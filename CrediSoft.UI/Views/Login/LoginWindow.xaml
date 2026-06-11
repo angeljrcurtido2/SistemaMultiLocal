@@ -1,0 +1,76 @@
+<Window x:Class="CrediSoft.UI.Views.Login.LoginWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        Title="CrediSoft — Login"
+        Width="400" Height="480"
+        ResizeMode="NoResize"
+        WindowStartupLocation="CenterScreen"
+        Background="#FFF8F0">
+
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="160" />
+            <RowDefinition Height="*" />
+        </Grid.RowDefinitions>
+
+        <!-- Header con logo -->
+        <Border Grid.Row="0" Background="#FF8C00">
+            <StackPanel HorizontalAlignment="Center" VerticalAlignment="Center">
+                <TextBlock Text="Credimar S.A."
+                           FontSize="28" FontWeight="Bold"
+                           Foreground="White" HorizontalAlignment="Center" />
+                <Border Background="#E07000" Padding="20,4" Margin="0,6,0,0"
+                        HorizontalAlignment="Center">
+                    <TextBlock Text="ELECTRODOMÉSTICOS"
+                               FontSize="13" FontWeight="SemiBold"
+                               Foreground="White" />
+                </Border>
+                <TextBlock Text="Sistema de Gestión Comercial"
+                           FontSize="11" Foreground="#FFE0B2"
+                           HorizontalAlignment="Center" Margin="0,8,0,0" />
+            </StackPanel>
+        </Border>
+
+        <!-- Formulario de login -->
+        <StackPanel Grid.Row="1" Margin="40,30,40,20" VerticalAlignment="Top">
+
+            <TextBlock Text="Usuario" Style="{StaticResource FieldLabel}" />
+            <TextBox x:Name="TxtUsuario"
+                     Style="{StaticResource FieldInput}"
+                     MaxLength="20"
+                     KeyDown="OnKeyDown" />
+
+            <TextBlock Text="Contraseña" Style="{StaticResource FieldLabel}" />
+            <PasswordBox x:Name="TxtContrasena"
+                         Padding="6,4" BorderBrush="#CCCCCC" BorderThickness="1"
+                         Background="White" FontSize="13"
+                         MaxLength="20"
+                         KeyDown="OnKeyDown" />
+
+            <TextBlock Text="Local (N° de sucursal)" Style="{StaticResource FieldLabel}" />
+            <TextBox x:Name="TxtLocal"
+                     Style="{StaticResource FieldInput}"
+                     MaxLength="3"
+                     KeyDown="OnKeyDown" />
+
+            <TextBlock x:Name="TxtError"
+                       Foreground="#E74C3C"
+                       FontSize="12"
+                       Margin="0,8,0,0"
+                       TextWrapping="Wrap"
+                       Visibility="Collapsed" />
+
+            <Button x:Name="BtnIngresar"
+                    Content="INGRESAR"
+                    Style="{StaticResource BtnPrimary}"
+                    Margin="0,20,0,0"
+                    Height="40"
+                    Click="BtnIngresar_Click" />
+
+            <TextBlock Text="CrediSoft v2.0 — Credimar S.A."
+                       FontSize="10" Foreground="#999999"
+                       HorizontalAlignment="Center"
+                       Margin="0,20,0,0" />
+        </StackPanel>
+    </Grid>
+</Window>

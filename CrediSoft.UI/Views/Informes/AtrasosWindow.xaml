@@ -1,0 +1,112 @@
+<Window x:Class="CrediSoft.UI.Views.Informes.AtrasosWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        Title="Atrasos - Morosos" Width="1100" Height="680"
+        WindowStartupLocation="CenterOwner"
+        Background="White">
+
+    <Grid>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="200" />
+            <ColumnDefinition Width="*" />
+        </Grid.ColumnDefinitions>
+
+        <!-- Panel izquierdo criterios -->
+        <Border Grid.Column="0" Background="#EEF2FF" Padding="10">
+            <StackPanel>
+                <Border Background="#FF8C00" Padding="8,5" Margin="0,0,0,10">
+                    <TextBlock Text="CRITERIOS DE BÚSQUEDA" Foreground="White"
+                               FontWeight="Bold" FontSize="11" />
+                </Border>
+
+                <RadioButton x:Name="RbTodos" Content="Todos los atrasos" IsChecked="True"
+                             Margin="0,0,0,6" />
+                <RadioButton x:Name="RbPeriodo" Content="Período de tiempo"
+                             Margin="0,0,0,4" Checked="OnCriterioChanged" />
+                <DatePicker x:Name="DpDesde" IsEnabled="False" Margin="8,0,0,4" />
+                <DatePicker x:Name="DpHasta" IsEnabled="False" Margin="8,0,0,8" />
+
+                <RadioButton x:Name="RbDias" Content="Días de mora"
+                             Margin="0,0,0,4" Checked="OnCriterioChanged" />
+                <TextBox x:Name="TxtDias" IsEnabled="False" Padding="4,3" Margin="8,0,0,8"
+                         Background="White" />
+
+                <RadioButton x:Name="RbIntervalo" Content="Intervalo de días"
+                             Margin="0,0,0,4" Checked="OnCriterioChanged" />
+                <StackPanel Orientation="Horizontal" Margin="8,0,0,8">
+                    <TextBlock Text="Desde:" VerticalAlignment="Center" Margin="0,0,4,0" FontSize="11" />
+                    <TextBox x:Name="TxtIntDesde" Width="45" IsEnabled="False" Padding="3,2" Background="White" />
+                    <TextBlock Text="Hasta:" VerticalAlignment="Center" Margin="6,0,4,0" FontSize="11" />
+                    <TextBox x:Name="TxtIntHasta" Width="45" IsEnabled="False" Padding="3,2" Background="White" />
+                </StackPanel>
+
+                <TextBlock Text="Local:" Margin="0,4,0,2" FontSize="12" />
+                <TextBox x:Name="TxtLocal" Padding="4,3" Background="White" />
+
+                <Button Content="🔍 Buscar" Style="{StaticResource BtnPrimary}"
+                        Margin="0,10,0,6" Click="OnBuscar" />
+                <Button Content="Resumen x local" Style="{StaticResource BtnSecondary}"
+                        Margin="0,0,0,6" FontSize="11" Click="OnResumenLocal" />
+                <Button Content="COMPLETO" Style="{StaticResource BtnPrimary}"
+                        Margin="0,0,0,0" FontSize="12" FontWeight="Bold" Click="OnCompleto" />
+            </StackPanel>
+        </Border>
+
+        <!-- Panel derecho resultados -->
+        <Grid Grid.Column="1" Margin="6,0,0,0">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="*" />
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="160" />
+                <RowDefinition Height="Auto" />
+            </Grid.RowDefinitions>
+
+            <!-- Grid morosos -->
+            <DataGrid x:Name="GridMorosos" Grid.Row="0" Style="{StaticResource CrediGrid}"
+                      SelectionChanged="OnMorosoSeleccionado">
+                <DataGrid.Columns>
+                    <DataGridTextColumn Header="Cliente"     Binding="{Binding ClienteNombre}" Width="*" />
+                    <DataGridTextColumn Header="Teléfono"    Binding="{Binding ClienteTelefono}" Width="110" />
+                    <DataGridTextColumn Header="Solicitud"   Binding="{Binding NSolicitud}" Width="120" />
+                    <DataGridTextColumn Header="N° Cuota"    Binding="{Binding NCuota}" Width="70" />
+                    <DataGridTextColumn Header="Monto Gs."   Binding="{Binding Monto, StringFormat=N0}" Width="100" />
+                    <DataGridTextColumn Header="Vencimiento" Binding="{Binding Vto, StringFormat=dd/MM/yyyy}" Width="100" />
+                    <DataGridTextColumn Header="Mora días"   Binding="{Binding DiasDeAtraso}" Width="80" />
+                    <DataGridTextColumn Header="Vendedor"    Binding="{Binding VendedorNombre}" Width="120" />
+                </DataGrid.Columns>
+            </DataGrid>
+
+            <!-- Separador Productos -->
+            <Border Grid.Row="1" Background="#3949AB" Padding="8,4" Margin="0,4,0,0">
+                <TextBlock Text="P R O D U C T O S   Y/O   M E R C A D E R I A S"
+                           Foreground="White" FontWeight="Bold" HorizontalAlignment="Center" FontSize="11" />
+            </Border>
+
+            <!-- Grid productos del cliente seleccionado -->
+            <DataGrid x:Name="GridProductos" Grid.Row="2" Style="{StaticResource CrediGrid}">
+                <DataGrid.Columns>
+                    <DataGridTextColumn Header="ID"          Binding="{Binding IdArt}" Width="60" />
+                    <DataGridTextColumn Header="Código"      Binding="{Binding ArticuloCodigo}" Width="120" />
+                    <DataGridTextColumn Header="Descripción" Binding="{Binding ArticuloNombre}" Width="*" />
+                    <DataGridTextColumn Header="Cantidad"    Binding="{Binding Cantidad, StringFormat=N2}" Width="80" />
+                    <DataGridTextColumn Header="P.Venta"     Binding="{Binding Pv, StringFormat=N0}" Width="90" />
+                </DataGrid.Columns>
+            </DataGrid>
+
+            <!-- Resumen -->
+            <DataGrid x:Name="GridResumen" Grid.Row="3" Height="100" Style="{StaticResource CrediGrid}"
+                      Margin="0,4,0,0">
+                <DataGrid.Columns>
+                    <DataGridTextColumn Header="Local"         Binding="{Binding Local}" Width="*" />
+                    <DataGridTextColumn Header="Tot.Crédito"   Binding="{Binding TotalCredito, StringFormat=N0}" Width="110" />
+                    <DataGridTextColumn Header="Tot.Cobrar"    Binding="{Binding TotalCobrar, StringFormat=N0}" Width="110" />
+                    <DataGridTextColumn Header="Tot.Atrasos"   Binding="{Binding TotalAtrasos, StringFormat=N0}" Width="110" />
+                    <DataGridTextColumn Header="1-30 días"     Binding="{Binding Atr1a30, StringFormat=N0}" Width="90" />
+                    <DataGridTextColumn Header="31-60 días"    Binding="{Binding Atr31a60, StringFormat=N0}" Width="90" />
+                    <DataGridTextColumn Header="61-90 días"    Binding="{Binding Atr61a90, StringFormat=N0}" Width="90" />
+                    <DataGridTextColumn Header="+90 días"      Binding="{Binding AtrMas90, StringFormat=N0}" Width="90" />
+                </DataGrid.Columns>
+            </DataGrid>
+        </Grid>
+    </Grid>
+</Window>

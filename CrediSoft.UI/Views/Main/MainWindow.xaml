@@ -1,0 +1,314 @@
+<Window x:Class="CrediSoft.UI.Views.Main.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        Title="CrediSoft"
+        WindowState="Maximized"
+        Background="#F5F5F5"
+        FontFamily="Segoe UI" FontSize="13">
+
+    <Window.Resources>
+        <Style x:Key="ToolbarBtn" TargetType="Button">
+            <Setter Property="Background" Value="Transparent" />
+            <Setter Property="BorderThickness" Value="0" />
+            <Setter Property="Padding" Value="8,4" />
+            <Setter Property="Cursor" Value="Hand" />
+            <Setter Property="Margin" Value="1,0" />
+            <Setter Property="Foreground" Value="#333" />
+            <Setter Property="FontSize" Value="11" />
+            <Style.Triggers>
+                <Trigger Property="IsMouseOver" Value="True">
+                    <Setter Property="Background" Value="#FFE0B2" />
+                </Trigger>
+            </Style.Triggers>
+        </Style>
+        <Style x:Key="ToolbarSep" TargetType="Separator">
+            <Setter Property="Margin" Value="3,2" />
+        </Style>
+    </Window.Resources>
+
+    <DockPanel>
+        <!-- Menú principal -->
+        <Menu DockPanel.Dock="Top" Background="#FF8C00" Foreground="White" FontWeight="SemiBold">
+            <Menu.ItemContainerStyle>
+                <Style TargetType="MenuItem">
+                    <Setter Property="Foreground" Value="White" />
+                    <Setter Property="Background" Value="Transparent" />
+                    <Setter Property="Padding" Value="10,5" />
+                </Style>
+            </Menu.ItemContainerStyle>
+
+            <MenuItem Header="Archivos">
+                <MenuItem Header="Artículos..."        Click="OnMenuArticulos" />
+                <MenuItem Header="Bancos..."           Click="OnMenuBancos" />
+                <MenuItem Header="Categorías..."       Click="OnMenuCategorias" />
+                <MenuItem Header="Subcategorías..."    Click="OnMenuSubcategorias" />
+                <MenuItem Header="Clientes..."         Click="OnMenuClientes" />
+                <MenuItem Header="Funcionarios..."     Click="OnMenuFuncionarios" />
+                <MenuItem Header="Locales..."          Click="OnMenuLocales" />
+                <MenuItem Header="Marcas..."           Click="OnMenuMarcas" />
+                <MenuItem Header="Procedencias..."     Click="OnMenuProcedencias" />
+                <MenuItem Header="Proveedores..."      Click="OnMenuProveedores" />
+                <MenuItem Header="Secciones..."        Click="OnMenuSecciones" />
+                <MenuItem Header="Unds. de medidas..." Click="OnMenuMedidas" />
+                <Separator />
+                <MenuItem Header="Salir" Click="OnMenuSalir" />
+            </MenuItem>
+
+            <MenuItem Header="Movimientos">
+                <MenuItem Header="Cobros">
+                    <MenuItem Header="Cobrar cuota"  Click="OnMenuCobrarCuota" />
+                    <MenuItem Header="Cobro masivo"  Click="OnMenuCobrarMasivo" />
+                </MenuItem>
+                <MenuItem Header="Compras">
+                    <MenuItem Header="Crear compra"  Click="OnMenuNuevaCompra" />
+                    <MenuItem Header="Editar compra" Click="OnMenuEditarCompras" />
+                </MenuItem>
+                <Separator />
+                <MenuItem Header="Generar Pagos..."            Click="OnMenuGenerarPagos" />
+                <MenuItem Header="Editar Pagos..."             Click="OnMenuEditarPagos" />
+                <MenuItem Header="Eliminar Pago generado..."   Click="OnMenuEliminarPago" />
+                <MenuItem Header="Pago de remuneraciones..."   Click="OnMenuPagoRemuneraciones" />
+                <MenuItem Header="Retiro libre..."             Click="OnMenuRetiroLibre" />
+                <Separator />
+                <MenuItem Header="Solicitudes">
+                    <MenuItem Header="Ingresar solicitud"  Click="OnMenuIngresarSolicitud" />
+                    <MenuItem Header="Visor solicitudes"   Click="OnMenuVisorSolicitudes" />
+                </MenuItem>
+                <MenuItem Header="Transferencias">
+                    <MenuItem Header="Nueva transferencia"   Click="OnMenuNuevaTransferencia" />
+                    <MenuItem Header="Aceptar transferencia" Click="OnMenuAceptarTransferencia" />
+                </MenuItem>
+                <MenuItem Header="Ventas">
+                    <MenuItem Header="Venta a crédito"  Click="OnMenuVentaCredito" />
+                    <MenuItem Header="Venta al contado" Click="OnMenuVentaContado" />
+                </MenuItem>
+            </MenuItem>
+
+            <MenuItem Header="Informes">
+                <MenuItem Header="Atrasos..."          Click="OnMenuAtrasos" />
+                <MenuItem Header="Cobranzas..."        Click="OnMenuHCobranzas" />
+                <MenuItem Header="Compras..."          Click="OnMenuHCompras" />
+                <MenuItem Header="Créditos..."         Click="OnMenuHCreditos" />
+                <MenuItem Header="En promoción..."     Click="OnMenuEnPromocion" />
+                <MenuItem Header="H.Nota de crédito..." Click="OnMenuHNotaCredito" />
+                <MenuItem Header="Mov. Artículos..."   Click="OnMenuMovArt" />
+                <MenuItem Header="Pendientes..."       Click="OnMenuPendientes" />
+                <MenuItem Header="Transferencias..."   Click="OnMenuHTransferencias" />
+                <MenuItem Header="Ventas..."           Click="OnMenuHVentas" />
+                <MenuItem Header="Ver Artículos..."    Click="OnMenuVerArticulos" />
+                <MenuItem Header="Visor Promoción..."  Click="OnMenuVisorPromo" />
+            </MenuItem>
+
+            <MenuItem Header="Caja">
+                <MenuItem Header="Apertura..."        Click="OnMenuCajaApertura" />
+                <MenuItem Header="Arqueo..."          Click="OnMenuCajaArqueo" />
+                <MenuItem Header="Ver gastos..."      Click="OnMenuCajaGastos" />
+                <MenuItem Header="Registrar..."       Click="OnMenuCajaRegistrar" />
+                <MenuItem Header="Cierre de caja..."  Click="OnMenuCajaCierre" />
+                <MenuItem Header="Historial Caja..."  Click="OnMenuCajaHistorial" />
+            </MenuItem>
+
+            <MenuItem Header="Herramientas">
+                <MenuItem Header="Bloquear transferencias..." Click="OnMenuBloquearTransf" />
+                <MenuItem Header="Editar cuota pagada..."     Click="OnMenuEditarCuota" />
+                <MenuItem Header="Eliminar venta contado..."  Click="OnMenuEliminarVentaCont" />
+                <MenuItem Header="Finalizar promoción..."     Click="OnMenuFinalizarPromo" />
+                <MenuItem Header="Impresoras..."              Click="OnMenuImpresoras" />
+                <MenuItem Header="Nota de crédito..."         Click="OnMenuNotaCredito" />
+                <MenuItem Header="Promoción..."               Click="OnMenuPromocion" />
+                <MenuItem Header="Puntorio..."                Click="OnMenuPunitorio" />
+            </MenuItem>
+
+            <MenuItem Header="Acerca de..." Click="OnMenuAcercaDe" />
+        </Menu>
+
+        <!-- Toolbar Fila 1: Maestros -->
+        <ToolBarTray DockPanel.Dock="Top" Background="White">
+            <ToolBar Band="1" BandIndex="1" Background="White">
+                <Button Style="{StaticResource ToolbarBtn}" Click="OnMenuArticulos">
+                    <StackPanel>
+                        <TextBlock Text="📦" FontSize="16" HorizontalAlignment="Center"/>
+                        <TextBlock Text="Artículos" />
+                    </StackPanel>
+                </Button>
+                <Separator Style="{StaticResource ToolbarSep}" />
+                <Button Style="{StaticResource ToolbarBtn}" Click="OnMenuBancos">
+                    <StackPanel><TextBlock Text="🏦" FontSize="16" HorizontalAlignment="Center"/>
+                    <TextBlock Text="Bancos" /></StackPanel>
+                </Button>
+                <Button Style="{StaticResource ToolbarBtn}" Click="OnMenuCategorias">
+                    <StackPanel><TextBlock Text="📁" FontSize="16" HorizontalAlignment="Center"/>
+                    <TextBlock Text="Categorías" /></StackPanel>
+                </Button>
+                <Button Style="{StaticResource ToolbarBtn}" Click="OnMenuClientes">
+                    <StackPanel><TextBlock Text="👥" FontSize="16" HorizontalAlignment="Center"/>
+                    <TextBlock Text="Clientes" /></StackPanel>
+                </Button>
+                <Button Style="{StaticResource ToolbarBtn}" Click="OnMenuFuncionarios">
+                    <StackPanel><TextBlock Text="👤" FontSize="16" HorizontalAlignment="Center"/>
+                    <TextBlock Text="Funcionarios" /></StackPanel>
+                </Button>
+                <Button Style="{StaticResource ToolbarBtn}" Click="OnMenuVisorSolicitudes">
+                    <StackPanel><TextBlock Text="🔍" FontSize="16" HorizontalAlignment="Center"/>
+                    <TextBlock Text="Visor" /></StackPanel>
+                </Button>
+                <Button Style="{StaticResource ToolbarBtn}" Click="OnMenuLocales">
+                    <StackPanel><TextBlock Text="🏪" FontSize="16" HorizontalAlignment="Center"/>
+                    <TextBlock Text="Locales" /></StackPanel>
+                </Button>
+                <Button Style="{StaticResource ToolbarBtn}" Click="OnMenuMarcas">
+                    <StackPanel><TextBlock Text="🏷️" FontSize="16" HorizontalAlignment="Center"/>
+                    <TextBlock Text="Marcas" /></StackPanel>
+                </Button>
+                <Button Style="{StaticResource ToolbarBtn}" Click="OnMenuProcedencias">
+                    <StackPanel><TextBlock Text="🌍" FontSize="16" HorizontalAlignment="Center"/>
+                    <TextBlock Text="Procedencia" /></StackPanel>
+                </Button>
+                <Button Style="{StaticResource ToolbarBtn}" Click="OnMenuProveedores">
+                    <StackPanel><TextBlock Text="🚚" FontSize="16" HorizontalAlignment="Center"/>
+                    <TextBlock Text="Proveedores" /></StackPanel>
+                </Button>
+                <Button Style="{StaticResource ToolbarBtn}" Click="OnMenuMedidas">
+                    <StackPanel><TextBlock Text="📏" FontSize="16" HorizontalAlignment="Center"/>
+                    <TextBlock Text="Medidas" /></StackPanel>
+                </Button>
+            </ToolBar>
+        </ToolBarTray>
+
+        <!-- Toolbar Fila 2: Informes/Movimientos -->
+        <ToolBarTray DockPanel.Dock="Top" Background="#FFF3E8">
+            <ToolBar Band="2" BandIndex="2" Background="#FFF3E8">
+                <Button Style="{StaticResource ToolbarBtn}" Click="OnMenuAtrasos">
+                    <StackPanel><TextBlock Text="⚠️" FontSize="14" HorizontalAlignment="Center"/>
+                    <TextBlock Text="Atrasos" /></StackPanel>
+                </Button>
+                <Button Style="{StaticResource ToolbarBtn}" Click="OnMenuHCobranzas">
+                    <StackPanel><TextBlock Text="💰" FontSize="14" HorizontalAlignment="Center"/>
+                    <TextBlock Text="H Cobranzas" /></StackPanel>
+                </Button>
+                <Button Style="{StaticResource ToolbarBtn}" Click="OnMenuHCompras">
+                    <StackPanel><TextBlock Text="🛒" FontSize="14" HorizontalAlignment="Center"/>
+                    <TextBlock Text="H Compras" /></StackPanel>
+                </Button>
+                <Button Style="{StaticResource ToolbarBtn}" Click="OnMenuHCreditos">
+                    <StackPanel><TextBlock Text="📊" FontSize="14" HorizontalAlignment="Center"/>
+                    <TextBlock Text="H Créditos" /></StackPanel>
+                </Button>
+                <Button Style="{StaticResource ToolbarBtn}" Click="OnMenuMovArt">
+                    <StackPanel><TextBlock Text="📦" FontSize="14" HorizontalAlignment="Center"/>
+                    <TextBlock Text="Mov.Art" /></StackPanel>
+                </Button>
+                <Button Style="{StaticResource ToolbarBtn}" Click="OnMenuEnPromocion">
+                    <StackPanel><TextBlock Text="🏷" FontSize="14" HorizontalAlignment="Center"/>
+                    <TextBlock Text="En Promoción" /></StackPanel>
+                </Button>
+                <Button Style="{StaticResource ToolbarBtn}" Click="OnMenuVisorPromo">
+                    <StackPanel><TextBlock Text="👁" FontSize="14" HorizontalAlignment="Center"/>
+                    <TextBlock Text="Visor Promo" /></StackPanel>
+                </Button>
+                <Button Style="{StaticResource ToolbarBtn}" Click="OnMenuHTransferencias">
+                    <StackPanel><TextBlock Text="🔄" FontSize="14" HorizontalAlignment="Center"/>
+                    <TextBlock Text="H Transferencias" /></StackPanel>
+                </Button>
+                <Button Style="{StaticResource ToolbarBtn}" Click="OnMenuHVentas">
+                    <StackPanel><TextBlock Text="📈" FontSize="14" HorizontalAlignment="Center"/>
+                    <TextBlock Text="H Ventas" /></StackPanel>
+                </Button>
+                <Button Style="{StaticResource ToolbarBtn}" Click="OnMenuVerArticulos">
+                    <StackPanel><TextBlock Text="🔎" FontSize="14" HorizontalAlignment="Center"/>
+                    <TextBlock Text="Ver Artículos" /></StackPanel>
+                </Button>
+                <Button Style="{StaticResource ToolbarBtn}" Click="OnMenuHNotaCredito">
+                    <StackPanel><TextBlock Text="📝" FontSize="14" HorizontalAlignment="Center"/>
+                    <TextBlock Text="H N crédito" /></StackPanel>
+                </Button>
+                <Separator />
+                <Button Style="{StaticResource ToolbarBtn}" Click="OnToolbarCompras">
+                    <Button.ContextMenu>
+                        <ContextMenu>
+                            <MenuItem Header="Crear compra"  Click="OnMenuNuevaCompra" />
+                            <MenuItem Header="Editar compra" Click="OnMenuEditarCompras" />
+                        </ContextMenu>
+                    </Button.ContextMenu>
+                    <StackPanel><TextBlock Text="🛒" FontSize="14" HorizontalAlignment="Center"/>
+                    <TextBlock Text="Compras ▼" /></StackPanel>
+                </Button>
+                <Button Style="{StaticResource ToolbarBtn}" Click="OnMenuIngresarSolicitud">
+                    <StackPanel><TextBlock Text="📋" FontSize="14" HorizontalAlignment="Center"/>
+                    <TextBlock Text="Solicitudes ▼" /></StackPanel>
+                </Button>
+                <Button Style="{StaticResource ToolbarBtn}" Click="OnToolbarVentas">
+                    <Button.ContextMenu>
+                        <ContextMenu>
+                            <MenuItem Header="Venta a crédito"  Click="OnMenuVentaCredito" />
+                            <MenuItem Header="Venta al contado" Click="OnMenuVentaContado" />
+                        </ContextMenu>
+                    </Button.ContextMenu>
+                    <StackPanel><TextBlock Text="💳" FontSize="14" HorizontalAlignment="Center"/>
+                    <TextBlock Text="Ventas ▼" /></StackPanel>
+                </Button>
+                <Button Style="{StaticResource ToolbarBtn}" Click="OnMenuNuevaTransferencia">
+                    <StackPanel><TextBlock Text="🔄" FontSize="14" HorizontalAlignment="Center"/>
+                    <TextBlock Text="Transferencias ▼" /></StackPanel>
+                </Button>
+            </ToolBar>
+        </ToolBarTray>
+
+        <!-- Barra de estado inferior -->
+        <StatusBar DockPanel.Dock="Bottom" Background="#FF8C00">
+            <StatusBarItem>
+                <TextBlock x:Name="TxtStatusUsuario"
+                           Foreground="White" FontSize="12" />
+            </StatusBarItem>
+            <Separator Background="#FFE0B2" Margin="8,2" />
+            <StatusBarItem>
+                <TextBlock x:Name="TxtStatusLocal"
+                           Foreground="White" FontSize="12" />
+            </StatusBarItem>
+            <Separator Background="#FFE0B2" Margin="8,2" />
+            <StatusBarItem>
+                <TextBlock x:Name="TxtStatusModulo"
+                           Foreground="#FFE0B2" FontSize="12" />
+            </StatusBarItem>
+            <StatusBarItem HorizontalAlignment="Right">
+                <TextBlock x:Name="TxtStatusFecha"
+                           Foreground="White" FontSize="12" />
+            </StatusBarItem>
+        </StatusBar>
+
+        <!-- Área de contenido MDI -->
+        <Border Background="White">
+            <Grid>
+                <!-- Logo central (visible cuando no hay módulo abierto) -->
+                <StackPanel x:Name="PanelLogo"
+                            HorizontalAlignment="Center"
+                            VerticalAlignment="Center">
+                    <Border Background="#FF8C00" Width="120" Height="120"
+                            CornerRadius="60" HorizontalAlignment="Center">
+                        <TextBlock Text="C" FontSize="72" FontWeight="Bold"
+                                   Foreground="White"
+                                   HorizontalAlignment="Center"
+                                   VerticalAlignment="Center" />
+                    </Border>
+                    <TextBlock Text="Credimar S.A."
+                               FontSize="32" FontWeight="Bold"
+                               Foreground="#FF8C00"
+                               HorizontalAlignment="Center"
+                               Margin="0,16,0,0" />
+                    <Border Background="#FF8C00" Padding="24,6" Margin="0,8,0,0"
+                            HorizontalAlignment="Center">
+                        <TextBlock Text="ELECTRODOMÉSTICOS"
+                                   FontSize="14" FontWeight="SemiBold"
+                                   Foreground="White" />
+                    </Border>
+                </StackPanel>
+
+                <!-- Contenedor de módulos (TabControl estilo MDI) -->
+                <TabControl x:Name="TabModulos"
+                            Visibility="Collapsed"
+                            TabStripPlacement="Top"
+                            Background="White" />
+            </Grid>
+        </Border>
+    </DockPanel>
+</Window>

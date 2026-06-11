@@ -1,0 +1,17 @@
+# Build output
+bin/
+obj/
+*.user
+*.suo
+.vs/
+
+# NuGet
+*.nupkg
+packages/
+
+# Rider/VS
+.idea/
+*.DotSettings.user
+
+# Runtime error logs
+runtime_err.txt

@@ -1,0 +1,508 @@
+<Window x:Class="CrediSoft.UI.Views.Maestros.ClientesWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        Title="Gestión de Clientes"
+        Width="1150" Height="740"
+        MinWidth="960" MinHeight="620"
+        WindowStartupLocation="CenterOwner"
+        Background="#F0F2F5">
+
+    <Window.Resources>
+        <!-- Campo label moderno -->
+        <Style x:Key="ModLabel" TargetType="TextBlock">
+            <Setter Property="FontSize" Value="10.5" />
+            <Setter Property="FontWeight" Value="SemiBold" />
+            <Setter Property="Foreground" Value="#6B7280" />
+            <Setter Property="Margin" Value="0,7,0,2" />
+        </Style>
+
+        <!-- Input moderno -->
+        <Style x:Key="ModInput" TargetType="TextBox">
+            <Setter Property="Padding" Value="8,5" />
+            <Setter Property="FontSize" Value="13" />
+            <Setter Property="Foreground" Value="#111827" />
+            <Setter Property="Background" Value="White" />
+            <Setter Property="BorderBrush" Value="#D1D5DB" />
+            <Setter Property="BorderThickness" Value="1" />
+            <Setter Property="Height" Value="32" />
+            <Setter Property="VerticalContentAlignment" Value="Center" />
+            <Style.Triggers>
+                <Trigger Property="IsReadOnly" Value="True">
+                    <Setter Property="Background" Value="#F9FAFB" />
+                    <Setter Property="Foreground" Value="#374151" />
+                </Trigger>
+                <Trigger Property="IsKeyboardFocused" Value="True">
+                    <Setter Property="BorderBrush" Value="#FF8C00" />
+                </Trigger>
+            </Style.Triggers>
+        </Style>
+
+        <!-- ComboBox moderno -->
+        <Style x:Key="ModCombo" TargetType="ComboBox">
+            <Setter Property="Padding" Value="8,5" />
+            <Setter Property="FontSize" Value="13" />
+            <Setter Property="Foreground" Value="#374151" />
+            <Setter Property="Background" Value="White" />
+            <Setter Property="BorderBrush" Value="#D1D5DB" />
+            <Setter Property="BorderThickness" Value="1" />
+            <Setter Property="Height" Value="32" />
+        </Style>
+
+        <!-- Sección header pill -->
+        <Style x:Key="SectionPill" TargetType="Border">
+            <Setter Property="Background" Value="#FF8C00" />
+            <Setter Property="CornerRadius" Value="4" />
+            <Setter Property="Padding" Value="10,4" />
+            <Setter Property="Margin" Value="0,10,0,6" />
+        </Style>
+
+        <!-- Tarjeta card -->
+        <Style x:Key="Card" TargetType="Border">
+            <Setter Property="Background" Value="White" />
+            <Setter Property="CornerRadius" Value="8" />
+            <Setter Property="Padding" Value="14,10" />
+            <Setter Property="Margin" Value="0,0,0,8" />
+            <Setter Property="Effect">
+                <Setter.Value>
+                    <DropShadowEffect BlurRadius="8" ShadowDepth="1" Opacity="0.10" Color="#000000" />
+                </Setter.Value>
+            </Setter>
+        </Style>
+
+        <!-- Botón acción -->
+        <Style x:Key="ActBtn" TargetType="Button" BasedOn="{StaticResource BtnPrimary}">
+            <Setter Property="Height" Value="34" />
+            <Setter Property="Padding" Value="16,0" />
+            <Setter Property="FontSize" Value="12.5" />
+        </Style>
+    </Window.Resources>
+
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto" />  <!-- Header -->
+            <RowDefinition Height="*" />     <!-- Contenido -->
+            <RowDefinition Height="Auto" />  <!-- Botonera -->
+        </Grid.RowDefinitions>
+
+        <!-- ══ HEADER ══ -->
+        <Border Grid.Row="0" Background="#FF8C00">
+            <Border.Effect>
+                <DropShadowEffect BlurRadius="6" ShadowDepth="2" Opacity="0.25" Color="#000" />
+            </Border.Effect>
+            <Grid Margin="16,10">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="Auto" />
+                    <ColumnDefinition Width="*" />
+                    <ColumnDefinition Width="Auto" />
+                </Grid.ColumnDefinitions>
+
+                <!-- Ícono + título -->
+                <StackPanel Grid.Column="0" Orientation="Horizontal" VerticalAlignment="Center">
+                    <Border Background="#E07000" CornerRadius="6" Padding="8,6" Margin="0,0,10,0">
+                        <TextBlock Text="👤" FontSize="18" />
+                    </Border>
+                    <StackPanel VerticalAlignment="Center">
+                        <TextBlock Text="Gestión de Clientes" FontSize="16" FontWeight="Bold"
+                                   Foreground="White" />
+                        <TextBlock Text="Administración del padrón de clientes" FontSize="10.5"
+                                   Foreground="#FFE0B2" />
+                    </StackPanel>
+                </StackPanel>
+
+                <!-- Búsqueda rápida por CI + botón modal -->
+                <StackPanel Grid.Column="1" Orientation="Horizontal"
+                            HorizontalAlignment="Center" VerticalAlignment="Center">
+                    <!-- Input CI rápido -->
+                    <Border Background="#E07000" CornerRadius="6" Padding="10,6" VerticalAlignment="Center">
+                        <StackPanel>
+                            <StackPanel Orientation="Horizontal">
+                                <TextBlock Text="CI:" Foreground="#FFE0B2" FontSize="12"
+                                           VerticalAlignment="Center" Margin="0,0,6,0" />
+                                <TextBox x:Name="TxtBuscar" Width="140" Height="28"
+                                         Padding="6,4" FontSize="12" Background="White"
+                                         VerticalContentAlignment="Center"
+                                         KeyDown="OnBuscarKeyDown"
+                                         PreviewTextInput="OnCiSoloNumeros"
+                                         DataObject.Pasting="OnCiPegado" />
+                                <Button Content="Buscar" Margin="6,0,0,0" Height="28"
+                                        Padding="10,0" FontSize="12" FontWeight="SemiBold"
+                                        Background="White" Foreground="#FF8C00"
+                                        BorderThickness="0" Cursor="Hand" Click="OnBuscar" />
+                            </StackPanel>
+                            <TextBlock Text="Mín. 6 dígitos · use Ver Listado para buscar por nombre"
+                                       Foreground="#FFDDA0" FontSize="9.5"
+                                       Margin="0,3,0,0" />
+                        </StackPanel>
+                    </Border>
+                    <!-- Separador -->
+                    <Border Width="1" Background="#E07000" Margin="12,4" />
+                    <!-- Botón modal completo -->
+                    <Button Content="🔍  Ver Listado de Clientes" Height="34" Padding="14,0"
+                            FontSize="12" FontWeight="Bold"
+                            Background="White" Foreground="#FF8C00"
+                            BorderThickness="0" Cursor="Hand"
+                            Click="OnAbrirBuscador" />
+                    <!-- Badge cliente activo -->
+                    <Border x:Name="BadgeCliente" Background="#E07000" CornerRadius="4"
+                            Padding="8,4" Margin="10,0,0,0" Visibility="Collapsed">
+                        <TextBlock x:Name="TxtClienteSeleccionadoBadge"
+                                   Foreground="White" FontSize="11" FontWeight="SemiBold" />
+                    </Border>
+                </StackPanel>
+
+                <!-- Atajos teclado -->
+                <TextBlock Grid.Column="2" Text="F1=Ayuda  F2=Buscar  Ctrl+N=Nuevo  Ctrl+S=Cerrar"
+                           Foreground="#FFE0B2" FontSize="10" VerticalAlignment="Center" />
+            </Grid>
+        </Border>
+
+        <!-- ══ CONTENIDO PRINCIPAL ══ -->
+        <Grid Grid.Row="1" Margin="12,10,12,6">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="*" />       <!-- Formulario -->
+                <ColumnDefinition Width="210" />     <!-- Datos adicionales -->
+                <ColumnDefinition Width="220" />     <!-- Foto cédula -->
+            </Grid.ColumnDefinitions>
+
+            <!-- Columna izquierda: formulario -->
+            <ScrollViewer Grid.Column="0"
+                          VerticalScrollBarVisibility="Auto"
+                          Margin="0,0,10,0" Padding="0,0,4,0">
+                <StackPanel>
+
+                    <!-- DATOS PERSONALES -->
+                    <Border Style="{StaticResource Card}">
+                        <StackPanel>
+                            <Border Style="{StaticResource SectionPill}">
+                                <TextBlock Text="DATOS PERSONALES" Foreground="White"
+                                           FontWeight="Bold" FontSize="11" />
+                            </Border>
+                            <Grid>
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="*" />
+                                    <ColumnDefinition Width="12" />
+                                    <ColumnDefinition Width="*" />
+                                </Grid.ColumnDefinitions>
+                                <!-- Col 1 -->
+                                <StackPanel Grid.Column="0">
+                                    <TextBlock Text="RUC" Style="{StaticResource ModLabel}" />
+                                    <TextBox x:Name="TxtRuc" Style="{StaticResource ModInput}" IsReadOnly="True" />
+                                    <TextBlock Style="{StaticResource ModLabel}">
+                                        <Run Text="C.I." /><Run Text=" *" Foreground="#EF4444" FontWeight="Bold" />
+                                    </TextBlock>
+                                    <TextBox x:Name="TxtCi" Style="{StaticResource ModInput}" IsReadOnly="True" />
+                                    <TextBlock x:Name="ErrCi" Visibility="Collapsed"
+                                               Foreground="#EF4444" FontSize="10.5" Margin="0,2,0,0" />
+                                    <TextBlock Style="{StaticResource ModLabel}">
+                                        <Run Text="Nombre / Razón Social" /><Run Text=" *" Foreground="#EF4444" FontWeight="Bold" />
+                                    </TextBlock>
+                                    <TextBox x:Name="TxtNombre" Style="{StaticResource ModInput}" IsReadOnly="True" />
+                                    <TextBlock x:Name="ErrNombre" Visibility="Collapsed"
+                                               Foreground="#EF4444" FontSize="10.5" Margin="0,2,0,0" />
+                                    <TextBlock Style="{StaticResource ModLabel}">
+                                        <Run Text="Dirección" /><Run Text=" *" Foreground="#EF4444" FontWeight="Bold" />
+                                    </TextBlock>
+                                    <TextBox x:Name="TxtDireccion" Style="{StaticResource ModInput}" IsReadOnly="True" />
+                                    <TextBlock x:Name="ErrDireccion" Visibility="Collapsed"
+                                               Foreground="#EF4444" FontSize="10.5" Margin="0,2,0,0" />
+                                    <TextBlock Style="{StaticResource ModLabel}">
+                                        <Run Text="Teléfono" /><Run Text=" *" Foreground="#EF4444" FontWeight="Bold" />
+                                    </TextBlock>
+                                    <TextBox x:Name="TxtTelefono" Style="{StaticResource ModInput}" IsReadOnly="True" />
+                                    <TextBlock x:Name="ErrTelefono" Visibility="Collapsed"
+                                               Foreground="#EF4444" FontSize="10.5" Margin="0,2,0,0" />
+                                    <TextBlock Style="{StaticResource ModLabel}">
+                                        <Run Text="Ciudad" /><Run Text=" *" Foreground="#EF4444" FontWeight="Bold" />
+                                    </TextBlock>
+                                    <TextBox x:Name="TxtCiudad" Style="{StaticResource ModInput}" IsReadOnly="True" />
+                                    <TextBlock x:Name="ErrCiudad" Visibility="Collapsed"
+                                               Foreground="#EF4444" FontSize="10.5" Margin="0,2,0,0" />
+                                    <TextBlock Text="Zona" Style="{StaticResource ModLabel}" />
+                                    <TextBox x:Name="TxtZona" Style="{StaticResource ModInput}" IsReadOnly="True" />
+                                </StackPanel>
+                                <!-- Col 2 -->
+                                <StackPanel Grid.Column="2">
+                                    <TextBlock Text="Referencia geográfica" Style="{StaticResource ModLabel}" />
+                                    <TextBox x:Name="TxtRefGeo" Style="{StaticResource ModInput}" IsReadOnly="True" />
+                                    <TextBlock Text="E-mail" Style="{StaticResource ModLabel}" />
+                                    <TextBox x:Name="TxtEmail" Style="{StaticResource ModInput}" IsReadOnly="True" />
+                                    <TextBlock Text="Crédito Máx." Style="{StaticResource ModLabel}" />
+                                    <TextBox x:Name="TxtCredMax" Style="{StaticResource ModInput}" IsReadOnly="True" />
+                                    <TextBlock Text="Estado" Style="{StaticResource ModLabel}" />
+                                    <ComboBox x:Name="CboEstado" Style="{StaticResource ModCombo}" IsEnabled="False">
+                                        <ComboBoxItem Content="Normal" Tag="0" />
+                                        <ComboBoxItem Content="Moroso" Tag="1" />
+                                    </ComboBox>
+                                    <TextBlock Text="Sexo" Style="{StaticResource ModLabel}" />
+                                    <ComboBox x:Name="CboSexo" Style="{StaticResource ModCombo}" IsEnabled="False">
+                                        <ComboBoxItem Content="Femenino" Tag="0" />
+                                        <ComboBoxItem Content="Masculino" Tag="1" />
+                                    </ComboBox>
+                                    <TextBlock Text="Estado Civil" Style="{StaticResource ModLabel}" />
+                                    <ComboBox x:Name="CboEcv" Style="{StaticResource ModCombo}" IsEnabled="False">
+                                        <ComboBoxItem Content="Soltero" Tag="0" />
+                                        <ComboBoxItem Content="Casado" Tag="1" />
+                                        <ComboBoxItem Content="Divorciado" Tag="2" />
+                                        <ComboBoxItem Content="Separado" Tag="3" />
+                                        <ComboBoxItem Content="Viudo" Tag="4" />
+                                    </ComboBox>
+                                    <TextBlock Text="Cónyuge" Style="{StaticResource ModLabel}" />
+                                    <TextBox x:Name="TxtConyuge" Style="{StaticResource ModInput}" IsReadOnly="True" />
+                                    <TextBlock Text="CI Cónyuge" Style="{StaticResource ModLabel}" />
+                                    <TextBox x:Name="TxtCiConyuge" Style="{StaticResource ModInput}" IsReadOnly="True" />
+                                </StackPanel>
+                            </Grid>
+                        </StackPanel>
+                    </Border>
+
+                    <!-- DATOS LABORALES -->
+                    <Border Style="{StaticResource Card}">
+                        <StackPanel>
+                            <Border Style="{StaticResource SectionPill}">
+                                <TextBlock Text="DATOS LABORALES" Foreground="White"
+                                           FontWeight="Bold" FontSize="11" />
+                            </Border>
+                            <Grid>
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="*" />
+                                    <ColumnDefinition Width="12" />
+                                    <ColumnDefinition Width="*" />
+                                </Grid.ColumnDefinitions>
+                                <StackPanel Grid.Column="0">
+                                    <TextBlock Text="Empresa" Style="{StaticResource ModLabel}" />
+                                    <TextBox x:Name="TxtEmpresa" Style="{StaticResource ModInput}" IsReadOnly="True" />
+                                    <TextBlock Text="Teléfono laboral" Style="{StaticResource ModLabel}" />
+                                    <TextBox x:Name="TxtTelLab" Style="{StaticResource ModInput}" IsReadOnly="True" />
+                                </StackPanel>
+                                <StackPanel Grid.Column="2">
+                                    <TextBlock Text="Dirección laboral" Style="{StaticResource ModLabel}" />
+                                    <TextBox x:Name="TxtDirLab" Style="{StaticResource ModInput}" IsReadOnly="True" />
+                                    <TextBlock Text="Antigüedad" Style="{StaticResource ModLabel}" />
+                                    <TextBox x:Name="TxtAntiguedad" Style="{StaticResource ModInput}" IsReadOnly="True" />
+                                </StackPanel>
+                            </Grid>
+                        </StackPanel>
+                    </Border>
+
+                </StackPanel>
+            </ScrollViewer>
+
+            <!-- Columna central: datos adicionales -->
+            <ScrollViewer Grid.Column="1" VerticalScrollBarVisibility="Auto"
+                          Margin="0,0,8,0" Padding="0,0,2,0">
+            <StackPanel>
+
+                <!-- DATOS ADICIONALES -->
+                <Border Style="{StaticResource Card}">
+                    <StackPanel>
+                        <Border Style="{StaticResource SectionPill}">
+                            <TextBlock Text="DATOS ADICIONALES" Foreground="White"
+                                       FontWeight="Bold" FontSize="11" />
+                        </Border>
+                        <TextBlock Text="Vencimiento CI" Style="{StaticResource ModLabel}" />
+                        <DatePicker x:Name="DpVencCi" IsEnabled="False" Height="32"
+                                    Padding="4,3" Background="White"
+                                    BorderBrush="#D1D5DB" FontSize="12" />
+                        <TextBlock Text="Tipo de cliente" Style="{StaticResource ModLabel}" />
+                        <ComboBox x:Name="CboTipo" Style="{StaticResource ModCombo}" IsEnabled="False">
+                            <ComboBoxItem Content="Malo"       Tag="0" />
+                            <ComboBoxItem Content="Regular"    Tag="1" />
+                            <ComboBoxItem Content="Bueno"      Tag="2" />
+                            <ComboBoxItem Content="Muy Bueno"  Tag="3" />
+                            <ComboBoxItem Content="Excelente"  Tag="4" />
+                        </ComboBox>
+                        <TextBlock Text="Condición" Style="{StaticResource ModLabel}" />
+                        <ComboBox x:Name="CboCondicion" Style="{StaticResource ModCombo}" IsEnabled="False">
+                            <ComboBoxItem Content="Activo"    Tag="0" />
+                            <ComboBoxItem Content="Cancelado" Tag="1" />
+                        </ComboBox>
+                        <TextBlock Text="InforcomConf" Style="{StaticResource ModLabel}" />
+                        <ComboBox x:Name="CboInforcom" Style="{StaticResource ModCombo}" IsEnabled="False">
+                            <ComboBoxItem Content="Libre"                  Tag="0" />
+                            <ComboBoxItem Content="Registrado en Inforcom" Tag="1" />
+                        </ComboBox>
+                        <TextBlock Text="Local" Style="{StaticResource ModLabel}" />
+                        <ComboBox x:Name="CboLocal" Style="{StaticResource ModCombo}" IsEnabled="False"
+                                  DisplayMemberPath="Nombre" SelectedValuePath="Id" />
+                    </StackPanel>
+                </Border>
+
+            </StackPanel>
+            </ScrollViewer>
+
+            <!-- Columna derecha: foto cédula -->
+            <ScrollViewer Grid.Column="2" VerticalScrollBarVisibility="Auto" Padding="0,0,2,0">
+            <Border Style="{StaticResource Card}">
+                <StackPanel>
+                    <Border Style="{StaticResource SectionPill}">
+                        <StackPanel Orientation="Horizontal">
+                            <TextBlock Text="📷 " FontSize="12" Foreground="White" />
+                            <TextBlock Text="FOTO DOCUMENTO" Foreground="White"
+                                       FontWeight="Bold" FontSize="11" />
+                        </StackPanel>
+                    </Border>
+
+                    <!-- ── Panel NUEVO: 2 slots frontal + dorso ── -->
+                    <StackPanel x:Name="PanelSlotsNuevo" Visibility="Collapsed">
+                        <Grid>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="*" />
+                                <ColumnDefinition Width="8" />
+                                <ColumnDefinition Width="*" />
+                            </Grid.ColumnDefinitions>
+
+                            <!-- FRONTAL -->
+                            <StackPanel Grid.Column="0">
+                                <Border Background="#EFF6FF" CornerRadius="4" Padding="4,2" Margin="0,0,0,4">
+                                    <TextBlock Text="FRONTAL" FontSize="9.5" FontWeight="Bold"
+                                               Foreground="#3B82F6" HorizontalAlignment="Center" />
+                                </Border>
+                                <Border x:Name="BorderFotoFrontal"
+                                        BorderBrush="#BFDBFE" BorderThickness="1"
+                                        CornerRadius="5" Background="#F9FAFB" Height="120"
+                                        Margin="0,0,0,4">
+                                    <Grid>
+                                        <StackPanel VerticalAlignment="Center" HorizontalAlignment="Center">
+                                            <TextBlock Text="🪪" FontSize="22" HorizontalAlignment="Center" Opacity="0.25" />
+                                            <TextBlock Text="Sin foto" FontSize="9" Foreground="#9CA3AF"
+                                                       HorizontalAlignment="Center" />
+                                        </StackPanel>
+                                        <Image x:Name="ImgFotoFrontal" Stretch="Uniform"
+                                               ToolTip="Cara frontal de la cédula" />
+                                    </Grid>
+                                </Border>
+                                <Button x:Name="BtnSelFotoFrontal" Content="📷 Frontal"
+                                        Height="26" FontSize="10.5" FontWeight="SemiBold"
+                                        Background="#3B82F6" Foreground="White"
+                                        BorderThickness="0" Cursor="Hand" IsEnabled="False"
+                                        Click="OnSeleccionarFotoFrontal" Margin="0,0,0,3"
+                                        Style="{StaticResource BtnPrimary}" />
+                                <Button x:Name="BtnQuitarFotoFrontal" Content="✕ Quitar"
+                                        Height="22" FontSize="10" FontWeight="SemiBold"
+                                        Background="#EF4444" Foreground="White"
+                                        BorderThickness="0" Cursor="Hand" IsEnabled="False"
+                                        Click="OnQuitarFotoFrontal"
+                                        Style="{StaticResource BtnDanger}" />
+                            </StackPanel>
+
+                            <!-- DORSO -->
+                            <StackPanel Grid.Column="2">
+                                <Border Background="#F0FDF4" CornerRadius="4" Padding="4,2" Margin="0,0,0,4">
+                                    <TextBlock Text="DORSO" FontSize="9.5" FontWeight="Bold"
+                                               Foreground="#22C55E" HorizontalAlignment="Center" />
+                                </Border>
+                                <Border x:Name="BorderFotoDorso"
+                                        BorderBrush="#BBF7D0" BorderThickness="1"
+                                        CornerRadius="5" Background="#F9FAFB" Height="120"
+                                        Margin="0,0,0,4">
+                                    <Grid>
+                                        <StackPanel VerticalAlignment="Center" HorizontalAlignment="Center">
+                                            <TextBlock Text="🪪" FontSize="22" HorizontalAlignment="Center" Opacity="0.25" />
+                                            <TextBlock Text="Sin foto" FontSize="9" Foreground="#9CA3AF"
+                                                       HorizontalAlignment="Center" />
+                                        </StackPanel>
+                                        <Image x:Name="ImgFotoDorso" Stretch="Uniform"
+                                               ToolTip="Dorso de la cédula" />
+                                    </Grid>
+                                </Border>
+                                <Button x:Name="BtnSelFotoDorso" Content="📷 Dorso"
+                                        Height="26" FontSize="10.5" FontWeight="SemiBold"
+                                        Background="#22C55E" Foreground="White"
+                                        BorderThickness="0" Cursor="Hand" IsEnabled="False"
+                                        Click="OnSeleccionarFotoDorso" Margin="0,0,0,3"
+                                        Style="{StaticResource BtnPrimary}" />
+                                <Button x:Name="BtnQuitarFotoDorso" Content="✕ Quitar"
+                                        Height="22" FontSize="10" FontWeight="SemiBold"
+                                        Background="#EF4444" Foreground="White"
+                                        BorderThickness="0" Cursor="Hand" IsEnabled="False"
+                                        Click="OnQuitarFotoDorso"
+                                        Style="{StaticResource BtnDanger}" />
+                            </StackPanel>
+                        </Grid>
+
+                        <!-- Estado carga -->
+                        <TextBox x:Name="TxtFotoRuta"
+                                 Style="{StaticResource ModInput}" IsReadOnly="True"
+                                 FontSize="9" Foreground="#9CA3AF" Margin="0,6,0,0"
+                                 Text="Sin fotos cargadas" Background="#F9FAFB" />
+                    </StackPanel>
+
+                    <!-- ── Panel VISTA/EDITAR: 1 slot unificado ── -->
+                    <StackPanel x:Name="PanelFotoUnica" Visibility="Visible">
+                        <Border x:Name="BorderFotoDoc"
+                                BorderBrush="#D1D5DB" BorderThickness="1"
+                                CornerRadius="6" Background="#F9FAFB"
+                                Height="180" Margin="0,0,0,8">
+                            <Grid>
+                                <StackPanel x:Name="PlaceholderFotoDoc"
+                                            VerticalAlignment="Center" HorizontalAlignment="Center">
+                                    <TextBlock Text="🪪" FontSize="32" HorizontalAlignment="Center" Opacity="0.20" />
+                                    <TextBlock Text="Sin foto registrada" FontSize="10"
+                                               Foreground="#9CA3AF" HorizontalAlignment="Center"
+                                               Margin="0,4,0,0" />
+                                </StackPanel>
+                                <Image x:Name="ImgFotoDoc" Stretch="Uniform"
+                                       ToolTip="Foto del documento de identidad" />
+                            </Grid>
+                        </Border>
+                        <Button x:Name="BtnCambiarFotoDoc" Content="📷  Cambiar foto"
+                                Height="28" FontSize="11" FontWeight="SemiBold"
+                                Background="#FF8C00" Foreground="White"
+                                BorderThickness="0" Cursor="Hand" IsEnabled="False"
+                                Click="OnCambiarFotoDoc"
+                                Style="{StaticResource BtnPrimary}" />
+                        <Button x:Name="BtnQuitarFotoDoc" Content="✕  Quitar foto"
+                                Height="24" FontSize="10.5" FontWeight="SemiBold"
+                                Foreground="White" BorderThickness="0" Cursor="Hand"
+                                IsEnabled="False" Margin="0,4,0,0"
+                                Click="OnQuitarFotoDoc"
+                                Style="{StaticResource BtnDanger}" />
+                    </StackPanel>
+
+                </StackPanel>
+            </Border>
+            </ScrollViewer>
+
+        </Grid>
+
+        <!-- ══ BOTONERA INFERIOR ══ -->
+        <Border Grid.Row="2" Background="White" Padding="12,8"
+                BorderBrush="#E5E7EB" BorderThickness="0,1,0,0">
+            <Border.Effect>
+                <DropShadowEffect BlurRadius="6" ShadowDepth="-2" Opacity="0.08" Color="#000" />
+            </Border.Effect>
+            <Grid>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*" />
+                    <ColumnDefinition Width="Auto" />
+                </Grid.ColumnDefinitions>
+
+                <!-- Info estado (izquierda) -->
+                <TextBlock x:Name="TxtEstadoBar" Grid.Column="0"
+                           Text="Seleccione un cliente de la lista"
+                           FontSize="11.5" Foreground="#6B7280"
+                           VerticalAlignment="Center" />
+
+                <!-- Botones (derecha) -->
+                <StackPanel Grid.Column="1" Orientation="Horizontal">
+                    <Button Content="Vista"    Style="{StaticResource ActBtn}" Background="#6B7280"
+                            Foreground="White" Width="80"  Margin="0,0,6,0" Click="OnVista" />
+                    <Button Content="Nuevo"    Style="{StaticResource ActBtn}" Background="#FF8C00"
+                            Foreground="White" Width="80"  Margin="0,0,6,0" Click="OnNuevo" />
+                    <Button x:Name="BtnEditar"  Content="Editar"   Style="{StaticResource ActBtn}"
+                            Background="#3B82F6" Foreground="White" Width="80"
+                            IsEnabled="False"   Margin="0,0,6,0"  Click="OnEditar" />
+                    <Button x:Name="BtnGuardar" Content="Guardar"  Style="{StaticResource ActBtn}"
+                            Background="#22C55E" Foreground="White" Width="80"
+                            IsEnabled="False"   Margin="0,0,6,0"  Click="OnGuardarClick" />
+                    <Button x:Name="BtnEliminar" Content="Eliminar" Style="{StaticResource ActBtn}"
+                            Background="#EF4444" Foreground="White" Width="80"
+                            IsEnabled="False"   Margin="0,0,6,0"  Click="OnEliminar" />
+                    <Button Content="Cerrar"   Style="{StaticResource ActBtn}" Background="#374151"
+                            Foreground="White" Width="80"  Click="OnCerrar" />
+                </StackPanel>
+            </Grid>
+        </Border>
+
+    </Grid>
+</Window>
