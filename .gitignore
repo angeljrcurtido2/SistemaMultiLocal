@@ -13,5 +13,10 @@ packages/
 .idea/
 *.DotSettings.user
 
-# Runtime error logs
+# Runtime logs
 runtime_err.txt
+runtime_log.txt
+*.log
+
+# Publish output (binaries)
+publish/
