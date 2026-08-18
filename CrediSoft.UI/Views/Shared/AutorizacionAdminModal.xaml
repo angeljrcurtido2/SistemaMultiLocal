@@ -1,0 +1,96 @@
+<Window x:Class="CrediSoft.UI.Views.Shared.AutorizacionAdminModal"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        Title="Autorización requerida"
+        Width="440" SizeToContent="Height"
+        ResizeMode="NoResize"
+        WindowStartupLocation="CenterOwner"
+        Background="#F0F2F5"
+        FontFamily="Segoe UI" FontSize="13"
+        ShowInTaskbar="False">
+
+    <Window.Resources>
+        <Style x:Key="BtnRed" TargetType="Button">
+            <Setter Property="Background"      Value="#1A4F6E"/>
+            <Setter Property="Foreground"      Value="White"/>
+            <Setter Property="FontWeight"      Value="SemiBold"/>
+            <Setter Property="BorderThickness" Value="0"/>
+            <Setter Property="Padding"         Value="16,8"/>
+            <Setter Property="Cursor"          Value="Hand"/>
+            <Style.Triggers>
+                <Trigger Property="IsMouseOver" Value="True">
+                    <Setter Property="Background" Value="#0E2F44"/>
+                </Trigger>
+            </Style.Triggers>
+        </Style>
+        <Style x:Key="BtnGray" TargetType="Button">
+            <Setter Property="Background"      Value="#ECEFF1"/>
+            <Setter Property="Foreground"      Value="#37474F"/>
+            <Setter Property="FontWeight"      Value="SemiBold"/>
+            <Setter Property="BorderThickness" Value="1"/>
+            <Setter Property="BorderBrush"     Value="#B0BEC5"/>
+            <Setter Property="Padding"         Value="16,8"/>
+            <Setter Property="Cursor"          Value="Hand"/>
+            <Style.Triggers>
+                <Trigger Property="IsMouseOver" Value="True">
+                    <Setter Property="Background" Value="#CFD8DC"/>
+                </Trigger>
+            </Style.Triggers>
+        </Style>
+        <Style x:Key="Lbl" TargetType="TextBlock">
+            <Setter Property="FontSize"   Value="11"/>
+            <Setter Property="Foreground" Value="#78909C"/>
+            <Setter Property="Margin"     Value="0,0,0,3"/>
+        </Style>
+    </Window.Resources>
+
+    <DockPanel>
+
+        <!-- Header -->
+        <Border DockPanel.Dock="Top" Background="#0E2F44" Padding="16,10">
+            <Grid>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="Auto"/>
+                    <ColumnDefinition Width="*"/>
+                </Grid.ColumnDefinitions>
+                <TextBlock Grid.Column="0" Text="&#xE72E;" FontFamily="Segoe MDL2 Assets" FontSize="20"
+                           Foreground="White" VerticalAlignment="Center" Margin="0,0,12,0"/>
+                <StackPanel Grid.Column="1" VerticalAlignment="Center">
+                    <TextBlock Text="AUTORIZACIÓN DE ADMINISTRADOR" FontSize="14"
+                               FontWeight="Bold" Foreground="White"/>
+                    <TextBlock x:Name="TxtAccion" Text=""
+                               FontSize="11" Foreground="#7FB3D3"
+                               TextWrapping="Wrap"/>
+                </StackPanel>
+            </Grid>
+        </Border>
+
+        <!-- Botones pie -->
+        <Border DockPanel.Dock="Bottom" Background="White" BorderBrush="#E0E0E0"
+                BorderThickness="0,1,0,0" Padding="16,10">
+            <StackPanel Orientation="Horizontal" HorizontalAlignment="Right">
+                <Button Content="Cancelar" Style="{StaticResource BtnGray}"
+                        Margin="0,0,8,0" Click="OnCancelar"/>
+                <Button Content="Autorizar" Style="{StaticResource BtnRed}"
+                        Click="OnAutorizar"/>
+            </StackPanel>
+        </Border>
+
+        <!-- Formulario -->
+        <StackPanel Margin="20,16">
+            <TextBlock Style="{StaticResource Lbl}" Text="USUARIO ADMINISTRADOR (nombre o código)"/>
+            <TextBox x:Name="TxtUsuario" Padding="6,5" Margin="0,0,0,12"
+                     BorderBrush="#CFD8DC" BorderThickness="1"
+                     FontSize="13" KeyDown="OnKeyDown"/>
+
+            <TextBlock Style="{StaticResource Lbl}" Text="CONTRASEÑA"/>
+            <PasswordBox x:Name="TxtPassword" Padding="6,5"
+                         BorderBrush="#CFD8DC" BorderThickness="1"
+                         FontSize="13" KeyDown="OnKeyDown"/>
+
+            <TextBlock x:Name="TxtError" Text="" Foreground="#B71C1C"
+                       FontSize="12" Margin="0,10,0,0" Visibility="Collapsed"/>
+        </StackPanel>
+
+    </DockPanel>
+</Window>

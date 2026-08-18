@@ -11,14 +11,37 @@ public abstract partial class MaestroSimpleWindow : Window
 {
     protected bool ModoEdicion;
 
-    protected MaestroSimpleWindow()
+    // Alta rápida: se usa cuando esta ventana se abre desde un selector con lupa
+    // (p.ej. el "+ Nuevo" de Sección/Categoría/Marca/etc. en Nuevo Artículo) — arranca
+    // directo en modo "Nuevo", oculta buscador/listado/vista/editar/eliminar, y al
+    // guardar cierra la ventana devolviendo el registro creado en vez de limpiar
+    // el formulario para seguir cargando más registros.
+    protected bool ModoAltaRapida { get; private set; }
+    public MaestroItem? ItemCreado { get; private set; }
+
+    protected MaestroSimpleWindow(bool modoAltaRapida = false)
     {
         InitializeComponent();
+        ModoAltaRapida = modoAltaRapida;
         Loaded += (_, _) =>
         {
             if (FindName("TxtTituloHeader") is System.Windows.Controls.TextBlock tb)
                 tb.Text = Title;
+            if (ModoAltaRapida) AplicarModoAltaRapida();
         };
+    }
+
+    private void AplicarModoAltaRapida()
+    {
+        if (FindName("BuscarHeaderPanel") is UIElement buscarPanel) buscarPanel.Visibility = Visibility.Collapsed;
+        if (FindName("PanelGridDatos") is UIElement gridPanel) gridPanel.Visibility = Visibility.Collapsed;
+        if (FindName("BtnVistaPrevia") is UIElement btnVP) btnVP.Visibility = Visibility.Collapsed;
+        if (FindName("BtnImprimir") is UIElement btnImp) btnImp.Visibility = Visibility.Collapsed;
+        if (FindName("BtnImprimirTodo") is UIElement btnImpT) btnImpT.Visibility = Visibility.Collapsed;
+        if (FindName("BtnNuevo") is UIElement btnN) btnN.Visibility = Visibility.Collapsed;
+        if (FindName("BtnEditar") is UIElement btnE) btnE.Visibility = Visibility.Collapsed;
+        if (FindName("BtnEliminar") is UIElement btnEl) btnEl.Visibility = Visibility.Collapsed;
+        OnNuevo(this, new RoutedEventArgs());
     }
 
     // ── Helpers genéricos para ventanas de maestros simples sin repo propio ───
@@ -112,6 +135,39 @@ public abstract partial class MaestroSimpleWindow : Window
     protected void OnEditar(object s, RoutedEventArgs e) { HabilitarEdicion(true); }
     protected void OnVista(object s, RoutedEventArgs e) { HabilitarEdicion(false); }
 
+    protected void OnVistaPrevia(object s, RoutedEventArgs e)  => AbrirMaestroPrevia(imprimir: false, todo: false);
+    protected void OnImprimir(object s, RoutedEventArgs e)     => AbrirMaestroPrevia(imprimir: true,  todo: false);
+    protected void OnImprimirTodo(object s, RoutedEventArgs e) => AbrirMaestroPrevia(imprimir: true,  todo: true);
+
+    private void AbrirMaestroPrevia(bool imprimir, bool todo)
+    {
+        var grid    = (System.Windows.Controls.DataGrid)FindName("GridDatos");
+        var buscar  = (System.Windows.Controls.TextBox)FindName("TxtBuscar");
+
+        // todo=true usa lista completa; todo=false usa lo visible en el grid
+        var fuente = todo
+            ? _todosItems
+            : (grid.ItemsSource as IEnumerable<MaestroItem>)?.ToList() ?? _todosItems;
+
+        if (fuente.Count == 0) return;
+
+        var filtroTxt = buscar.Text.Trim();
+        var pagina = new CrediSoft.UI.Views.Maestros.MaestroSimplePagina
+        {
+            Titulo   = Title,
+            Filas    = fuente.Select(x => new CrediSoft.UI.Views.Maestros.FilaMaestroSimple(x.Codigo, x.Nombre)).ToList(),
+            Filtro   = string.IsNullOrEmpty(filtroTxt) ? "" : $"Búsqueda: {filtroTxt}",
+            FechaImp = DateTime.Now.ToString("dd/MM/yyyy HH:mm"),
+            Usuario  = CrediSoft.Core.Services.SessionService.Instance.UsuarioActual?.NombreUsuario ?? "",
+            LogoPath = CrediSoft.UI.Views.Maestros.ArticulosPagina.ResolverLogoPath(),
+        };
+
+        if (imprimir)
+            CrediSoft.UI.Views.Maestros.MaestroSimpleImpresora.Imprimir(pagina, this);
+        else
+            new CrediSoft.UI.Views.Maestros.MaestroSimplePreviewWindow(pagina) { Owner = this }.ShowDialog();
+    }
+
     protected void OnGuardarClick(object s, RoutedEventArgs e) => OnGuardar();
 
     protected async void OnGuardar()
@@ -137,6 +193,16 @@ public abstract partial class MaestroSimpleWindow : Window
             else
             {
                 await GuardarAsync(cod, nom);
+
+                if (ModoAltaRapida)
+                {
+                    var creados = (await CargarDatosAsync()).ToList();
+                    ItemCreado = creados.FirstOrDefault(x => x.Codigo == cod && x.Nombre == nom)
+                              ?? creados.LastOrDefault(x => x.Nombre == nom);
+                    DialogResult = true;
+                    return;
+                }
+
                 txtBuscar.Text = "";
                 await Refrescar();
                 ((System.Windows.Controls.TextBox)FindName("TxtCodigo")).Text = "";

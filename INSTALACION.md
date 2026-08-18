@@ -64,7 +64,7 @@ cd "c:\SIS_VENTAS_NEXT\CrediSoftWPF"
 dotnet publish CrediSoft.UI -c Release -r win-x64 --self-contained false -o publish\
 ```
 
-El .exe quedará en `publish\CrediSoft.exe` (~15 MB).  
+El .exe quedará en `publish\ElectroMar.exe` (~15 MB).  
 Requiere .NET 8 Runtime instalado en la PC destino (se instala una vez, gratis).
 
 Para un ejecutable completamente independiente (sin necesidad de instalar .NET):

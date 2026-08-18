@@ -1,12 +1,108 @@
 <Window x:Class="CrediSoft.UI.Views.Maestros.ArticulosWindow"
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-        Title="Artículos/Mercaderías"
-        Width="260" Height="440"
+        Title="Artículos / Mercaderías"
+        Width="260" Height="480"
         WindowStartupLocation="CenterOwner"
-        Background="#FFA500"
+        Background="#1A4F6E"
         ResizeMode="NoResize"
         KeyDown="OnWindowKeyDown">
+
+    <Window.Resources>
+
+        <!-- Botón primario — azul más claro para destacar -->
+        <Style x:Key="BtnPrimary" TargetType="Button">
+            <Setter Property="Height"          Value="36"/>
+            <Setter Property="FontSize"        Value="12"/>
+            <Setter Property="FontWeight"      Value="SemiBold"/>
+            <Setter Property="Foreground"      Value="White"/>
+            <Setter Property="Background"      Value="#2471A3"/>
+            <Setter Property="BorderThickness" Value="0"/>
+            <Setter Property="Cursor"          Value="Hand"/>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="Button">
+                        <Border x:Name="bd" Background="{TemplateBinding Background}"
+                                CornerRadius="4">
+                            <ContentPresenter HorizontalAlignment="Center"
+                                              VerticalAlignment="Center"/>
+                        </Border>
+                        <ControlTemplate.Triggers>
+                            <Trigger Property="IsMouseOver" Value="True">
+                                <Setter TargetName="bd" Property="Background" Value="#2E86C1"/>
+                            </Trigger>
+                            <Trigger Property="IsPressed" Value="True">
+                                <Setter TargetName="bd" Property="Background" Value="#1A5276"/>
+                            </Trigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+
+        <!-- Sub-botones del grupo Editar -->
+        <Style x:Key="BtnSub" TargetType="Button">
+            <Setter Property="Height"                    Value="30"/>
+            <Setter Property="FontSize"                  Value="11"/>
+            <Setter Property="FontWeight"                Value="Normal"/>
+            <Setter Property="Foreground"                Value="#D6EAF8"/>
+            <Setter Property="Background"                Value="Transparent"/>
+            <Setter Property="BorderThickness"           Value="0"/>
+            <Setter Property="HorizontalContentAlignment" Value="Left"/>
+            <Setter Property="Padding"                   Value="12,0,0,0"/>
+            <Setter Property="Cursor"                    Value="Hand"/>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="Button">
+                        <Border x:Name="bd" Background="{TemplateBinding Background}"
+                                CornerRadius="3" Padding="{TemplateBinding Padding}">
+                            <ContentPresenter VerticalAlignment="Center"/>
+                        </Border>
+                        <ControlTemplate.Triggers>
+                            <Trigger Property="IsMouseOver" Value="True">
+                                <Setter TargetName="bd" Property="Background" Value="#1F6089"/>
+                                <Setter Property="Foreground" Value="White"/>
+                            </Trigger>
+                            <Trigger Property="IsPressed" Value="True">
+                                <Setter TargetName="bd" Property="Background" Value="#154360"/>
+                            </Trigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+
+        <!-- Botones secundarios (Inhabilitar, Habilitar, Imprimir, Cerrar) -->
+        <Style x:Key="BtnMuted" TargetType="Button">
+            <Setter Property="Height"          Value="32"/>
+            <Setter Property="FontSize"        Value="11"/>
+            <Setter Property="Foreground"      Value="#D6EAF8"/>
+            <Setter Property="Background"      Value="#154360"/>
+            <Setter Property="BorderThickness" Value="0"/>
+            <Setter Property="Cursor"          Value="Hand"/>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="Button">
+                        <Border x:Name="bd" Background="{TemplateBinding Background}"
+                                CornerRadius="4">
+                            <ContentPresenter HorizontalAlignment="Center"
+                                              VerticalAlignment="Center"/>
+                        </Border>
+                        <ControlTemplate.Triggers>
+                            <Trigger Property="IsMouseOver" Value="True">
+                                <Setter TargetName="bd" Property="Background" Value="#1F6089"/>
+                                <Setter Property="Foreground" Value="White"/>
+                            </Trigger>
+                            <Trigger Property="IsPressed" Value="True">
+                                <Setter TargetName="bd" Property="Background" Value="#0E2F44"/>
+                            </Trigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+
+    </Window.Resources>
 
     <Grid>
         <Grid.RowDefinitions>
@@ -15,77 +111,109 @@
             <RowDefinition Height="Auto"/>
         </Grid.RowDefinitions>
 
-        <!-- Título -->
-        <Border Grid.Row="0" Background="#CC6600" Padding="8,6">
-            <TextBlock Text="Artículos y/o Mercaderías"
-                       Foreground="White" FontWeight="Bold" FontSize="12"
-                       HorizontalAlignment="Center"/>
+        <!-- ── HEADER ── -->
+        <Border Grid.Row="0" Background="#0E2F44" Padding="16,12">
+            <StackPanel>
+                <TextBlock Text="ARTÍCULOS"
+                           Foreground="White" FontWeight="Bold" FontSize="13"/>
+                <TextBlock Text="Gestión de productos y mercaderías"
+                           Foreground="#7FB3D3" FontSize="9.5" Margin="0,2,0,0"/>
+            </StackPanel>
         </Border>
 
-        <!-- Botones principales -->
-        <StackPanel Grid.Row="1" Margin="20,16,20,8" VerticalAlignment="Top">
+        <!-- ── CUERPO ── -->
+        <StackPanel Grid.Row="1" Margin="14,14,14,6">
 
-            <!-- NUEVO -->
-            <Button Content="NUEVO" Click="OnNuevo"
-                    Background="#27AE60" Foreground="White"
-                    FontWeight="Bold" FontSize="13"
-                    Height="34" Margin="0,0,0,10"
-                    BorderThickness="0"/>
+            <TextBlock Text="REGISTROS"
+                       Foreground="#7FB3D3" FontSize="9" FontWeight="SemiBold"
+                       Margin="2,0,0,6"/>
 
-            <!-- EDITAR con subitems -->
-            <Border Background="#1F6FAE" CornerRadius="2" Margin="0,0,0,10">
+            <Button Content="＋  Nuevo artículo"
+                    Style="{StaticResource BtnPrimary}"
+                    Click="OnNuevo" Margin="0,0,0,10"/>
+
+            <TextBlock Text="EDITAR"
+                       Foreground="#7FB3D3" FontSize="9" FontWeight="SemiBold"
+                       Margin="2,0,0,6"/>
+
+            <Border Background="#0E2F44" CornerRadius="4"
+                    Padding="4,4,4,4" Margin="0,0,0,10">
                 <StackPanel>
-                    <TextBlock Text="EDITAR" Foreground="White" FontWeight="Bold"
-                               FontSize="13" HorizontalAlignment="Center"
-                               Margin="0,6,0,4"/>
-                    <Button Content=" General" Click="OnEditarGeneral"
-                            Background="#2980B9" Foreground="White"
-                            FontSize="11" Height="26" BorderThickness="0"
-                            HorizontalContentAlignment="Left" Padding="16,0,0,0"/>
-                    <Button Content=" Precios" Click="OnEditarPrecios"
-                            Background="#2980B9" Foreground="White"
-                            FontSize="11" Height="26" BorderThickness="0"
-                            HorizontalContentAlignment="Left" Padding="16,0,0,0"
-                            Margin="0,1,0,0"/>
-                    <Button Content=" Stock" Click="OnEditarStock"
-                            Background="#2980B9" Foreground="White"
-                            FontSize="11" Height="26" BorderThickness="0"
-                            HorizontalContentAlignment="Left" Padding="16,0,0,0"
-                            Margin="0,1,0,0"/>
-                    <Button Content=" Secc-Cat" Click="OnEditarSeccCat"
-                            Background="#2980B9" Foreground="White"
-                            FontSize="11" Height="26" BorderThickness="0"
-                            HorizontalContentAlignment="Left" Padding="16,0,0,0"
-                            Margin="0,1,0,6"/>
+                    <Button Content="✎  General"
+                            Style="{StaticResource BtnSub}"
+                            Click="OnEditarGeneral"/>
+                    <Button Content="   Precios"
+                            Style="{StaticResource BtnSub}"
+                            Click="OnEditarPrecios" Margin="0,1,0,0"/>
+                    <Button Content="   Stock"
+                            Style="{StaticResource BtnSub}"
+                            Click="OnEditarStock" Margin="0,1,0,0"/>
+                    <Button Content="   Sección / Categoría"
+                            Style="{StaticResource BtnSub}"
+                            Click="OnEditarSeccCat" Margin="0,1,0,0"/>
                 </StackPanel>
             </Border>
 
-            <!-- INHABILITAR -->
-            <Button Content="INHABILITAR" Click="OnInhabilitar"
-                    Background="#8E44AD" Foreground="White"
-                    FontWeight="Bold" FontSize="13"
-                    Height="34" Margin="0,0,0,8"
-                    BorderThickness="0"/>
+            <TextBlock Text="ESTADO"
+                       Foreground="#7FB3D3" FontSize="9" FontWeight="SemiBold"
+                       Margin="2,0,0,6"/>
 
-            <!-- HABILITAR -->
-            <Button Content="HABILITAR" Click="OnHabilitar"
-                    Background="#C0392B" Foreground="White"
-                    FontWeight="Bold" FontSize="13"
-                    Height="34" Margin="0,0,0,8"
-                    BorderThickness="0"/>
+            <Grid Margin="0,0,0,10">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="8"/>
+                    <ColumnDefinition Width="*"/>
+                </Grid.ColumnDefinitions>
 
-            <!-- CERRAR -->
-            <Button Content="CERRAR" Click="OnCerrar"
-                    Background="#555555" Foreground="White"
-                    FontWeight="Bold" FontSize="13"
-                    Height="34" BorderThickness="0"/>
+                <Button Grid.Column="0" Click="OnInhabilitar"
+                        Style="{StaticResource BtnMuted}">
+                    <StackPanel Orientation="Horizontal">
+                        <TextBlock Text="⊘" Foreground="#F1948A" FontSize="13"
+                                   VerticalAlignment="Center" Margin="0,0,5,0"/>
+                        <TextBlock Text="Inhabilitar" Foreground="#D6EAF8"
+                                   FontSize="11" VerticalAlignment="Center"/>
+                    </StackPanel>
+                </Button>
+
+                <Button Grid.Column="2" Click="OnHabilitar"
+                        Style="{StaticResource BtnMuted}">
+                    <StackPanel Orientation="Horizontal">
+                        <TextBlock Text="✔" Foreground="#82E0AA" FontSize="12"
+                                   VerticalAlignment="Center" Margin="0,0,5,0"/>
+                        <TextBlock Text="Habilitar" Foreground="#D6EAF8"
+                                   FontSize="11" VerticalAlignment="Center"/>
+                    </StackPanel>
+                </Button>
+            </Grid>
+
+            <TextBlock Text="REPORTES"
+                       Foreground="#7FB3D3" FontSize="9" FontWeight="SemiBold"
+                       Margin="2,0,0,6"/>
+
+            <Button Click="OnImprimirVistaPrevia"
+                    Style="{StaticResource BtnMuted}" Height="32">
+                <StackPanel Orientation="Horizontal">
+                    <TextBlock Text="⎙" Foreground="#AED6F1" FontSize="14"
+                               VerticalAlignment="Center" Margin="0,0,6,0"/>
+                    <TextBlock Text="Imprimir / Vista previa" Foreground="#D6EAF8"
+                               FontSize="11" VerticalAlignment="Center"/>
+                </StackPanel>
+            </Button>
+
         </StackPanel>
 
-        <!-- Atajos de teclado -->
-        <Border Grid.Row="2" Background="#CC6600" Padding="6,4">
-            <TextBlock Text="Ctrl+N=Nuevo  F2=Editar General  F3=Editar Precios  F4=Stock  F5=Secc-Cat"
-                       Foreground="#FFE0B2" FontSize="9"
-                       HorizontalAlignment="Center" TextWrapping="Wrap"/>
+        <!-- ── PIE ── -->
+        <Border Grid.Row="2" Background="#0E2F44" Padding="14,8">
+            <StackPanel>
+                <Button Content="Cerrar" Click="OnCerrar"
+                        Style="{StaticResource BtnMuted}"
+                        Height="30" Margin="0,0,0,6"/>
+                <TextBlock Text="Ctrl+N · F2 General · F3 Precios · F4 Stock · F5 Cat · F6 Imprimir"
+                           Foreground="#4A7FA5" FontSize="8.5"
+                           HorizontalAlignment="Center"
+                           TextWrapping="Wrap" TextAlignment="Center"/>
+            </StackPanel>
         </Border>
+
     </Grid>
 </Window>

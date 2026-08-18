@@ -24,9 +24,9 @@ public class BancosWindow : MaestroSimpleWindow
 public class CategoriasWindow : MaestroSimpleWindow
 {
     private readonly IMaestrosCategoriaRepository _repo;
-    public CategoriasWindow()
+    public CategoriasWindow(bool modoAltaRapida = false) : base(modoAltaRapida)
     {
-        Title = "Categorías";
+        Title = modoAltaRapida ? "Nueva Categoría" : "Categorías";
         _repo = App.Services.GetRequiredService<IMaestrosCategoriaRepository>();
         Loaded += async (_, _) => await Refrescar();
     }
@@ -39,9 +39,9 @@ public class CategoriasWindow : MaestroSimpleWindow
 public class MarcasWindow : MaestroSimpleWindow
 {
     private readonly IMaestrosMarcaRepository _repo;
-    public MarcasWindow()
+    public MarcasWindow(bool modoAltaRapida = false) : base(modoAltaRapida)
     {
-        Title = "Marcas";
+        Title = modoAltaRapida ? "Nueva Marca" : "Marcas";
         _repo = App.Services.GetRequiredService<IMaestrosMarcaRepository>();
         Loaded += async (_, _) => await Refrescar();
     }
@@ -53,7 +53,11 @@ public class MarcasWindow : MaestroSimpleWindow
 
 public class MedidasWindow : MaestroSimpleWindow
 {
-    public MedidasWindow() { Title = "Unidades de Medida"; Loaded += async (_, _) => await Refrescar(); }
+    public MedidasWindow(bool modoAltaRapida = false) : base(modoAltaRapida)
+    {
+        Title = modoAltaRapida ? "Nueva Unidad de Medida" : "Unidades de Medida";
+        Loaded += async (_, _) => await Refrescar();
+    }
     protected override bool RequiereAdminParaEliminar => true;
     protected override Task<IEnumerable<MaestroItem>> CargarDatosAsync(string? f = null) => GenericList("MEDIDAS", "ID", "CODIGO", "UM", f);
     protected override Task GuardarAsync(string c, string n) => GenericInsert("MEDIDAS", "CODIGO", "UM", c, n);
@@ -63,7 +67,11 @@ public class MedidasWindow : MaestroSimpleWindow
 
 public class ProcedenciasWindow : MaestroSimpleWindow
 {
-    public ProcedenciasWindow() { Title = "Procedencias / Países"; Loaded += async (_, _) => await Refrescar(); }
+    public ProcedenciasWindow(bool modoAltaRapida = false) : base(modoAltaRapida)
+    {
+        Title = modoAltaRapida ? "Nuevo País" : "Procedencias / Países";
+        Loaded += async (_, _) => await Refrescar();
+    }
     protected override Task<IEnumerable<MaestroItem>> CargarDatosAsync(string? f = null) => GenericList("PAISES", "ID", "CODIGO", "PAIS", f);
     protected override Task GuardarAsync(string c, string n) => GenericInsert("PAISES", "CODIGO", "PAIS", c, n);
     protected override Task ActualizarAsync(int id, string c, string n) => GenericUpdate("PAISES", "ID", "CODIGO", "PAIS", id, c, n);
@@ -72,7 +80,11 @@ public class ProcedenciasWindow : MaestroSimpleWindow
 
 public class SeccionesWindow : MaestroSimpleWindow
 {
-    public SeccionesWindow() { Title = "Secciones"; Loaded += async (_, _) => await Refrescar(); }
+    public SeccionesWindow(bool modoAltaRapida = false) : base(modoAltaRapida)
+    {
+        Title = modoAltaRapida ? "Nueva Sección" : "Secciones";
+        Loaded += async (_, _) => await Refrescar();
+    }
     protected override Task<IEnumerable<MaestroItem>> CargarDatosAsync(string? f = null) => GenericList("SECCIONES", "IDSECC", "CODIGO", "SECCION", f);
     protected override Task GuardarAsync(string c, string n) => GenericInsert("SECCIONES", "CODIGO", "SECCION", c, n);
     protected override Task ActualizarAsync(int id, string c, string n) => GenericUpdate("SECCIONES", "IDSECC", "CODIGO", "SECCION", id, c, n);

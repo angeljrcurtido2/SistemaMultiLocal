@@ -1,0 +1,229 @@
+<Window x:Class="CrediSoft.UI.Views.Cobros.ListaCuotasModal"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        Title="Cuotas pendientes"
+        Width="820" Height="520"
+        MinWidth="600" MinHeight="380"
+        WindowStartupLocation="CenterOwner"
+        Background="#F0F2F5"
+        FontFamily="Segoe UI" FontSize="13"
+        ShowInTaskbar="False">
+
+    <Window.Resources>
+        <Style x:Key="BtnOrange" TargetType="Button">
+            <Setter Property="Background"      Value="#1A4F6E"/>
+            <Setter Property="Foreground"      Value="White"/>
+            <Setter Property="FontWeight"      Value="SemiBold"/>
+            <Setter Property="BorderThickness" Value="0"/>
+            <Setter Property="Padding"         Value="16,7"/>
+            <Setter Property="Cursor"          Value="Hand"/>
+            <Style.Triggers>
+                <Trigger Property="IsMouseOver" Value="True">
+                    <Setter Property="Background" Value="#0E2F44"/>
+                </Trigger>
+            </Style.Triggers>
+        </Style>
+        <Style x:Key="BtnGray" TargetType="Button">
+            <Setter Property="Background"      Value="#ECEFF1"/>
+            <Setter Property="Foreground"      Value="#37474F"/>
+            <Setter Property="FontWeight"      Value="SemiBold"/>
+            <Setter Property="BorderThickness" Value="1"/>
+            <Setter Property="BorderBrush"     Value="#B0BEC5"/>
+            <Setter Property="Padding"         Value="16,7"/>
+            <Setter Property="Cursor"          Value="Hand"/>
+            <Style.Triggers>
+                <Trigger Property="IsMouseOver" Value="True">
+                    <Setter Property="Background" Value="#CFD8DC"/>
+                </Trigger>
+            </Style.Triggers>
+        </Style>
+        <Style x:Key="RbStyle" TargetType="RadioButton">
+            <Setter Property="Foreground"  Value="#37474F"/>
+            <Setter Property="FontSize"    Value="13"/>
+            <Setter Property="Cursor"      Value="Hand"/>
+            <Setter Property="Margin"      Value="0,0,20,0"/>
+            <Setter Property="VerticalContentAlignment" Value="Center"/>
+        </Style>
+    </Window.Resources>
+
+    <DockPanel>
+
+        <!-- Header -->
+        <Border DockPanel.Dock="Top" Background="#0E2F44" Padding="16,10">
+            <Grid>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="Auto"/>
+                    <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="Auto"/>
+                </Grid.ColumnDefinitions>
+                <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
+                    <TextBlock Text="&#xE8F1;" FontFamily="Segoe MDL2 Assets" FontSize="20"
+                               Foreground="White" VerticalAlignment="Center" Margin="0,0,10,0"/>
+                    <StackPanel>
+                        <TextBlock Text="CUOTAS PENDIENTES" FontSize="15" FontWeight="Bold" Foreground="White"/>
+                        <TextBlock x:Name="TxtInfo" Text="Cargando..."
+                                   FontSize="11" Foreground="#7FB3D3"/>
+                    </StackPanel>
+                </StackPanel>
+                <!-- Buscador + filtro de local -->
+                <StackPanel Grid.Column="1" Orientation="Horizontal" VerticalAlignment="Center">
+                    <ComboBox x:Name="CboLocal" Width="180" Margin="0,0,10,0"
+                              Background="White" Foreground="Black"
+                              ToolTip="Filtrar por local"
+                              SelectionChanged="OnLocalCambiado"/>
+                    <Border Background="#1A4F6E" CornerRadius="4"
+                            Padding="8,5" VerticalAlignment="Center">
+                        <Grid>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="Auto"/>
+                                <ColumnDefinition Width="220"/>
+                                <ColumnDefinition Width="Auto"/>
+                            </Grid.ColumnDefinitions>
+                            <TextBlock Grid.Column="0" Text="&#xE721;" FontFamily="Segoe MDL2 Assets"
+                                       FontSize="14" Foreground="#7FB3D3" VerticalAlignment="Center"
+                                       Margin="0,0,8,0"/>
+                            <TextBox x:Name="TxtBuscar" Grid.Column="1"
+                                     Padding="4,3" FontSize="13" Background="White"
+                                     ToolTip="Buscar por cliente, CI o comprobante"
+                                     TextChanged="OnBuscarChanged"/>
+                            <Button Grid.Column="2" Content="✕" Background="Transparent"
+                                    BorderThickness="0" Foreground="#7FB3D3" FontSize="13"
+                                    Cursor="Hand" Padding="6,0" Margin="4,0,0,0"
+                                    Click="OnLimpiarBuscar" ToolTip="Limpiar búsqueda"/>
+                        </Grid>
+                    </Border>
+                </StackPanel>
+                <Button Grid.Column="2" Content="✕  Cerrar" Style="{StaticResource BtnGray}"
+                        Padding="12,6" Click="OnCerrar"/>
+            </Grid>
+        </Border>
+
+        <!-- Pie: filtros + botón -->
+        <Border DockPanel.Dock="Bottom" Background="White" BorderBrush="#E0E0E0"
+                BorderThickness="0,1,0,0" Padding="16,10">
+            <Grid>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="Auto"/>
+                </Grid.ColumnDefinitions>
+                <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
+                    <TextBlock Text="Ver:" FontWeight="SemiBold" Foreground="#37474F"
+                               VerticalAlignment="Center" Margin="0,0,14,0"/>
+                    <RadioButton x:Name="RbSemanal"  Content="Semanal"  IsChecked="True"
+                                 Style="{StaticResource RbStyle}" GroupName="GrpVista"
+                                 Checked="OnFiltroVistaCambiado"/>
+                    <RadioButton x:Name="RbMensual"  Content="Mensual"
+                                 Style="{StaticResource RbStyle}" GroupName="GrpVista"
+                                 Checked="OnFiltroVistaCambiado"/>
+                    <RadioButton x:Name="RbDiario"   Content="Diario"
+                                 Style="{StaticResource RbStyle}" GroupName="GrpVista"
+                                 Checked="OnFiltroVistaCambiado"/>
+                    <RadioButton x:Name="RbTodos"    Content="Todos"
+                                 Style="{StaticResource RbStyle}" GroupName="GrpVista"
+                                 Checked="OnFiltroVistaCambiado"/>
+                </StackPanel>
+                <StackPanel Grid.Column="1" Orientation="Horizontal" VerticalAlignment="Center">
+                    <!-- Leyenda vencida -->
+                    <Border Background="#FFEBEE" BorderBrush="#EF9A9A" BorderThickness="1"
+                            CornerRadius="3" Padding="6,3" Margin="0,0,12,0">
+                        <StackPanel Orientation="Horizontal">
+                            <Border Width="10" Height="10" Background="#C62828" CornerRadius="2" Margin="0,0,5,0"/>
+                            <TextBlock Text="Con mora" FontSize="11" Foreground="#C62828"/>
+                        </StackPanel>
+                    </Border>
+                    <!-- Leyenda normal -->
+                    <Border Background="#F5F5F5" BorderBrush="#E0E0E0" BorderThickness="1"
+                            CornerRadius="3" Padding="6,3" Margin="0,0,16,0">
+                        <StackPanel Orientation="Horizontal">
+                            <Border Width="10" Height="10" Background="#757575" CornerRadius="2" Margin="0,0,5,0"/>
+                            <TextBlock Text="Al día" FontSize="11" Foreground="#757575"/>
+                        </StackPanel>
+                    </Border>
+                    <TextBlock Text="Doble clic para seleccionar"
+                               FontSize="11" Foreground="#90A4AE" VerticalAlignment="Center"
+                               Margin="0,0,16,0"/>
+                    <Button x:Name="BtnHistorial" Content="Historial"
+                            Style="{StaticResource BtnGray}" Padding="10,5" Margin="0,0,6,0"
+                            IsEnabled="False" Click="OnHistorial"/>
+                    <Button x:Name="BtnArticulos" Content="Artículos"
+                            Style="{StaticResource BtnGray}" Padding="10,5"
+                            IsEnabled="False" Click="OnArticulos"/>
+                </StackPanel>
+            </Grid>
+        </Border>
+
+        <!-- Grid de cuotas -->
+        <Border Background="White" Margin="12,10,12,0"
+                BorderBrush="#E0E0E0" BorderThickness="1" CornerRadius="4">
+            <DataGrid x:Name="GridCuotas"
+                      AutoGenerateColumns="False" IsReadOnly="True"
+                      SelectionMode="Single" SelectionUnit="FullRow"
+                      GridLinesVisibility="Horizontal"
+                      HorizontalGridLinesBrush="#F0F0F0"
+                      HeadersVisibility="Column"
+                      CanUserReorderColumns="False" CanUserResizeRows="False"
+                      Background="White" RowBackground="White"
+                      AlternatingRowBackground="#FAFAFA"
+                      BorderThickness="0"
+                      MouseDoubleClick="OnCuotaDobleClick"
+                      SelectionChanged="OnCuotaSeleccionada">
+                <DataGrid.ColumnHeaderStyle>
+                    <Style TargetType="DataGridColumnHeader">
+                        <Setter Property="Background"        Value="#1A4F6E"/>
+                        <Setter Property="Foreground"        Value="White"/>
+                        <Setter Property="FontWeight"        Value="SemiBold"/>
+                        <Setter Property="FontSize"          Value="12"/>
+                        <Setter Property="Padding"           Value="8,7"/>
+                        <Setter Property="BorderBrush"       Value="#0E2F44"/>
+                        <Setter Property="BorderThickness"   Value="0,0,1,0"/>
+                    </Style>
+                </DataGrid.ColumnHeaderStyle>
+                <DataGrid.RowStyle>
+                    <Style TargetType="DataGridRow">
+                        <Setter Property="Height" Value="26"/>
+                        <Style.Triggers>
+                            <DataTrigger Binding="{Binding EstaVencida}" Value="True">
+                                <Setter Property="Background" Value="#FFEBEE"/>
+                                <Setter Property="Foreground" Value="#C62828"/>
+                            </DataTrigger>
+                            <Trigger Property="IsSelected" Value="True">
+                                <Setter Property="Background" Value="#1A4F6E"/>
+                                <Setter Property="Foreground" Value="White"/>
+                            </Trigger>
+                            <Trigger Property="IsMouseOver" Value="True">
+                                <Setter Property="Background" Value="#EBF3F8"/>
+                            </Trigger>
+                        </Style.Triggers>
+                    </Style>
+                </DataGrid.RowStyle>
+                <DataGrid.CellStyle>
+                    <Style TargetType="DataGridCell">
+                        <Setter Property="Padding"         Value="6,2"/>
+                        <Setter Property="BorderThickness" Value="0"/>
+                        <Setter Property="Template">
+                            <Setter.Value>
+                                <ControlTemplate TargetType="DataGridCell">
+                                    <Border Padding="{TemplateBinding Padding}"
+                                            Background="{TemplateBinding Background}">
+                                        <ContentPresenter VerticalAlignment="Center"/>
+                                    </Border>
+                                </ControlTemplate>
+                            </Setter.Value>
+                        </Setter>
+                    </Style>
+                </DataGrid.CellStyle>
+                <DataGrid.Columns>
+                    <DataGridTextColumn Header="ID"       Binding="{Binding IdGeneradas}"  Width="55"/>
+                    <DataGridTextColumn Header="Local"    Binding="{Binding LocalTexto}"    Width="130"/>
+                    <DataGridTextColumn Header="Cliente"  Binding="{Binding ClienteNombre}" Width="200"/>
+                    <DataGridTextColumn Header="Cuota"    Binding="{Binding NCuotaTexto}"   Width="70"/>
+                    <DataGridTextColumn Header="Monto"    Binding="{Binding Monto, StringFormat=N0}" Width="100"/>
+                    <DataGridTextColumn Header="Vence"    Binding="{Binding Vto, StringFormat=dd/MM/yyyy}" Width="90"/>
+                    <DataGridTextColumn Header="Días mora" Binding="{Binding DiasDeAtraso}" Width="70"/>
+                    <DataGridTextColumn Header="USUARIO"  Binding="{Binding VendedorNombre}" Width="*"/>
+                </DataGrid.Columns>
+            </DataGrid>
+        </Border>
+
+    </DockPanel>
+</Window>

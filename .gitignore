@@ -18,5 +18,55 @@ runtime_err.txt
 runtime_log.txt
 *.log
 
-# Publish output (binaries)
+# Publish output (binaries) y carpetas de instaladores/paquetes generados —
+# artefactos compilados, no código fuente; algunos incluso reempaquetan un
+# appsettings.Remote.json con credenciales reales adentro.
 publish/
+publish_cliente/
+instalador/
+CrediSoft_v2_20260704/
+ElectroMar_para_sucursales/
+ElectroMar_v2.9.0_USB/
+
+# Config con datos de conexión reales — NUNCA debe llegar a un repo público.
+# appsettings.Local.json / appsettings.Remote.json llevan la IP y contraseña
+# real del servidor de producción de Credimar S.A. Solo el appsettings.json
+# base (sin credenciales, ServidorPath en blanco) se versiona.
+CrediSoft.UI/appsettings.Local.json
+CrediSoft.UI/appsettings.Remote.json
+**/appsettings.Local.json
+**/appsettings.Remote.json
+
+# Base de datos local SQLite/archivo de prueba, si llegara a generarse acá
+CrediSoft.UI/CREDISOFT.db
+*.db
+
+# Scripts/artefactos de sesiones de trabajo que no son parte del código fuente
+nssm/
+nssm_tmp/
+COPIA_OK
+Abrir_ElectroMar_Local.bat
+
+# Paquetes de instalación empaquetados (GB de binarios, no código fuente)
+*.zip
+*.rar
+
+# Herramientas de terceros descargadas suelto (no es código propio)
+rufus.com
+
+# Notas/links privados que no son parte del proyecto versionable
+SISTEMA-LINK.txt
+INFORMACION.txt
+
+# Assets de branding del cliente (logos) — no forman parte del código fuente
+EJEMPLOSLOGOS.pdf
+logotipocredimar2.png
+logotipocredimarticketera.png
+
+# Herramienta interna de grabación de demo — tiene la contraseña REAL de un
+# usuario administrador de producción hardcodeada en Program.cs. No debe
+# publicarse jamás en un repo público sin sacar esa credencial primero.
+ElectroMar.DemoRecorder/
+
+# Config de pruebas UI con la MISMA contraseña real de administrador.
+CrediSoft.UITests/testsettings.json

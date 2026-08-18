@@ -16,7 +16,12 @@ public class AuthService
         _session = session;
     }
 
-    public async Task<LoginResultado> LoginAsync(string codigo, string contrasena, int idLocal)
+    // El local ya no se recibe como parametro externo: se toma siempre de
+    // USUARIOS.LOCAL_USUARIO (via usuario.LocalUsuario), tal como esta asignado en la base
+    // de datos. Antes la UI del login permitia elegir manualmente el local con un selector,
+    // lo que dejaba abierta la posibilidad de loguearse con un local distinto al asignado;
+    // ahora queda fijo por el dato real de la BD, sin intervencion de la UI.
+    public async Task<LoginResultado> LoginAsync(string codigo, string contrasena)
     {
         if (string.IsNullOrWhiteSpace(codigo) || string.IsNullOrWhiteSpace(contrasena))
             return LoginResultado.Fallo("Ingrese código y contraseña.");
@@ -29,12 +34,9 @@ public class AuthService
         if (usuario.ContrasenaUsuario != contrasena)
             return LoginResultado.Fallo("Contraseña incorrecta.");
 
-        if (usuario.LocalUsuario != idLocal && !usuario.EsAdministrador)
-            return LoginResultado.Fallo("El local no corresponde al usuario.");
-
-        var local = await _locales.ObtenerPorIdAsync(idLocal);
+        var local = await _locales.ObtenerPorIdAsync(usuario.LocalUsuario);
         if (local == null)
-            return LoginResultado.Fallo("Local no encontrado.");
+            return LoginResultado.Fallo("El local asignado a este usuario no existe. Contacte al administrador.");
 
         _session.IniciarSesion(usuario, local);
         return LoginResultado.Ok(usuario, local);

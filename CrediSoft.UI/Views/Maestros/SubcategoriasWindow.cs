@@ -21,19 +21,39 @@ public class SubcategoriasWindow : Window
     private Button _btnEliminar = null!;
     private Subcategoria? _seleccionada;
 
-    public SubcategoriasWindow()
+    // Alta rápida: se abre desde el "+ Nuevo" del selector de Subcategoría en Nuevo
+    // Artículo — arranca en modo Nuevo, oculta buscador/listado/editar/eliminar, y al
+    // guardar cierra la ventana devolviendo la subcategoría creada.
+    private readonly bool _modoAltaRapida;
+    public Subcategoria? SubcategoriaCreada { get; private set; }
+
+    public SubcategoriasWindow(bool modoAltaRapida = false)
     {
         _repo = App.Services.GetRequiredService<IMaestrosSubcategoriaRepository>();
         _categorias = App.Services.GetRequiredService<IMaestrosCategoriaRepository>();
+        _modoAltaRapida = modoAltaRapida;
 
-        Title = "Subcategorias";
-        Width = 920;
-        Height = 620;
+        Title = modoAltaRapida ? "Nueva Subcategoría" : "Subcategorias";
         WindowStartupLocation = WindowStartupLocation.CenterOwner;
         Background = System.Windows.Media.Brushes.White;
+        if (modoAltaRapida)
+        {
+            Width = 420;
+            SizeToContent = SizeToContent.Height;
+            ResizeMode = ResizeMode.NoResize;
+        }
+        else
+        {
+            Width = 920;
+            Height = 620;
+        }
 
         BuildUI();
-        Loaded += async (_, _) => await RefrescarAsync();
+        Loaded += async (_, _) =>
+        {
+            await RefrescarAsync();
+            if (_modoAltaRapida) OnNuevo(this, new RoutedEventArgs());
+        };
     }
 
     private void BuildUI()
@@ -41,7 +61,7 @@ public class SubcategoriasWindow : Window
         var root = new Grid { Margin = new Thickness(8, 8, 8, 8) };
         root.RowDefinitions.Add(new RowDefinition { Height = GridLength.Auto });
         root.RowDefinitions.Add(new RowDefinition { Height = GridLength.Auto });
-        root.RowDefinitions.Add(new RowDefinition { Height = new GridLength(1, GridUnitType.Star) });
+        root.RowDefinitions.Add(new RowDefinition { Height = _modoAltaRapida ? GridLength.Auto : new GridLength(1, GridUnitType.Star) });
         root.RowDefinitions.Add(new RowDefinition { Height = GridLength.Auto });
 
         var search = new Border
@@ -67,6 +87,7 @@ public class SubcategoriasWindow : Window
         searchRow.Children.Add(btnBuscar);
         search.Child = searchRow;
         Grid.SetRow(search, 0);
+        search.Visibility = _modoAltaRapida ? Visibility.Collapsed : Visibility.Visible;
         root.Children.Add(search);
 
         var form = new Border
@@ -116,6 +137,7 @@ public class SubcategoriasWindow : Window
         _grid.Columns.Add(new DataGridTextColumn { Header = "Categoría", Binding = new System.Windows.Data.Binding("CategoriaNombre"), Width = 200 });
         _grid.SelectionChanged += OnGridSelectionChanged;
         Grid.SetRow(_grid, 2);
+        _grid.Visibility = _modoAltaRapida ? Visibility.Collapsed : Visibility.Visible;
         root.Children.Add(_grid);
 
         var buttons = new StackPanel { Orientation = Orientation.Horizontal, HorizontalAlignment = HorizontalAlignment.Right, Margin = new Thickness(0, 6, 0, 0) };
@@ -125,12 +147,20 @@ public class SubcategoriasWindow : Window
         var btnGuardar = Btn("Guardar", "#27AE60"); btnGuardar.Click += OnGuardarClick;
         _btnEliminar = Btn("Eliminar", "#E74C3C"); _btnEliminar.IsEnabled = false; _btnEliminar.Click += OnEliminar;
         var btnCerrar = Btn("Cerrar", "#757575"); btnCerrar.Click += (_, _) => Close();
-        buttons.Children.Add(btnVista);
-        buttons.Children.Add(btnNuevo);
-        buttons.Children.Add(_btnEditar);
-        buttons.Children.Add(btnGuardar);
-        buttons.Children.Add(_btnEliminar);
-        buttons.Children.Add(btnCerrar);
+        if (_modoAltaRapida)
+        {
+            buttons.Children.Add(btnGuardar);
+            buttons.Children.Add(btnCerrar);
+        }
+        else
+        {
+            buttons.Children.Add(btnVista);
+            buttons.Children.Add(btnNuevo);
+            buttons.Children.Add(_btnEditar);
+            buttons.Children.Add(btnGuardar);
+            buttons.Children.Add(_btnEliminar);
+            buttons.Children.Add(btnCerrar);
+        }
         Grid.SetRow(buttons, 3);
         root.Children.Add(buttons);
 
@@ -235,10 +265,22 @@ public class SubcategoriasWindow : Window
 
         try
         {
+            var cod = _txtCodigo.Text.Trim();
+            var nom = _txtNombre.Text.Trim();
+
             if (_seleccionada == null)
-                await _repo.InsertarAsync(cat.IdCategoria, _txtCodigo.Text.Trim(), _txtNombre.Text.Trim());
+                await _repo.InsertarAsync(cat.IdCategoria, cod, nom);
             else
-                await _repo.ActualizarAsync(_seleccionada.IdSubcategoria, _txtCodigo.Text.Trim(), _txtNombre.Text.Trim());
+                await _repo.ActualizarAsync(_seleccionada.IdSubcategoria, cod, nom);
+
+            if (_modoAltaRapida)
+            {
+                var todas = (await _repo.ListarTodosAsync()).ToList();
+                SubcategoriaCreada = todas.FirstOrDefault(x => x.CodigoSubcategoria == cod && x.NombreSubcategoria == nom)
+                                   ?? todas.LastOrDefault(x => x.NombreSubcategoria == nom);
+                DialogResult = true;
+                return;
+            }
 
             await RefrescarAsync();
             MessageBox.Show("Guardado correctamente.", "OK", MessageBoxButton.OK, MessageBoxImage.Information);

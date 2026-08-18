@@ -1,126 +1,995 @@
 <Window x:Class="CrediSoft.UI.Views.Cobros.CobrosWindow"
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-        Title="Cobrar Cuota" Width="820" Height="580"
-        WindowStartupLocation="CenterOwner"
-        Background="#FFA500">
+        Title="Cobrar Cuota — ElectroMar"
+        WindowStartupLocation="CenterScreen"
+        Background="#F0F2F5"
+        FontFamily="Segoe UI" FontSize="11.5">
 
-    <Grid Margin="8">
-        <Grid.RowDefinitions>
-            <RowDefinition Height="Auto" />
-            <RowDefinition Height="Auto" />
-            <RowDefinition Height="*" />
-            <RowDefinition Height="Auto" />
-            <RowDefinition Height="Auto" />
-        </Grid.RowDefinitions>
+    <Window.Resources>
+        <!-- Botón primario azul -->
+        <Style x:Key="BtnOrange" TargetType="Button">
+            <Setter Property="Background"       Value="#1A4F6E"/>
+            <Setter Property="Foreground"       Value="White"/>
+            <Setter Property="FontWeight"       Value="SemiBold"/>
+            <Setter Property="BorderThickness"  Value="0"/>
+            <Setter Property="Padding"          Value="16,8"/>
+            <Setter Property="Cursor"           Value="Hand"/>
+            <Setter Property="FontSize"         Value="13"/>
+            <Style.Triggers>
+                <Trigger Property="IsMouseOver" Value="True">
+                    <Setter Property="Background" Value="#0E2F44"/>
+                </Trigger>
+                <Trigger Property="IsEnabled" Value="False">
+                    <Setter Property="Background" Value="#BDBDBD"/>
+                    <Setter Property="Foreground" Value="#757575"/>
+                </Trigger>
+            </Style.Triggers>
+        </Style>
+        <!-- Botón verde cobrar -->
+        <Style x:Key="BtnGreen" TargetType="Button">
+            <Setter Property="Background"       Value="#2E7D32"/>
+            <Setter Property="Foreground"       Value="White"/>
+            <Setter Property="FontWeight"       Value="Bold"/>
+            <Setter Property="BorderThickness"  Value="0"/>
+            <Setter Property="Padding"          Value="20,10"/>
+            <Setter Property="Cursor"           Value="Hand"/>
+            <Setter Property="FontSize"         Value="14"/>
+            <Style.Triggers>
+                <Trigger Property="IsMouseOver" Value="True">
+                    <Setter Property="Background" Value="#1B5E20"/>
+                </Trigger>
+                <Trigger Property="IsEnabled" Value="False">
+                    <Setter Property="Background" Value="#BDBDBD"/>
+                    <Setter Property="Foreground" Value="#757575"/>
+                </Trigger>
+            </Style.Triggers>
+        </Style>
+        <!-- Botón secundario gris -->
+        <Style x:Key="BtnGray" TargetType="Button">
+            <Setter Property="Background"       Value="#ECEFF1"/>
+            <Setter Property="Foreground"       Value="#37474F"/>
+            <Setter Property="FontWeight"       Value="SemiBold"/>
+            <Setter Property="BorderThickness"  Value="1"/>
+            <Setter Property="BorderBrush"      Value="#B0BEC5"/>
+            <Setter Property="Padding"          Value="14,7"/>
+            <Setter Property="Cursor"           Value="Hand"/>
+            <Style.Triggers>
+                <Trigger Property="IsMouseOver" Value="True">
+                    <Setter Property="Background" Value="#CFD8DC"/>
+                </Trigger>
+            </Style.Triggers>
+        </Style>
+        <!-- Botón rojo -->
+        <Style x:Key="BtnRed" TargetType="Button">
+            <Setter Property="Background"       Value="#C62828"/>
+            <Setter Property="Foreground"       Value="White"/>
+            <Setter Property="FontWeight"       Value="SemiBold"/>
+            <Setter Property="BorderThickness"  Value="0"/>
+            <Setter Property="Padding"          Value="10,6"/>
+            <Setter Property="Cursor"           Value="Hand"/>
+            <Style.Triggers>
+                <Trigger Property="IsMouseOver" Value="True">
+                    <Setter Property="Background" Value="#B71C1C"/>
+                </Trigger>
+            </Style.Triggers>
+        </Style>
+        <!-- Label pequeño gris -->
+        <Style x:Key="Lbl" TargetType="TextBlock">
+            <Setter Property="FontSize"   Value="11"/>
+            <Setter Property="Foreground" Value="#78909C"/>
+            <Setter Property="Margin"     Value="0,0,0,2"/>
+        </Style>
+        <!-- Valor de campo -->
+        <Style x:Key="Val" TargetType="TextBox">
+            <Setter Property="Padding"          Value="6,5"/>
+            <Setter Property="BorderBrush"      Value="#CFD8DC"/>
+            <Setter Property="BorderThickness"  Value="1"/>
+            <Setter Property="Background"       Value="White"/>
+            <Setter Property="FontSize"         Value="13"/>
+        </Style>
+        <!-- Valor readonly -->
+        <Style x:Key="ValRO" TargetType="TextBox" BasedOn="{StaticResource Val}">
+            <Setter Property="IsReadOnly" Value="True"/>
+            <Setter Property="Background" Value="#ECEFF1"/>
+            <Setter Property="Foreground" Value="#37474F"/>
+        </Style>
+        <!-- Valor total grande -->
+        <Style x:Key="ValTotal" TargetType="TextBox">
+            <Setter Property="IsReadOnly"       Value="True"/>
+            <Setter Property="FontSize"         Value="18"/>
+            <Setter Property="FontWeight"       Value="Bold"/>
+            <Setter Property="Foreground"       Value="#BF360C"/>
+            <Setter Property="Background"       Value="#FFF8F5"/>
+            <Setter Property="BorderBrush"      Value="#FFAB91"/>
+            <Setter Property="BorderThickness"  Value="2"/>
+            <Setter Property="Padding"          Value="8,6"/>
+            <Setter Property="TextAlignment"    Value="Right"/>
+        </Style>
+    </Window.Resources>
 
-        <!-- Búsqueda cliente -->
-        <Border Grid.Row="0" Background="#E07000" Padding="8,6" CornerRadius="4" Margin="0,0,0,6">
-            <StackPanel Orientation="Horizontal">
-                <TextBlock Text="CI del cliente:" Foreground="White" VerticalAlignment="Center" Margin="0,0,8,0" />
-                <TextBox x:Name="TxtCi" Width="140" Padding="4,3" Background="White" KeyDown="OnCiKeyDown" />
-                <Button Content="🔍 Buscar" Margin="6,0,0,0" Padding="10,4"
-                        Background="White" Click="OnBuscarCliente" />
-                <TextBlock x:Name="TxtClienteNombre" Foreground="White" FontWeight="Bold"
-                           VerticalAlignment="Center" Margin="16,0,0,0" FontSize="14" />
+    <DockPanel>
+
+        <!-- ══ HEADER ══ -->
+        <Border DockPanel.Dock="Top" Background="#0E2F44" Padding="16,10">
+            <Grid>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="Auto"/>
+                    <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="Auto"/>
+                </Grid.ColumnDefinitions>
+                <StackPanel Grid.Column="0" Orientation="Horizontal" VerticalAlignment="Center">
+                    <TextBlock Text="💳" FontSize="22" VerticalAlignment="Center" Margin="0,0,10,0"/>
+                    <StackPanel>
+                        <TextBlock Text="COBRAR CUOTA" FontSize="16" FontWeight="Bold" Foreground="White"/>
+                        <TextBlock Text="Seleccioná un cliente y cobrá la cuota" FontSize="11" Foreground="#7FB3D3"/>
+                    </StackPanel>
+                </StackPanel>
+                <!-- Búsqueda rápida por CI (Enter) o listado completo -->
+                <Border x:Name="PanelBusquedaCI" Grid.Column="1" Background="#1A4F6E" CornerRadius="4"
+                        Padding="10,6" Margin="24,0" VerticalAlignment="Center">
+                    <StackPanel Orientation="Horizontal">
+                        <TextBlock Text="C.I. / RUC:" Foreground="#7FB3D3" VerticalAlignment="Center"
+                                   FontSize="12" Margin="0,0,8,0"/>
+                        <TextBox x:Name="TxtCi" Width="180" Padding="6,4"
+                                 Background="White" FontSize="13"
+                                 KeyDown="OnCiKeyDown"
+                                 ToolTip="Ingresá el CI y presioná Enter para buscar"/>
+                        <Button x:Name="BtnBuscarModal"
+                                Style="{StaticResource BtnOrange}"
+                                Margin="10,0,0,0" Padding="14,5"
+                                Click="OnAbrirBuscadorCliente"
+                                ToolTip="Buscar cliente con cuotas pendientes">
+                            <StackPanel Orientation="Horizontal">
+                                <TextBlock Text="&#xE721;" FontFamily="Segoe MDL2 Assets"
+                                           FontSize="13" VerticalAlignment="Center" Margin="0,0,6,0"/>
+                                <TextBlock Text="Listar clientes" VerticalAlignment="Center"/>
+                            </StackPanel>
+                        </Button>
+                    </StackPanel>
+                </Border>
+                <!-- Indicador modo "Todos los clientes" -->
+                <Border x:Name="PanelModoTodos" Grid.Column="1" Background="#1A4F6E" CornerRadius="4"
+                        Padding="14,6" Margin="24,0" VerticalAlignment="Center"
+                        Visibility="Collapsed">
+                    <StackPanel Orientation="Horizontal">
+                        <TextBlock Text="👥" FontSize="16" VerticalAlignment="Center" Margin="0,0,8,0"/>
+                        <TextBlock x:Name="TxtModoTodosInfo"
+                                   Text="Mostrando todos los clientes con cuotas pendientes"
+                                   Foreground="White" FontSize="13" VerticalAlignment="Center"/>
+                    </StackPanel>
+                </Border>
+            </Grid>
+        </Border>
+
+        <!-- ══ STATUS BAR CLIENTE ══ -->
+        <Border x:Name="PanelCliente" DockPanel.Dock="Top"
+                Background="#EBF3F8" BorderBrush="#7FB3D3" BorderThickness="0,0,0,2"
+                Padding="16,8" Visibility="Collapsed">
+            <Grid>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="2*"/>
+                    <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="Auto"/>
+                </Grid.ColumnDefinitions>
+                <StackPanel Grid.Column="0">
+                    <TextBlock Style="{StaticResource Lbl}" Text="CLIENTE"/>
+                    <TextBlock x:Name="TxtClienteNombre" FontSize="15" FontWeight="Bold"
+                               Foreground="#0E2F44"/>
+                </StackPanel>
+                <StackPanel Grid.Column="1" Margin="12,0,0,0">
+                    <TextBlock Style="{StaticResource Lbl}" Text="C.I."/>
+                    <TextBlock x:Name="TxtClienteCi" FontWeight="SemiBold" Foreground="#37474F"/>
+                </StackPanel>
+                <StackPanel Grid.Column="2" Margin="12,0,0,0">
+                    <TextBlock Style="{StaticResource Lbl}" Text="TELÉFONO"/>
+                    <TextBlock x:Name="TxtTelefono" FontWeight="SemiBold" Foreground="#37474F"/>
+                </StackPanel>
+                <StackPanel Grid.Column="3" Margin="12,0,0,0">
+                    <TextBlock Style="{StaticResource Lbl}" Text="CIUDAD"/>
+                    <TextBlock x:Name="TxtCiudad" FontWeight="SemiBold" Foreground="#37474F"/>
+                </StackPanel>
+                <StackPanel Grid.Column="4" Margin="12,0,0,0">
+                    <TextBlock Style="{StaticResource Lbl}" Text="ESTADO"/>
+                    <TextBlock x:Name="TxtEstado" FontWeight="Bold"/>
+                </StackPanel>
+                <Border Grid.Column="5" Background="#1A4F6E" CornerRadius="4" Padding="10,4" Margin="12,0,0,0">
+                    <StackPanel>
+                        <TextBlock Text="CRÉDITO MÁX." FontSize="10" Foreground="#7FB3D3" TextAlignment="Center"/>
+                        <TextBlock x:Name="TxtCredMax" FontSize="13" FontWeight="Bold"
+                                   Foreground="White" TextAlignment="Center"/>
+                    </StackPanel>
+                </Border>
+            </Grid>
+        </Border>
+
+        <!-- ══ BARRA DE FILTROS ══ -->
+        <Border DockPanel.Dock="Top" Background="#ECEFF1" BorderBrush="#CFD8DC"
+                BorderThickness="0,0,0,1" Padding="16,8">
+            <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
+
+                <!-- ── CLIENTES ── -->
+                <TextBlock Text="Clientes:" FontWeight="SemiBold" Foreground="#37474F"
+                           VerticalAlignment="Center" Margin="0,0,10,0"/>
+                <RadioButton x:Name="RbClienteTodos" Content="Todos" IsChecked="True"
+                             GroupName="GrpCliente"
+                             VerticalAlignment="Center" Margin="0,0,14,0"
+                             FontSize="13" Foreground="#37474F"
+                             Checked="OnFiltroClienteChanged"/>
+                <RadioButton x:Name="RbClienteEspecifico" Content="Específico"
+                             GroupName="GrpCliente"
+                             VerticalAlignment="Center" Margin="0,0,0,0"
+                             FontSize="13" Foreground="#37474F"
+                             Checked="OnFiltroClienteChanged"/>
+
+                <!-- Separador vertical -->
+                <Border Width="1" Background="#CFD8DC" Margin="20,2" VerticalAlignment="Stretch"/>
+
+                <!-- ── LOCAL ── -->
+                <TextBlock Text="Local:" FontWeight="SemiBold" Foreground="#37474F"
+                           VerticalAlignment="Center" Margin="0,0,10,0"/>
+                <RadioButton x:Name="RbTodos" Content="Todos" IsChecked="True"
+                             GroupName="GrpLocal"
+                             VerticalAlignment="Center" Margin="0,0,14,0"
+                             FontSize="13" Foreground="#37474F"
+                             Checked="OnFiltroLocalChanged"/>
+                <RadioButton x:Name="RbEspecifico" Content="Específico"
+                             GroupName="GrpLocal"
+                             VerticalAlignment="Center" Margin="0,0,10,0"
+                             FontSize="13" Foreground="#37474F"
+                             Checked="OnFiltroLocalChanged"/>
+                <ComboBox x:Name="CboLocal" Width="190" Padding="6,4"
+                          FontSize="13" IsEnabled="False"
+                          DisplayMemberPath="Nombre"
+                          SelectedValuePath="Id"
+                          SelectionChanged="OnLocalComboChanged"
+                          Margin="0,0,10,0"/>
+
+                <!-- Badge local activo -->
+                <Border x:Name="BadgeLocal" Background="#E65100" CornerRadius="3"
+                        Padding="8,3" Visibility="Collapsed" VerticalAlignment="Center">
+                    <TextBlock x:Name="TxtBadgeLocal" Foreground="White"
+                               FontSize="11" FontWeight="SemiBold"/>
+                </Border>
+
             </StackPanel>
         </Border>
 
-        <!-- Resumen cliente -->
-        <Border Grid.Row="1" Background="White" Padding="8,6" Margin="0,0,0,6" CornerRadius="4">
-            <Grid>
+        <!-- ══ BOTONES LATERALES + CONTENIDO ══ -->
+        <DockPanel DockPanel.Dock="Bottom" LastChildFill="True">
+
+            <!-- Panel lateral derecho: acciones -->
+            <Border DockPanel.Dock="Right" Background="White" Width="170"
+                    BorderBrush="#ECEFF1" BorderThickness="1,0,0,0" Padding="12,16">
+                <StackPanel>
+                    <TextBlock Text="ACCIONES" FontSize="11" FontWeight="Bold"
+                               Foreground="#90A4AE" Margin="0,0,0,12"/>
+                    <Button Content="Eliminar factura" Style="{StaticResource BtnRed}"
+                            Margin="0,0,0,8" Click="OnEliminarFactura"/>
+                    <Button Content="Historial" Style="{StaticResource BtnGray}"
+                            Margin="0,0,0,8" Click="OnHistorial"/>
+                    <Button Content="Artículos" Style="{StaticResource BtnGray}"
+                            Margin="0,0,0,8" Click="OnVerArticulos"/>
+                    <Button x:Name="BtnAsignarCobrador" Content="Asignar cobrador" Style="{StaticResource BtnGray}"
+                            Margin="0,0,0,8" Click="OnAsignarCobranzas"/>
+                    <Separator Margin="0,8"/>
+
+                    <!-- Efectivo recibido/vuelto — reubicado acá (antes vivía en la barra
+                         horizontal de abajo, que quedaba muy ancha/alta) para aprovechar el
+                         espacio vertical libre del panel lateral. Sigue siendo el mismo control
+                         (TxtEfectivoRecibido / CardVuelto / CardFaltante), solo cambia el layout
+                         a vertical compacto. Resaltado en verde + ícono de dinero para que
+                         destaque como EL campo de pago frente a las demás cards neutras — un
+                         cajero llegó a tipear el efectivo recibido en Reajuste por error, así
+                         que este campo necesita ser inconfundible. -->
+                    <Grid x:Name="PanelEfectivoRecibido" Visibility="Collapsed" Margin="0,0,0,8">
+                        <Border Background="#E8F5E9" BorderBrush="#2E7D32" BorderThickness="2"
+                                CornerRadius="6" Padding="8,7">
+                            <StackPanel>
+                                <StackPanel Orientation="Horizontal" Margin="0,0,0,4">
+                                    <TextBlock Text="&#xE8C7;" FontFamily="Segoe MDL2 Assets"
+                                               FontSize="12" Foreground="#1B5E20"
+                                               VerticalAlignment="Center" Margin="0,0,4,0"/>
+                                    <TextBlock x:Name="TxtLblMontoRecibido" Text="EFECTIVO RECIBIDO Gs." FontSize="9.5" FontWeight="Bold"
+                                               Foreground="#1B5E20"/>
+                                </StackPanel>
+                                <TextBox x:Name="TxtEfectivoRecibido" Text="0" TextAlignment="Right"
+                                         FontSize="15" FontWeight="Bold" Padding="8,7"
+                                         Background="White" BorderBrush="#2E7D32" BorderThickness="2"
+                                         TextChanged="OnEfectivoRecibidoChanged"/>
+                                <Border x:Name="CardVuelto" Background="#2E7D32" CornerRadius="5"
+                                        Padding="8,6" Margin="0,6,0,0" Visibility="Collapsed">
+                                    <StackPanel>
+                                        <TextBlock Text="VUELTO" FontSize="9" FontWeight="Bold"
+                                                   Foreground="#C8E6C9"/>
+                                        <TextBlock x:Name="TxtVuelto" FontSize="14" FontWeight="Bold"
+                                                   Foreground="White" Margin="0,2,0,0"/>
+                                    </StackPanel>
+                                </Border>
+                                <Border x:Name="CardFaltante" Background="#C62828" CornerRadius="5"
+                                        Padding="8,6" Margin="0,6,0,0" Visibility="Collapsed">
+                                    <StackPanel>
+                                        <TextBlock Text="FALTA" FontSize="9" FontWeight="Bold"
+                                                   Foreground="#FFCDD2"/>
+                                        <TextBlock x:Name="TxtFaltante" FontSize="14" FontWeight="Bold"
+                                                   Foreground="White" Margin="0,2,0,0"/>
+                                    </StackPanel>
+                                </Border>
+                            </StackPanel>
+                        </Border>
+                    </Grid>
+
+                    <!-- Monto que abona hoy + saldo/vuelto: solo abono parcial (mismo control,
+                         mismo motivo de reubicación y resaltado que PanelEfectivoRecibido). -->
+                    <Grid x:Name="PanelMontoParcial" Visibility="Collapsed" Margin="0,0,0,8">
+                        <Border Background="#E8F5E9" BorderBrush="#2E7D32" BorderThickness="2"
+                                CornerRadius="6" Padding="8,7">
+                            <StackPanel>
+                                <StackPanel Orientation="Horizontal" Margin="0,0,0,4">
+                                    <TextBlock Text="&#xE8C7;" FontFamily="Segoe MDL2 Assets"
+                                               FontSize="12" Foreground="#1B5E20"
+                                               VerticalAlignment="Center" Margin="0,0,4,0"/>
+                                    <TextBlock Text="MONTO QUE ABONA HOY Gs." FontSize="9.5" FontWeight="Bold"
+                                               Foreground="#1B5E20"/>
+                                </StackPanel>
+                                <TextBox x:Name="TxtMontoParcial" Text="0" TextAlignment="Right"
+                                         FontSize="15" FontWeight="Bold" Padding="8,7"
+                                         Background="White" BorderBrush="#2E7D32" BorderThickness="2"
+                                         TextChanged="OnMontoParcialChanged"/>
+                                <Border x:Name="CardSaldoRestante" Background="#1A4F6E" CornerRadius="5"
+                                        Padding="8,6" Margin="0,6,0,0" Visibility="Collapsed">
+                                    <StackPanel>
+                                        <TextBlock Text="SALDO PENDIENTE" FontSize="9" FontWeight="Bold"
+                                                   Foreground="#7FB3D3"/>
+                                        <TextBlock x:Name="TxtSaldoRestante" FontSize="14" FontWeight="Bold"
+                                                   Foreground="White" Margin="0,2,0,0"/>
+                                    </StackPanel>
+                                </Border>
+                                <Border x:Name="CardVueltoParcial" Background="#2E7D32" CornerRadius="5"
+                                        Padding="8,6" Margin="0,6,0,0" Visibility="Collapsed">
+                                    <StackPanel>
+                                        <TextBlock Text="VUELTO" FontSize="9" FontWeight="Bold"
+                                                   Foreground="#C8E6C9"/>
+                                        <TextBlock x:Name="TxtVueltoParcial" FontSize="14" FontWeight="Bold"
+                                                   Foreground="White" Margin="0,2,0,0"/>
+                                    </StackPanel>
+                                </Border>
+                            </StackPanel>
+                        </Border>
+                    </Grid>
+
+                    <CheckBox x:Name="ChkPagoParcial" Visibility="Collapsed"
+                              Checked="OnPagoParcialToggled" Unchecked="OnPagoParcialToggled"/>
+
+                    <Separator Margin="0,4,0,10"/>
+
+                    <!-- Monto a cobrar — reubicado debajo de Efectivo recibido/Monto parcial
+                         para que todo el flujo de cobro quede junto en la misma columna, en
+                         vez de repartido entre el panel lateral y la barra ancha de abajo. -->
+                    <Border Background="#0E2F44" Padding="10,8" CornerRadius="4">
+                        <StackPanel>
+                            <TextBlock Text="MONTO A COBRAR (Gs.)" FontSize="9" FontWeight="Bold"
+                                       Foreground="#7FB3D3" Margin="0,0,0,2"/>
+                            <TextBox x:Name="TxtTotalCobrar" IsReadOnly="True"
+                                     Background="Transparent" BorderThickness="0"
+                                     Foreground="White" FontSize="20" FontWeight="Bold"
+                                     Padding="0" Focusable="False" IsHitTestVisible="False"
+                                     TextWrapping="Wrap"/>
+                        </StackPanel>
+                    </Border>
+
+                    <!-- Botón Cobrar — reubicado acá (antes vivía en el pie, junto a Nota/
+                         Método/N° tarjeta) para que quede junto al monto a cobrar, en el
+                         espacio libre del panel lateral. -->
+                    <Button x:Name="BtnCobrar" Style="{StaticResource BtnGreen}"
+                            IsEnabled="False" Click="OnCobrar"
+                            Height="40" Margin="0,10,0,0" HorizontalContentAlignment="Center">
+                        <StackPanel Orientation="Horizontal">
+                            <TextBlock Text="&#xE8FB;" FontFamily="Segoe MDL2 Assets"
+                                       FontSize="14" VerticalAlignment="Center" Margin="0,0,8,0"/>
+                            <TextBlock x:Name="TxtBtnCobrarLabel" Text="COBRAR  (F5)" FontSize="13" FontWeight="Bold"
+                                       VerticalAlignment="Center"/>
+                        </StackPanel>
+                    </Button>
+                </StackPanel>
+            </Border>
+
+            <!-- Contenido central: columna IZQUIERDA angosta con "Cuotas del crédito" (info +
+                 selector + grilla), columna DERECHA con el panel de cobro / empty state.
+                 Antes "Cuotas del crédito" era una franja horizontal de solo 100px de alto,
+                 apenas alcanzaba para 2-3 filas visibles — como columna lateral tiene todo el
+                 alto disponible de la ventana para mostrar más filas sin scroll. -->
+            <Grid Margin="10,10,10,10">
                 <Grid.ColumnDefinitions>
-                    <ColumnDefinition Width="*" /><ColumnDefinition Width="*" />
-                    <ColumnDefinition Width="*" /><ColumnDefinition Width="*" />
+                    <ColumnDefinition Width="290"/>
+                    <ColumnDefinition Width="10"/>
+                    <ColumnDefinition Width="*"/>
                 </Grid.ColumnDefinitions>
-                <StackPanel Grid.Column="0">
-                    <TextBlock Text="Teléfono" FontSize="11" Foreground="#666" />
-                    <TextBlock x:Name="TxtTelefono" FontWeight="SemiBold" />
-                </StackPanel>
-                <StackPanel Grid.Column="1">
-                    <TextBlock Text="Ciudad" FontSize="11" Foreground="#666" />
-                    <TextBlock x:Name="TxtCiudad" FontWeight="SemiBold" />
-                </StackPanel>
-                <StackPanel Grid.Column="2">
-                    <TextBlock Text="Estado" FontSize="11" Foreground="#666" />
-                    <TextBlock x:Name="TxtEstado" FontWeight="SemiBold" />
-                </StackPanel>
-                <StackPanel Grid.Column="3">
-                    <TextBlock Text="Crédito máx." FontSize="11" Foreground="#666" />
-                    <TextBlock x:Name="TxtCredMax" FontWeight="SemiBold" />
-                </StackPanel>
+
+                <!-- ── COLUMNA IZQUIERDA: info crédito + selector + grilla de cuotas ── -->
+                <Grid Grid.Column="0">
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="*"/>
+                    </Grid.RowDefinitions>
+
+                    <!-- ── BARRA INFO CRÉDITO + BOTÓN LISTAR ── -->
+                    <Border Grid.Row="0" Background="White" CornerRadius="4"
+                            BorderBrush="#E0E0E0" BorderThickness="1" Margin="0,0,0,10" Padding="14,10">
+                        <StackPanel>
+                            <!-- Selector de crédito: un mismo cliente puede tener varios créditos
+                                 (ventas a crédito distintas) — sin esto, la grilla de abajo mezclaba
+                                 las cuotas de TODOS sus créditos en una sola tabla, y esta barra
+                                 mostraba los datos de uno solo (el primero encontrado), dando pie a
+                                 cobrar la cuota equivocada por confundir de qué crédito es cada fila. -->
+                            <StackPanel x:Name="PanelSelectorCredito" Margin="0,0,0,8"
+                                        Visibility="Collapsed">
+                                <TextBlock Text="CRÉDITO:" FontSize="11" FontWeight="SemiBold"
+                                           Foreground="#546E7A" Margin="0,0,0,4"/>
+                                <ComboBox x:Name="CboCredito" Padding="8,4"
+                                          DisplayMemberPath="Texto" SelectionChanged="OnCreditoSeleccionado"/>
+                            </StackPanel>
+                            <Grid>
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="*"/>
+                                    <ColumnDefinition Width="*"/>
+                                </Grid.ColumnDefinitions>
+                                <Grid.RowDefinitions>
+                                    <RowDefinition/>
+                                    <RowDefinition/>
+                                </Grid.RowDefinitions>
+                                <StackPanel Grid.Row="0" Grid.Column="0" Margin="0,0,8,8">
+                                    <TextBlock Text="ID CRÉDITO" FontSize="10" Foreground="#90A4AE" Margin="0,0,0,2"/>
+                                    <TextBlock x:Name="TxtInfoId" Text="—" FontWeight="SemiBold" Foreground="#37474F"/>
+                                </StackPanel>
+                                <StackPanel Grid.Row="0" Grid.Column="1" Margin="0,0,0,8">
+                                    <TextBlock Text="DEUDA TOTAL Gs." FontSize="10" Foreground="#90A4AE" Margin="0,0,0,2"/>
+                                    <TextBlock x:Name="TxtInfoDeudaTotal" Text="—" FontWeight="Bold" Foreground="#37474F"/>
+                                </StackPanel>
+                                <StackPanel Grid.Row="1" Grid.Column="0" Margin="0,0,8,8">
+                                    <TextBlock Text="HABER Gs." FontSize="10" Foreground="#90A4AE" Margin="0,0,0,2"/>
+                                    <TextBlock x:Name="TxtInfoHaber" Text="—" FontWeight="SemiBold" Foreground="#2E7D32"/>
+                                </StackPanel>
+                                <StackPanel Grid.Row="1" Grid.Column="1" Margin="0,0,0,8">
+                                    <TextBlock Text="DEBE Gs." FontSize="10" Foreground="#90A4AE" Margin="0,0,0,2"/>
+                                    <TextBlock x:Name="TxtInfoDebe" Text="—" FontWeight="Bold" Foreground="#C62828"/>
+                                </StackPanel>
+                            </Grid>
+                            <Button x:Name="BtnListarCuotas"
+                                    Content="Listar cuotas"
+                                    Style="{StaticResource BtnOrange}"
+                                    HorizontalAlignment="Stretch" Padding="16,8" Click="OnListarCuotas"
+                                    ToolTip="Ver todas las cuotas pendientes (F3)"/>
+                        </StackPanel>
+                    </Border>
+
+                    <!-- ── GRID CUOTAS del cliente seleccionado ── -->
+                    <Border Grid.Row="1" Background="White" CornerRadius="4"
+                            BorderBrush="#E0E0E0" BorderThickness="1">
+                        <Grid>
+                            <Grid.RowDefinitions>
+                                <RowDefinition Height="Auto"/>
+                                <RowDefinition Height="*"/>
+                            </Grid.RowDefinitions>
+                            <Border Grid.Row="0" Background="#455A64" Padding="10,6" CornerRadius="4,4,0,0">
+                                <StackPanel>
+                                    <TextBlock Text="CUOTAS DEL CRÉDITO"
+                                               Foreground="White" FontWeight="SemiBold" FontSize="12"/>
+                                    <TextBlock x:Name="TxtResumenDeuda" Foreground="#B0BEC5" FontSize="11" Margin="0,2,0,0"/>
+                                </StackPanel>
+                            </Border>
+                            <DataGrid x:Name="GridCuotas" Grid.Row="1"
+                                      AutoGenerateColumns="False" IsReadOnly="True"
+                                      SelectionMode="Single" SelectionUnit="FullRow"
+                                      GridLinesVisibility="Horizontal"
+                                      HorizontalGridLinesBrush="#F0F0F0"
+                                      HeadersVisibility="Column"
+                                      CanUserReorderColumns="False" CanUserResizeRows="False"
+                                      Background="White" RowBackground="White"
+                                      AlternatingRowBackground="#FAFAFA"
+                                      BorderThickness="0"
+                                      MouseDoubleClick="OnCuotaDobleClick"
+                                      SelectionChanged="OnCuotaSeleccionada">
+                                <DataGrid.ColumnHeaderStyle>
+                                    <Style TargetType="DataGridColumnHeader">
+                                        <Setter Property="Background"   Value="#ECEFF1"/>
+                                        <Setter Property="Foreground"   Value="#37474F"/>
+                                        <Setter Property="FontWeight"   Value="SemiBold"/>
+                                        <Setter Property="FontSize"     Value="11"/>
+                                        <Setter Property="Padding"      Value="6,5"/>
+                                        <Setter Property="BorderBrush"  Value="#CFD8DC"/>
+                                        <Setter Property="BorderThickness" Value="0,0,1,1"/>
+                                    </Style>
+                                </DataGrid.ColumnHeaderStyle>
+                                <DataGrid.RowStyle>
+                                    <Style TargetType="DataGridRow">
+                                        <Setter Property="Height" Value="26"/>
+                                        <Style.Triggers>
+                                            <DataTrigger Binding="{Binding EstaVencida}" Value="True">
+                                                <Setter Property="Background" Value="#FFEBEE"/>
+                                                <Setter Property="Foreground" Value="#C62828"/>
+                                            </DataTrigger>
+                                            <DataTrigger Binding="{Binding EstadoTextoCorto}" Value="Cobrada">
+                                                <Setter Property="Background" Value="#E8F5E9"/>
+                                                <Setter Property="Foreground" Value="#2E7D32"/>
+                                            </DataTrigger>
+                                            <Trigger Property="IsSelected" Value="True">
+                                                <Setter Property="Background" Value="#E3F2FD"/>
+                                                <Setter Property="Foreground" Value="#0D47A1"/>
+                                            </Trigger>
+                                        </Style.Triggers>
+                                    </Style>
+                                </DataGrid.RowStyle>
+                                <DataGrid.CellStyle>
+                                    <Style TargetType="DataGridCell">
+                                        <Setter Property="Padding"         Value="5,2"/>
+                                        <Setter Property="BorderThickness" Value="0"/>
+                                        <Setter Property="Template">
+                                            <Setter.Value>
+                                                <ControlTemplate TargetType="DataGridCell">
+                                                    <Border Padding="{TemplateBinding Padding}"
+                                                            Background="{TemplateBinding Background}">
+                                                        <ContentPresenter VerticalAlignment="Center"/>
+                                                    </Border>
+                                                </ControlTemplate>
+                                            </Setter.Value>
+                                        </Setter>
+                                    </Style>
+                                </DataGrid.CellStyle>
+                                <!-- Columnas recortadas a lo esencial para una columna angosta:
+                                     se quitan ID/Comprobante (poco útiles para el cajero de un
+                                     vistazo) y Punitorio (ya se ve en Total Gs.) — el detalle
+                                     completo de la cuota elegida igual se ve en el panel de cobro
+                                     de la derecha al seleccionarla. -->
+                                <DataGrid.Columns>
+                                    <DataGridTextColumn Header="N° Cuota"  Binding="{Binding NCuotaTexto}"  Width="70"/>
+                                    <DataGridTextColumn Header="Vence" Binding="{Binding Vto, StringFormat=dd/MM/yy}" Width="70"/>
+                                    <DataGridTextColumn Header="Estado"    Binding="{Binding EstadoTextoCorto}" Width="70"/>
+                                    <DataGridTextColumn Header="Total Gs." Binding="{Binding TotalCuota, StringFormat=N0}" Width="*"/>
+                                </DataGrid.Columns>
+                            </DataGrid>
+                        </Grid>
+                    </Border>
+                </Grid>
+
+                <!-- ── COLUMNA DERECHA: panel de cobro / empty state / hint ── -->
+                <Grid Grid.Column="2">
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="*"/>
+                        <RowDefinition Height="Auto"/>
+                    </Grid.RowDefinitions>
+
+                <!-- ── PANEL COBRO ──
+                     El Grid.Row="0" del contenedor padre es "*" — este panel siempre recibe
+                     exactamente el espacio real disponible de la ventana. Internamente reparte
+                     ese espacio con Auto (header) / * (cuerpo scrolleable) / Auto (pie): el pie
+                     con el boton COBRAR queda garantizado visible, y es el cuerpo el que cede
+                     con scroll interno si el contenido (ej. abono parcial) no entra. -->
+                <Border x:Name="PanelCobro" Grid.Row="0" Background="White" CornerRadius="8"
+                        BorderBrush="#E0E0E0" BorderThickness="1"
+                        Visibility="Collapsed">
+                    <Border.Effect>
+                        <DropShadowEffect BlurRadius="14" Opacity="0.08" ShadowDepth="2" Direction="270" Color="Black"/>
+                    </Border.Effect>
+                    <Grid>
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="Auto"/>
+                            <RowDefinition Height="*"/>
+                            <RowDefinition Height="Auto"/>
+                        </Grid.RowDefinitions>
+
+                        <!-- ── Encabezado de contexto: cliente + cuota (línea compacta) + barra
+                                    "Cobrado por" (propia, destacada, ver comentario más abajo) ── -->
+                        <Border Grid.Row="0" Background="#0E2F44" CornerRadius="8,8,0,0">
+                            <DockPanel LastChildFill="True">
+                                <Grid DockPanel.Dock="Top" Margin="14,6,14,6">
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="*"/>
+                                        <ColumnDefinition Width="Auto"/>
+                                    </Grid.ColumnDefinitions>
+                                    <StackPanel Grid.Column="0" Orientation="Horizontal">
+                                        <TextBlock x:Name="TxtCobroCliente" FontSize="13.5" FontWeight="Bold"
+                                                   Foreground="White" VerticalAlignment="Center"/>
+                                        <Border Background="#1A4F6E" CornerRadius="3" Padding="6,2" Margin="10,0,0,0"
+                                                VerticalAlignment="Center">
+                                            <TextBlock VerticalAlignment="Center" FontSize="10" Foreground="#B0D4EC">
+                                                <Run Text="Cuota N° "/><Run x:Name="TxtNCuota" FontWeight="Bold" Foreground="White"/>
+                                                <Run Text="  ·  Vence "/><Run x:Name="TxtVencimiento" FontWeight="Bold" Foreground="White"/>
+                                            </TextBlock>
+                                        </Border>
+                                        <Border x:Name="BadgeMora" Background="#C62828" CornerRadius="3" Padding="6,2"
+                                                Margin="6,0,0,0" VerticalAlignment="Center">
+                                            <TextBlock FontSize="10" FontWeight="Bold" Foreground="White">
+                                                <Run x:Name="TxtMora"/><Run Text=" días de atraso"/>
+                                            </TextBlock>
+                                        </Border>
+                                        <!-- Visible solo si la cuota está asignada a OTRO cobrador (OnCobrar
+                                             bloquea el pago en ese caso) — aviso temprano para no dejar que
+                                             el cajero llene todo el panel y recién se entere al tocar COBRAR. -->
+                                        <Border x:Name="BadgeAsignadaOtro" Background="#EF6C00" CornerRadius="3" Padding="6,2"
+                                                Margin="6,0,0,0" VerticalAlignment="Center" Visibility="Collapsed">
+                                            <TextBlock FontSize="10" FontWeight="Bold" Foreground="White">
+                                                <Run Text="Asignada a "/><Run x:Name="TxtAsignadaOtro"/>
+                                            </TextBlock>
+                                        </Border>
+                                    </StackPanel>
+                                    <TextBlock Grid.Column="1" Foreground="#7FB3D3" FontSize="10" VerticalAlignment="Center">
+                                        <Run Text="ID crédito "/><Run x:Name="TxtCobroId" FontWeight="SemiBold" Foreground="White"/>
+                                        <Run Text="   ·   Debe "/><Run x:Name="TxtDebe" FontWeight="SemiBold" Foreground="White"/>
+                                        <Run Text=" de "/><Run x:Name="TxtDeudaTotal" FontWeight="SemiBold" Foreground="White"/>
+                                    </TextBlock>
+                                </Grid>
+
+                                <!-- Barra "Cobrado por" — propia, ancho completo, bien destacada
+                                     (fondo ámbar = "atención, esto no es lo normal por default").
+                                     Vendedor que realmente cobra esta cuota — por default el
+                                     usuario logueado, cambiable validando código+clave de otro
+                                     vendedor (sin tocar la sesión global). Existe para que la
+                                     comisión de fin de mes se calcule a nombre de quien realmente
+                                     cobró, no de quien tiene la sesión/caja abierta (ej. la abrió
+                                     un cajero, pero cobra otra vendedora). El diseño chico como
+                                     badge entre badges no se notaba — ahora es imposible de perder. -->
+                                <Border Background="#1565C0" Padding="14,7"
+                                        Cursor="Hand" MouseLeftButtonUp="OnCambiarVendedorCobrador"
+                                        ToolTip="Click para registrar este cobro a nombre de otro vendedor">
+                                    <Grid>
+                                        <Grid.ColumnDefinitions>
+                                            <ColumnDefinition Width="Auto"/>
+                                            <ColumnDefinition Width="Auto"/>
+                                            <ColumnDefinition Width="*"/>
+                                            <ColumnDefinition Width="Auto"/>
+                                        </Grid.ColumnDefinitions>
+                                        <TextBlock Grid.Column="0" Text="&#xE77B;" FontFamily="Segoe MDL2 Assets"
+                                                   FontSize="15" Foreground="White"
+                                                   VerticalAlignment="Center" Margin="0,0,8,0"/>
+                                        <StackPanel Grid.Column="1" VerticalAlignment="Center">
+                                            <TextBlock Text="COBRADO POR" FontSize="8" FontWeight="Bold"
+                                                       Foreground="#BBDEFB"/>
+                                            <TextBlock x:Name="TxtVendedorCobrador" FontSize="13.5"
+                                                       FontWeight="Bold" Foreground="White" Margin="0,1,0,0"/>
+                                        </StackPanel>
+                                        <TextBlock Grid.Column="2" Text="¿Deseás que este cobro figure a nombre de otro vendedor? Pulsá el botón →"
+                                                   FontSize="10" Foreground="#E3F2FD" FontStyle="Italic"
+                                                   TextWrapping="Wrap" VerticalAlignment="Center"
+                                                   Margin="20,0,14,0"/>
+                                        <Border Grid.Column="3" Background="White" CornerRadius="4"
+                                                Padding="10,5" VerticalAlignment="Center">
+                                            <TextBlock Text="CAMBIAR VENDEDOR" FontSize="9.5" FontWeight="Bold"
+                                                       Foreground="#1565C0"/>
+                                        </Border>
+                                    </Grid>
+                                </Border>
+                            </DockPanel>
+                        </Border>
+
+                        <!-- ── Cuerpo: detalle del cargo (fila horizontal compacta, arriba) +
+                                    monto a cobrar / toggle / vuelto (protagonista, abajo) ──
+                             Diseño pensado para resoluciones chicas (1280x720): todo apilado
+                             horizontalmente en vez de en columnas anchas con mucho padding.
+                             ScrollViewer como red de seguridad si aun asi no entra. -->
+                        <ScrollViewer Grid.Row="1" VerticalScrollBarVisibility="Auto"
+                                      HorizontalScrollBarVisibility="Disabled">
+                        <StackPanel Margin="16,8,16,6">
+
+                            <!-- Detalle del cargo: cada valor en su propia tarjeta, sin líneas divisorias
+                                 sueltas — Capital / Punitorio / Inforconf (si corresponde) / Reajuste /
+                                 Total / Ya entregado. Columnas "*" para repartir el ancho uniformemente;
+                                 Inforconf usa Width="Auto" porque solo aparece cuando corresponde el cargo
+                                 y no debe robarle espacio fijo a las demás tarjetas cuando está oculto. -->
+                            <Grid Margin="0,0,0,8">
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="*"/>
+                                    <ColumnDefinition Width="6"/>
+                                    <ColumnDefinition Width="*"/>
+                                    <ColumnDefinition Width="6"/>
+                                    <ColumnDefinition Width="Auto"/>
+                                    <ColumnDefinition Width="6"/>
+                                    <ColumnDefinition Width="*"/>
+                                    <ColumnDefinition Width="6"/>
+                                    <ColumnDefinition Width="*"/>
+                                    <ColumnDefinition Width="6"/>
+                                    <ColumnDefinition Width="*"/>
+                                </Grid.ColumnDefinitions>
+
+                                <Border Grid.Column="0" Background="#FAFBFC" CornerRadius="6"
+                                        BorderBrush="#EEF1F3" BorderThickness="1" Padding="8,6">
+                                    <StackPanel>
+                                        <TextBlock Text="CAPITAL" FontSize="8.5" FontWeight="Bold" Foreground="#90A4AE"/>
+                                        <TextBlock x:Name="TxtMontoCuota" FontWeight="SemiBold"
+                                                   Foreground="#263238" FontSize="12.5" Margin="0,2,0,0"/>
+                                    </StackPanel>
+                                </Border>
+
+                                <Border Grid.Column="2" Background="#FAFBFC" CornerRadius="6"
+                                        BorderBrush="#EEF1F3" BorderThickness="1" Padding="8,6">
+                                    <StackPanel>
+                                        <TextBlock Foreground="#90A4AE" FontSize="8.5" FontWeight="Bold">
+                                            <Run Text="PUNITORIO "/><Run x:Name="TxtTasaPunitorio"/>
+                                        </TextBlock>
+                                        <TextBlock x:Name="TxtPunitorio" FontWeight="SemiBold"
+                                                   Foreground="#E65100" FontSize="12.5" Margin="0,2,0,0"/>
+                                    </StackPanel>
+                                </Border>
+
+                                <Border Grid.Column="4" Background="#FAFBFC" CornerRadius="6"
+                                        BorderBrush="#EEF1F3" BorderThickness="1" Padding="8,6">
+                                    <StackPanel>
+                                        <TextBlock Text="YA ENTREGADO" FontSize="8.5" FontWeight="Bold" Foreground="#90A4AE"/>
+                                        <TextBlock x:Name="TxtEntregado" Foreground="#78909C"
+                                                   FontSize="12.5" FontWeight="SemiBold" Margin="0,2,0,0"/>
+                                    </StackPanel>
+                                </Border>
+
+                                <!-- OJO: este campo se SUMA al total de la cuota, no lo reemplaza — un
+                                     cajero llegó a tipear acá el efectivo recibido por error, generando
+                                     un cobro casi el doble del real. BorderBrush se resalta en ámbar
+                                     desde OnReajusteChanged cuando el valor es distinto de cero, para
+                                     que el cajero note que está agregando un extra antes de confirmar. -->
+                                <Border x:Name="CardReajuste" Grid.Column="6" Background="#FAFBFC" CornerRadius="6"
+                                        BorderBrush="#EEF1F3" BorderThickness="1" Padding="10,8"
+                                        ToolTipService.InitialShowDelay="200">
+                                    <Border.ToolTip>
+                                        <TextBlock MaxWidth="260" TextWrapping="Wrap"
+                                                   Text="Monto ADICIONAL que se suma al total de la cuota (capital + punitorio). Dejar en 0 si no corresponde ningún ajuste extra."/>
+                                    </Border.ToolTip>
+                                    <StackPanel>
+                                        <TextBlock Text="REAJUSTE (se suma, opcional)" FontSize="9"
+                                                   FontWeight="Bold" Foreground="#90A4AE" TextWrapping="Wrap"/>
+                                        <TextBox x:Name="TxtReajuste" Style="{StaticResource Val}"
+                                                 Text="0" TextAlignment="Right" FontWeight="SemiBold"
+                                                 Padding="6,3" Margin="0,2,0,0"
+                                                 GotFocus="OnReajusteGotFocus"
+                                                 TextChanged="OnReajusteChanged"/>
+                                    </StackPanel>
+                                </Border>
+
+                                <Border Grid.Column="8" Background="#0E2F44" CornerRadius="6" Padding="8,6">
+                                    <StackPanel>
+                                        <!-- Etiqueta dinámica: "TOTAL DE LA CUOTA" a secas cuando no hay
+                                             recargo, o "TOTAL DE LA CUOTA + RECARGO" cuando Inforconf y/o
+                                             Reajuste suman algo — ver RecalcTotal. -->
+                                        <TextBlock x:Name="TxtLblTotalCuota" Text="TOTAL DE LA CUOTA"
+                                                   FontSize="8.5" FontWeight="Bold" Foreground="#7FA8C9"/>
+                                        <TextBlock x:Name="TxtSubTotal" FontWeight="Bold"
+                                                   Foreground="White" FontSize="14.5" Margin="0,2,0,0"/>
+                                        <!-- Fórmula chica (ej. "870.250 + 97.468 + 100.000"), visible solo
+                                             cuando hay recargo — para que quede claro de dónde sale la suma. -->
+                                        <TextBlock x:Name="TxtFormulaTotalCuota" FontSize="9"
+                                                   Foreground="#7FA8C9" Margin="0,3,0,0"
+                                                   Visibility="Collapsed" TextWrapping="Wrap"/>
+                                    </StackPanel>
+                                </Border>
+
+                                <!-- Reubicado desde la barra inferior (junto a N° Tarjeta/Ref.) para que
+                                     quede junto al resto de los montos de la cuota — es el cargo automático
+                                     de Inforconf (ver CargarPanelCobro/CorrespondeCargoInforconfAsync),
+                                     separado del Reajuste manual. Tarjeta propia con acento naranja, visible
+                                     solo cuando corresponde (se oculta si TxtInforconf="0"); al ocultarse no
+                                     deja hueco porque la columna es Width="Auto". -->
+                                <Border x:Name="BadgeInforconfCol" Grid.Column="10"
+                                        Background="#FFF3E0" BorderBrush="#FFB74D" BorderThickness="1.2"
+                                        CornerRadius="6" Padding="10,8">
+                                    <StackPanel>
+                                        <StackPanel Orientation="Horizontal">
+                                            <TextBlock Text="&#xE7BA;" FontFamily="Segoe MDL2 Assets"
+                                                       FontSize="10" Foreground="#E65100" Margin="0,0,3,0"/>
+                                            <TextBlock Text="INFORCONF" FontSize="9" FontWeight="Bold"
+                                                       Foreground="#E65100"/>
+                                        </StackPanel>
+                                        <TextBox x:Name="TxtInforconf" Style="{StaticResource ValRO}"
+                                                 Text="0" TextAlignment="Left" FontWeight="Bold" FontSize="14"
+                                                 Foreground="#E65100" Background="Transparent" BorderThickness="0"
+                                                 Padding="0" Margin="0,2,0,0" MinWidth="70"/>
+                                    </StackPanel>
+                                </Border>
+                            </Grid>
+
+                            <!-- Descuento por Nota de Crédito pre-cargado por un administrador/código 67
+                                 (ver DescuentoCuotaWindow) — línea SEPARADA del total original, visible solo
+                                 cuando esta cuota tiene un descuento pendiente sin cobrar. Transparente para
+                                 el cajero/cliente: se ve claramente que hubo una intervención administrativa,
+                                 no se mezcla en silencio con Reajuste (que ya se usa para Inforconf/exoneraciones). -->
+                            <Border x:Name="BannerDescuentoNc" Background="#DCFCE7" CornerRadius="6"
+                                    BorderBrush="#16A34A" BorderThickness="1.2" Padding="12,8"
+                                    Margin="0,8,0,0" Visibility="Collapsed">
+                                <StackPanel Orientation="Horizontal">
+                                    <TextBlock Text="&#xE8C7;" FontFamily="Segoe MDL2 Assets" FontSize="14"
+                                               Foreground="#15803D" VerticalAlignment="Center" Margin="0,0,8,0"/>
+                                    <StackPanel VerticalAlignment="Center">
+                                        <TextBlock Text="DESCUENTO POR NOTA DE CRÉDITO" FontSize="9"
+                                                   FontWeight="Bold" Foreground="#15803D"/>
+                                        <TextBlock x:Name="TxtDescuentoNcMonto" FontSize="14" FontWeight="Bold"
+                                                   Foreground="#15803D" Margin="0,1,0,0"/>
+                                        <TextBlock x:Name="TxtDescuentoNcMotivo" FontSize="10"
+                                                   Foreground="#166534" TextWrapping="Wrap"/>
+                                    </StackPanel>
+                                </StackPanel>
+                            </Border>
+                        </StackPanel>
+                        </ScrollViewer>
+
+                        <!-- ── Pie: metadata de pago + acción ── -->
+                        <Border Grid.Row="2" Background="#FAFBFC" CornerRadius="0,0,8,8"
+                                BorderBrush="#EEF1F3" BorderThickness="0,1,0,0" Padding="18,8">
+                        <Grid>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="*"/>
+                                <ColumnDefinition Width="160"/>
+                                <ColumnDefinition Width="160"/>
+                            </Grid.ColumnDefinitions>
+                            <StackPanel Grid.Column="0" Margin="0,0,10,0">
+                                <TextBlock Style="{StaticResource Lbl}" Text="NOTA / OBSERVACIÓN"/>
+                                <TextBox x:Name="TxtNota" Style="{StaticResource Val}" MaxLength="200"/>
+                            </StackPanel>
+                            <StackPanel Grid.Column="1" Margin="0,0,10,0">
+                                <TextBlock Style="{StaticResource Lbl}" Text="MÉTODO DE PAGO"/>
+                                <ComboBox x:Name="CboMetodo" Padding="6,5" FontSize="13"
+                                          SelectionChanged="OnMetodoChanged">
+                                    <ComboBoxItem Content="EFECTIVO" IsSelected="True"/>
+                                    <ComboBoxItem Content="TARJETA"/>
+                                    <ComboBoxItem Content="TRANSFERENCIA"/>
+                                    <ComboBoxItem Content="QR"/>
+                                    <ComboBoxItem Content="CHEQUE"/>
+                                </ComboBox>
+                            </StackPanel>
+                            <StackPanel Grid.Column="2">
+                                <TextBlock Style="{StaticResource Lbl}" Text="N° TARJETA / REF."/>
+                                <TextBox x:Name="TxtReferencia" Style="{StaticResource Val}"
+                                         IsEnabled="False"/>
+                            </StackPanel>
+                        </Grid>
+                        </Border>
+                    </Grid>
+                </Border>
+
+                <!-- Empty state -->
+                <Border x:Name="PanelEmpty" Grid.Row="0" Background="White" CornerRadius="4"
+                        BorderBrush="#E0E0E0" BorderThickness="1" Padding="24">
+                    <StackPanel HorizontalAlignment="Center" VerticalAlignment="Center">
+                        <TextBlock Text="👆" FontSize="32" HorizontalAlignment="Center"/>
+                        <TextBlock Text="Buscá un cliente para ver sus cuotas"
+                                   FontSize="14" Foreground="#90A4AE"
+                                   HorizontalAlignment="Center" Margin="0,8,0,4"/>
+                        <TextBlock Text="Ingresá el C.I. en el campo de arriba o usá el botón ..."
+                                   FontSize="12" Foreground="#B0BEC5"
+                                   HorizontalAlignment="Center"/>
+                    </StackPanel>
+                </Border>
+
+                <!-- Detalle de cuota YA COBRADA: se muestra en vez de PanelEmpty cuando el
+                     cajero selecciona una cuota con Estado=1 — antes ese click no mostraba
+                     nada (OnCuotaSeleccionada llamaba OcultarPanelCobro y listo), dejando al
+                     cajero sin forma de ver qué se cobró realmente en cuotas con reajuste o
+                     exoneración, donde la columna "Total Gs." de la grilla (Monto+Punitorio,
+                     sin restar Reajuste) no refleja el monto neto real cobrado. -->
+                <Border x:Name="PanelDetalleCobrada" Grid.Row="0" Background="White" CornerRadius="8"
+                        BorderBrush="#E0E0E0" BorderThickness="1" Visibility="Collapsed">
+                    <!-- ScrollViewer: sin esto, cuotas con varios pagos parciales (PAGOS
+                         REALIZADOS puede crecer bastante) quedaban cortadas contra el borde
+                         inferior de la ventana sin ningún indicio de que había más contenido
+                         — mismo criterio que PanelCobro, que ya tenía scroll interno. -->
+                    <ScrollViewer VerticalScrollBarVisibility="Auto" Padding="0,0,8,0">
+                    <StackPanel Margin="24">
+                        <StackPanel Orientation="Horizontal" Margin="0,0,0,4">
+                            <TextBlock Text="✔" FontSize="18" Foreground="#2E7D32" Margin="0,0,8,0"/>
+                            <TextBlock x:Name="TxtDetTitulo" Text="CUOTA COBRADA" FontSize="15" FontWeight="Bold" Foreground="#2E7D32"/>
+                        </StackPanel>
+                        <TextBlock x:Name="TxtDetCobradaSub" FontSize="11.5" Foreground="#78909C" Margin="0,0,0,18"/>
+
+                        <!-- Oculto para la Cuota 1 (Entrega): es el pago inicial de la venta,
+                             no una cuota real del plan — no acumula punitorio ni admite
+                             reajuste, mostrar esas tarjetas en 0 confundía más de lo que
+                             aclaraba (ver MostrarDetalleCobrada). -->
+                        <Grid x:Name="GridDetDesglose">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="*"/>
+                                <ColumnDefinition Width="12"/>
+                                <ColumnDefinition Width="*"/>
+                            </Grid.ColumnDefinitions>
+                            <Grid.RowDefinitions>
+                                <RowDefinition/>
+                                <RowDefinition Height="8"/>
+                                <RowDefinition/>
+                            </Grid.RowDefinitions>
+
+                            <Border Grid.Row="0" Grid.Column="0" Background="#FAFBFC" CornerRadius="6"
+                                    BorderBrush="#EEF1F3" BorderThickness="1" Padding="10,8">
+                                <StackPanel>
+                                    <TextBlock Text="CAPITAL" FontSize="8.5" FontWeight="Bold" Foreground="#90A4AE"/>
+                                    <TextBlock x:Name="TxtDetCapital" FontWeight="SemiBold" Foreground="#263238" FontSize="13" Margin="0,2,0,0"/>
+                                </StackPanel>
+                            </Border>
+                            <Border Grid.Row="0" Grid.Column="2" Background="#FAFBFC" CornerRadius="6"
+                                    BorderBrush="#EEF1F3" BorderThickness="1" Padding="10,8">
+                                <StackPanel>
+                                    <TextBlock Text="PUNITORIO" FontSize="8.5" FontWeight="Bold" Foreground="#90A4AE"/>
+                                    <TextBlock x:Name="TxtDetPunitorio" FontWeight="SemiBold" Foreground="#E65100" FontSize="13" Margin="0,2,0,0"/>
+                                </StackPanel>
+                            </Border>
+
+                            <Border Grid.Row="2" Grid.Column="0" x:Name="CardDetReajuste" Background="#FAFBFC" CornerRadius="6"
+                                    BorderBrush="#EEF1F3" BorderThickness="1" Padding="10,8">
+                                <StackPanel>
+                                    <TextBlock x:Name="TxtLblDetReajuste" Text="REAJUSTE / EXONERACIÓN" FontSize="8.5" FontWeight="Bold" Foreground="#90A4AE"/>
+                                    <TextBlock x:Name="TxtDetReajuste" FontWeight="SemiBold" FontSize="13" Margin="0,2,0,0"/>
+                                </StackPanel>
+                            </Border>
+                            <Border Grid.Row="2" Grid.Column="2" Background="#FAFBFC" CornerRadius="6"
+                                    BorderBrush="#EEF1F3" BorderThickness="1" Padding="10,8">
+                                <StackPanel>
+                                    <TextBlock Text="FECHA DE COBRO" FontSize="8.5" FontWeight="Bold" Foreground="#90A4AE"/>
+                                    <TextBlock x:Name="TxtDetFecha" FontWeight="SemiBold" Foreground="#263238" FontSize="13" Margin="0,2,0,0"/>
+                                </StackPanel>
+                            </Border>
+                        </Grid>
+
+                        <!-- Solo para Cuota 1 (Entrega), en lugar de GridDetDesglose: no hay
+                             capital/punitorio/reajuste que mostrar, pero la fecha sigue siendo
+                             relevante. -->
+                        <Border x:Name="CardDetFechaEntrega" Background="#FAFBFC" CornerRadius="6"
+                                BorderBrush="#EEF1F3" BorderThickness="1" Padding="10,8" Visibility="Collapsed">
+                            <StackPanel>
+                                <TextBlock Text="FECHA" FontSize="8.5" FontWeight="Bold" Foreground="#90A4AE"/>
+                                <TextBlock x:Name="TxtDetFechaEntrega" FontWeight="SemiBold" Foreground="#263238" FontSize="13" Margin="0,2,0,0"/>
+                            </StackPanel>
+                        </Border>
+
+                        <Border Background="#0E2F44" CornerRadius="6" Padding="14,12" Margin="0,14,0,0">
+                            <StackPanel>
+                                <TextBlock x:Name="TxtDetTotalLbl" Text="TOTAL COBRADO" FontSize="9" FontWeight="Bold" Foreground="#7FA8C9"/>
+                                <TextBlock x:Name="TxtDetTotal" FontWeight="Bold" Foreground="White" FontSize="20" Margin="0,2,0,0"/>
+                                <TextBlock x:Name="TxtDetFormula" FontSize="10" Foreground="#7FA8C9" Margin="0,4,0,0" TextWrapping="Wrap"/>
+                            </StackPanel>
+                        </Border>
+
+                        <TextBlock x:Name="TxtDetObs" FontSize="11.5" Foreground="#78909C"
+                                   Margin="0,14,0,0" TextWrapping="Wrap" Visibility="Collapsed"/>
+
+                        <!-- Pagos reales (CAJA_DETALLE) que componen esta cuota — puede haber
+                             más de una fila si hubo abonos parciales antes del pago final. -->
+                        <StackPanel x:Name="PanelDetPagos" Margin="0,14,0,0" Visibility="Collapsed">
+                            <TextBlock Text="PAGOS REALIZADOS" FontSize="9" FontWeight="Bold"
+                                       Foreground="#1565C0" Margin="0,0,0,6"/>
+                            <ItemsControl x:Name="ListDetPagos">
+                                <ItemsControl.ItemTemplate>
+                                    <DataTemplate>
+                                        <Border Background="#FAFBFC" CornerRadius="4" BorderBrush="#EEF1F3"
+                                                BorderThickness="1" Padding="8,5" Margin="0,0,0,4">
+                                            <Grid>
+                                                <Grid.ColumnDefinitions>
+                                                    <ColumnDefinition Width="*"/>
+                                                    <ColumnDefinition Width="Auto"/>
+                                                </Grid.ColumnDefinitions>
+                                                <TextBlock Grid.Column="0" FontSize="10.5" Foreground="#546E7A"
+                                                           VerticalAlignment="Center">
+                                                    <Run Text="{Binding FechaTexto}" FontWeight="SemiBold" Foreground="#263238"/>
+                                                    <Run Text=" · "/>
+                                                    <Run Text="{Binding FormaPago}"/>
+                                                </TextBlock>
+                                                <TextBlock Grid.Column="1" Text="{Binding MontoTexto}"
+                                                           FontSize="11.5" FontWeight="Bold" Foreground="#2E7D32"
+                                                           VerticalAlignment="Center"/>
+                                            </Grid>
+                                        </Border>
+                                    </DataTemplate>
+                                </ItemsControl.ItemTemplate>
+                            </ItemsControl>
+                        </StackPanel>
+                    </StackPanel>
+                    </ScrollViewer>
+                </Border>
+
+                <!-- Hint doble clic -->
+                <Border Grid.Row="1" Padding="0,8,0,0">
+                    <TextBlock x:Name="TxtHint"
+                               Text="Usá F3 para listar cuotas o buscá un cliente por CI — luego doble clic en la cuota para cobrar"
+                               FontSize="12" Foreground="#90A4AE"/>
+                </Border>
+                </Grid>
             </Grid>
-        </Border>
-
-        <!-- Grid cuotas -->
-        <DataGrid x:Name="GridCuotas" Grid.Row="2" Style="{StaticResource CrediGrid}"
-                  SelectionChanged="OnCuotaSeleccionada">
-            <DataGrid.RowStyle>
-                <Style TargetType="DataGridRow">
-                    <Style.Triggers>
-                        <DataTrigger Binding="{Binding EstaVencida}" Value="True">
-                            <Setter Property="Background" Value="#FFE0E0" />
-                        </DataTrigger>
-                    </Style.Triggers>
-                </Style>
-            </DataGrid.RowStyle>
-            <DataGrid.Columns>
-                <DataGridTextColumn Header="N° Cuota"   Binding="{Binding NCuota}"           Width="70" />
-                <DataGridTextColumn Header="Solicitud"  Binding="{Binding NSolicitud}"        Width="130" />
-                <DataGridTextColumn Header="Vencimiento" Binding="{Binding Vto, StringFormat=dd/MM/yyyy}" Width="110" />
-                <DataGridTextColumn Header="Monto Gs."  Binding="{Binding Monto, StringFormat=N0}" Width="100" />
-                <DataGridTextColumn Header="Días mora"  Binding="{Binding DiasDeAtraso}"      Width="90" />
-                <DataGridTextColumn Header="Punitorio"  Binding="{Binding Punitorio, StringFormat=N0}" Width="90" />
-                <DataGridTextColumn Header="Total"      Binding="{Binding Total, StringFormat=N0}" Width="100" />
-            </DataGrid.Columns>
-        </DataGrid>
-
-        <!-- Panel de cobro -->
-        <Border Grid.Row="3" Background="White" Padding="12,8" Margin="0,6,0,6" CornerRadius="4">
-            <Grid>
-                <Grid.ColumnDefinitions>
-                    <ColumnDefinition Width="*" /><ColumnDefinition Width="*" />
-                    <ColumnDefinition Width="*" /><ColumnDefinition Width="*" />
-                    <ColumnDefinition Width="*" />
-                </Grid.ColumnDefinitions>
-                <StackPanel Grid.Column="0" Margin="0,0,8,0">
-                    <TextBlock Text="Monto cuota" FontSize="11" Foreground="#666" />
-                    <TextBox x:Name="TxtMontoCuota" IsReadOnly="True" Padding="4,3"
-                             Background="#F5F5F5" FontWeight="Bold" FontSize="14" />
-                </StackPanel>
-                <StackPanel Grid.Column="1" Margin="0,0,8,0">
-                    <TextBlock Text="Punitorio" FontSize="11" Foreground="#666" />
-                    <TextBox x:Name="TxtPunitorio" IsReadOnly="True" Padding="4,3"
-                             Background="#FFE0E0" FontWeight="Bold" FontSize="14" />
-                </StackPanel>
-                <StackPanel Grid.Column="2" Margin="0,0,8,0">
-                    <TextBlock Text="TOTAL A COBRAR" FontSize="11" Foreground="#CC0000" FontWeight="Bold" />
-                    <TextBox x:Name="TxtTotalCobrar" IsReadOnly="True" Padding="4,3"
-                             Background="#FFF3CD" FontWeight="Bold" FontSize="16"
-                             Foreground="#CC0000" />
-                </StackPanel>
-                <StackPanel Grid.Column="3" Margin="0,0,8,0">
-                    <TextBlock Text="Forma de pago" FontSize="11" Foreground="#666" />
-                    <ComboBox x:Name="CboFormaPago" Padding="4,3">
-                        <ComboBoxItem Content="Efectivo" IsSelected="True" />
-                        <ComboBoxItem Content="Tarjeta" />
-                        <ComboBoxItem Content="Transferencia" />
-                        <ComboBoxItem Content="Cheque" />
-                    </ComboBox>
-                </StackPanel>
-                <StackPanel Grid.Column="4" VerticalAlignment="Bottom">
-                    <Button x:Name="BtnCobrar" Content="✅ COBRAR" Width="120" Height="36"
-                            Style="{StaticResource BtnSuccess}"
-                            IsEnabled="False" Click="OnCobrar" />
-                </StackPanel>
-            </Grid>
-        </Border>
-
-        <!-- Botones -->
-        <StackPanel Grid.Row="4" Orientation="Horizontal" HorizontalAlignment="Right">
-            <TextBlock Text="F1=Ayuda  F2=Buscar  Ctrl+S=Cerrar"
-                       FontSize="11" Foreground="#333" VerticalAlignment="Center" Margin="0,0,16,0" />
-            <Button Content="Cerrar" Style="{StaticResource BtnSecondary}" Width="80" Click="OnCerrar" />
-        </StackPanel>
-    </Grid>
+        </DockPanel>
+    </DockPanel>
 </Window>

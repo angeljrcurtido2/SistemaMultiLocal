@@ -35,4 +35,12 @@ public class Articulo
     public string MedidaNombre { get; set; } = string.Empty;
 
     public string EstadoTexto => Es == 1 ? "Activo" : "Inactivo";
+
+    // Local donde tiene mayor stock (join calculado en query)
+    public string LocalUbicacion { get; set; } = string.Empty;
+
+    // Precios (join desde PRICES — max por artículo, para mostrar en formulario)
+    public decimal Pventa  { get; set; }
+    public decimal Contado { get; set; }
+    public decimal Pc      { get; set; }
 }

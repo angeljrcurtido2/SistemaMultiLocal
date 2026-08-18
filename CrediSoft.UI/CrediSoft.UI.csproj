@@ -5,12 +5,20 @@
     <Nullable>enable</Nullable>
     <ImplicitUsings>enable</ImplicitUsings>
     <UseWPF>true</UseWPF>
-<AssemblyName>CrediSoft</AssemblyName>
+<AssemblyName>ElectroMar</AssemblyName>
     <RootNamespace>CrediSoft.UI</RootNamespace>
     <PublishSingleFile>true</PublishSingleFile>
     <SelfContained>false</SelfContained>
+    <ApplicationIcon>Resources\credimar.ico</ApplicationIcon>
+    <!-- Precompila a codigo nativo (ReadyToRun) en el publish self-contained: evita que
+         cada equipo tenga que hacer JIT completo en frio al abrir la app. Notable en los
+         equipos Intel Celeron de las sucursales, donde el JIT en frio es mas lento. Solo
+         aplica cuando se publica con -r win-x86 (RuntimeIdentifier explicito) — no afecta
+         el build de Debug local (dotnet build) que sigue arrancando igual que siempre. -->
+    <PublishReadyToRun Condition="'$(RuntimeIdentifier)'!=''">true</PublishReadyToRun>
   </PropertyGroup>
   <ItemGroup>
+    <PackageReference Include="ClosedXML" Version="0.105.0" />
     <PackageReference Include="MaterialDesignThemes" Version="5.1.0" />
     <PackageReference Include="CommunityToolkit.Mvvm" Version="8.3.2" />
     <PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="8.0.1" />
@@ -26,5 +34,35 @@
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
       <CopyToPublishDirectory>Always</CopyToPublishDirectory>
     </None>
+    <None Update="appsettings.Local.json">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+      <CopyToPublishDirectory>Always</CopyToPublishDirectory>
+    </None>
+    <None Update="appsettings.Remote.json">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+      <CopyToPublishDirectory>Always</CopyToPublishDirectory>
+    </None>
+    <Content Include="Resources\credimar.ico">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+      <CopyToPublishDirectory>Always</CopyToPublishDirectory>
+      <Link>credimar.ico</Link>
+    </Content>
+    <Resource Include="Resources\logo_credimar.png"/>
+    <Resource Include="Resources\credimar.ico"/>
+    <Content Include="..\logotipocredimar2.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+      <CopyToPublishDirectory>Always</CopyToPublishDirectory>
+      <Link>logotipocredimar2.png</Link>
+    </Content>
+    <Content Include="..\logotipocredimar2.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+      <CopyToPublishDirectory>Always</CopyToPublishDirectory>
+      <Link>credimarlogopng.png</Link>
+    </Content>
+    <Content Include="..\logotipocredimarticketera.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+      <CopyToPublishDirectory>Always</CopyToPublishDirectory>
+      <Link>logotipocredimarticketera.png</Link>
+    </Content>
   </ItemGroup>
 </Project>

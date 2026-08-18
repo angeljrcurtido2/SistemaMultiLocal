@@ -1,76 +1,276 @@
 <Window x:Class="CrediSoft.UI.Views.Login.LoginWindow"
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-        Title="CrediSoft — Login"
-        Width="400" Height="480"
+        Title="ElectroMar — Login"
+        Width="420" Height="580"
         ResizeMode="NoResize"
         WindowStartupLocation="CenterScreen"
-        Background="#FFF8F0">
+        WindowStyle="None"
+        AllowsTransparency="True"
+        Background="Transparent"
+        FontFamily="Segoe UI">
 
-    <Grid>
-        <Grid.RowDefinitions>
-            <RowDefinition Height="160" />
-            <RowDefinition Height="*" />
-        </Grid.RowDefinitions>
+    <Window.Resources>
 
-        <!-- Header con logo -->
-        <Border Grid.Row="0" Background="#FF8C00">
-            <StackPanel HorizontalAlignment="Center" VerticalAlignment="Center">
-                <TextBlock Text="Credimar S.A."
-                           FontSize="28" FontWeight="Bold"
-                           Foreground="White" HorizontalAlignment="Center" />
-                <Border Background="#E07000" Padding="20,4" Margin="0,6,0,0"
-                        HorizontalAlignment="Center">
-                    <TextBlock Text="ELECTRODOMÉSTICOS"
-                               FontSize="13" FontWeight="SemiBold"
-                               Foreground="White" />
-                </Border>
-                <TextBlock Text="Sistema de Gestión Comercial"
-                           FontSize="11" Foreground="#FFE0B2"
-                           HorizontalAlignment="Center" Margin="0,8,0,0" />
-            </StackPanel>
-        </Border>
+        <!-- Campo label -->
+        <Style x:Key="FldLbl" TargetType="TextBlock">
+            <Setter Property="FontSize"   Value="11"/>
+            <Setter Property="FontWeight" Value="SemiBold"/>
+            <Setter Property="Foreground" Value="#7FB3D3"/>
+            <Setter Property="Margin"     Value="0,14,0,4"/>
+        </Style>
 
-        <!-- Formulario de login -->
-        <StackPanel Grid.Row="1" Margin="40,30,40,20" VerticalAlignment="Top">
+        <!-- Input editable -->
+        <Style x:Key="FldBox" TargetType="TextBox">
+            <Setter Property="Height"                   Value="38"/>
+            <Setter Property="FontSize"                 Value="14"/>
+            <Setter Property="Padding"                  Value="12,0"/>
+            <Setter Property="Background"               Value="#1A4F6E"/>
+            <Setter Property="Foreground"               Value="White"/>
+            <Setter Property="CaretBrush"               Value="White"/>
+            <Setter Property="BorderBrush"              Value="#1F6089"/>
+            <Setter Property="BorderThickness"          Value="0,0,0,2"/>
+            <Setter Property="SelectionBrush"           Value="#4FC3F7"/>
+            <Setter Property="VerticalContentAlignment" Value="Center"/>
+            <Style.Triggers>
+                <Trigger Property="IsFocused" Value="True">
+                    <Setter Property="BorderBrush" Value="#4FC3F7"/>
+                    <Setter Property="Background"  Value="#1F6089"/>
+                </Trigger>
+            </Style.Triggers>
+        </Style>
 
-            <TextBlock Text="Usuario" Style="{StaticResource FieldLabel}" />
-            <TextBox x:Name="TxtUsuario"
-                     Style="{StaticResource FieldInput}"
-                     MaxLength="20"
-                     KeyDown="OnKeyDown" />
+        <!-- PasswordBox con template para coincidir con FldBox -->
+        <Style x:Key="FldPass" TargetType="PasswordBox">
+            <Setter Property="Height"                   Value="38"/>
+            <Setter Property="FontSize"                 Value="14"/>
+            <Setter Property="Padding"                  Value="12,0"/>
+            <Setter Property="Background"               Value="#1A4F6E"/>
+            <Setter Property="Foreground"               Value="White"/>
+            <Setter Property="CaretBrush"               Value="White"/>
+            <Setter Property="BorderBrush"              Value="#1F6089"/>
+            <Setter Property="BorderThickness"          Value="0,0,0,2"/>
+            <Setter Property="SelectionBrush"           Value="#4FC3F7"/>
+            <Setter Property="VerticalContentAlignment" Value="Center"/>
+        </Style>
 
-            <TextBlock Text="Contraseña" Style="{StaticResource FieldLabel}" />
-            <PasswordBox x:Name="TxtContrasena"
-                         Padding="6,4" BorderBrush="#CCCCCC" BorderThickness="1"
-                         Background="White" FontSize="13"
-                         MaxLength="20"
-                         KeyDown="OnKeyDown" />
+        <!-- Botón ingresar -->
+        <Style x:Key="BtnLogin" TargetType="Button">
+            <Setter Property="Background"      Value="#1F6089"/>
+            <Setter Property="Foreground"      Value="White"/>
+            <Setter Property="FontSize"        Value="14"/>
+            <Setter Property="FontWeight"      Value="Bold"/>
+            <Setter Property="BorderThickness" Value="0"/>
+            <Setter Property="Height"          Value="44"/>
+            <Setter Property="Cursor"          Value="Hand"/>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="Button">
+                        <Border x:Name="bd" Background="{TemplateBinding Background}"
+                                CornerRadius="6">
+                            <ContentPresenter HorizontalAlignment="Center"
+                                              VerticalAlignment="Center"/>
+                        </Border>
+                        <ControlTemplate.Triggers>
+                            <Trigger Property="IsMouseOver" Value="True">
+                                <Setter TargetName="bd" Property="Background" Value="#0E2F44"/>
+                            </Trigger>
+                            <Trigger Property="IsPressed" Value="True">
+                                <Setter TargetName="bd" Property="Background" Value="#0A2030"/>
+                            </Trigger>
+                            <Trigger Property="IsEnabled" Value="False">
+                                <Setter TargetName="bd" Property="Background" Value="#37474F"/>
+                                <Setter Property="Foreground" Value="#90A4AE"/>
+                            </Trigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
 
-            <TextBlock Text="Local (N° de sucursal)" Style="{StaticResource FieldLabel}" />
-            <TextBox x:Name="TxtLocal"
-                     Style="{StaticResource FieldInput}"
-                     MaxLength="3"
-                     KeyDown="OnKeyDown" />
+    </Window.Resources>
 
-            <TextBlock x:Name="TxtError"
-                       Foreground="#E74C3C"
-                       FontSize="12"
-                       Margin="0,8,0,0"
-                       TextWrapping="Wrap"
-                       Visibility="Collapsed" />
+    <!-- Tarjeta con sombra sobre fondo semi-transparente -->
+    <Border CornerRadius="12" ClipToBounds="True">
+        <Border.Effect>
+            <DropShadowEffect Color="#000000" BlurRadius="30" Opacity="0.45" ShadowDepth="6"/>
+        </Border.Effect>
 
-            <Button x:Name="BtnIngresar"
-                    Content="INGRESAR"
-                    Style="{StaticResource BtnPrimary}"
-                    Margin="0,20,0,0"
-                    Height="40"
-                    Click="BtnIngresar_Click" />
+        <Grid>
+            <Grid.RowDefinitions>
+                <RowDefinition Height="200"/>   <!-- panel azul con logo -->
+                <RowDefinition Height="*"/>     <!-- formulario -->
+            </Grid.RowDefinitions>
 
-            <TextBlock Text="CrediSoft v2.0 — Credimar S.A."
-                       FontSize="10" Foreground="#999999"
-                       HorizontalAlignment="Center"
-                       Margin="0,20,0,0" />
-        </StackPanel>
-    </Grid>
+            <!-- ══ PANEL SUPERIOR AZUL ══ -->
+            <Border Grid.Row="0" Background="#0E2F44" CornerRadius="12,12,0,0">
+                <Grid>
+                    <!-- Círculo decorativo fondo -->
+                    <Ellipse Width="220" Height="220" Fill="#0A2030" Opacity="0.4"
+                             HorizontalAlignment="Right" VerticalAlignment="Bottom"
+                             Margin="0,0,-60,-60"/>
+                    <Ellipse Width="140" Height="140" Fill="#1A4F6E" Opacity="0.3"
+                             HorizontalAlignment="Left" VerticalAlignment="Top"
+                             Margin="-40,-40,0,0"/>
+
+                    <!-- Botón cerrar X -->
+                    <Button HorizontalAlignment="Right" VerticalAlignment="Top"
+                            Margin="0,10,10,0" Width="32" Height="32"
+                            Background="Transparent" BorderThickness="0"
+                            Cursor="Hand" Focusable="False"
+                            Click="OnCerrarApp" ToolTip="Salir">
+                        <Button.Template>
+                            <ControlTemplate TargetType="Button">
+                                <Border x:Name="bd" Background="Transparent" CornerRadius="16">
+                                    <TextBlock x:Name="ico" Text="✕" FontSize="15" FontWeight="Bold"
+                                               Foreground="#7FB3D3"
+                                               HorizontalAlignment="Center"
+                                               VerticalAlignment="Center"/>
+                                </Border>
+                                <ControlTemplate.Triggers>
+                                    <Trigger Property="IsMouseOver" Value="True">
+                                        <Setter TargetName="bd"  Property="Background" Value="#44FFFFFF"/>
+                                        <Setter TargetName="ico" Property="Foreground" Value="White"/>
+                                    </Trigger>
+                                    <Trigger Property="IsPressed" Value="True">
+                                        <Setter TargetName="bd"  Property="Background" Value="#66FFFFFF"/>
+                                    </Trigger>
+                                </ControlTemplate.Triggers>
+                            </ControlTemplate>
+                        </Button.Template>
+                    </Button>
+
+                    <StackPanel HorizontalAlignment="Center" VerticalAlignment="Center">
+                        <!-- Logo -->
+                        <Border Width="90" Height="90" CornerRadius="45"
+                                Background="White" Margin="0,0,0,10"
+                                HorizontalAlignment="Center">
+                            <Border.Effect>
+                                <DropShadowEffect Color="#000000" BlurRadius="12"
+                                                  Opacity="0.25" ShadowDepth="3"/>
+                            </Border.Effect>
+                            <Image x:Name="ImgLogo"
+                                   Width="72" Height="72" Stretch="Uniform"
+                                   RenderOptions.BitmapScalingMode="HighQuality"/>
+                        </Border>
+
+                        <TextBlock Text="Credimar S.A."
+                                   FontSize="22" FontWeight="Bold" Foreground="White"
+                                   HorizontalAlignment="Center"/>
+                        <TextBlock Text="Sistema de Gestión Comercial"
+                                   FontSize="11" Foreground="#7FB3D3"
+                                   HorizontalAlignment="Center" Margin="0,4,0,0"/>
+                    </StackPanel>
+                </Grid>
+            </Border>
+
+            <!-- ══ FORMULARIO ══ -->
+            <Border Grid.Row="1" Background="#154360" CornerRadius="0,0,12,12">
+                <StackPanel Margin="36,10,36,24" VerticalAlignment="Top">
+
+                    <!-- Usuario -->
+                    <TextBlock Text="CÓDIGO DE USUARIO" Style="{StaticResource FldLbl}"/>
+                    <TextBox x:Name="TxtUsuario" Style="{StaticResource FldBox}"
+                             MaxLength="20" KeyDown="OnKeyDown"/>
+
+                    <!-- Contraseña -->
+                    <TextBlock Text="CONTRASEÑA" Style="{StaticResource FldLbl}"/>
+                    <Grid>
+                        <PasswordBox x:Name="TxtContrasena"
+                                     AutomationProperties.AutomationId="TxtContrasena"
+                                     Style="{StaticResource FldPass}"
+                                     MaxLength="20" KeyDown="OnKeyDown"
+                                     Padding="12,0,44,0"/>
+                        <!-- TextBox visible cuando se muestra contraseña -->
+                        <TextBox x:Name="TxtContrasenaVisible"
+                                 Style="{StaticResource FldBox}"
+                                 MaxLength="20" KeyDown="OnKeyDown"
+                                 Padding="12,0,44,0"
+                                 Visibility="Collapsed"/>
+                        <!-- Botón ojo -->
+                        <Button x:Name="BtnTogglePass"
+                                Width="36" Height="36"
+                                HorizontalAlignment="Right" VerticalAlignment="Center"
+                                Margin="0,0,4,0"
+                                Background="Transparent" BorderThickness="0"
+                                Cursor="Hand" Focusable="False"
+                                Click="OnTogglePassword">
+                            <Button.Template>
+                                <ControlTemplate TargetType="Button">
+                                    <Border Background="Transparent" CornerRadius="4">
+                                        <TextBlock x:Name="IcoOjo" Text="&#xE7B3;"
+                                                   FontFamily="Segoe MDL2 Assets" FontSize="16"
+                                                   Foreground="#7FB3D3" VerticalAlignment="Center"
+                                                   HorizontalAlignment="Center"/>
+                                        <VisualStateManager.VisualStateGroups>
+                                            <VisualStateGroup x:Name="CommonStates">
+                                                <VisualState x:Name="MouseOver">
+                                                    <Storyboard>
+                                                        <ColorAnimation Storyboard.TargetName="IcoOjo"
+                                                            Storyboard.TargetProperty="(TextBlock.Foreground).(SolidColorBrush.Color)"
+                                                            To="#4FC3F7" Duration="0:0:0.1"/>
+                                                    </Storyboard>
+                                                </VisualState>
+                                                <VisualState x:Name="Normal"/>
+                                                <VisualState x:Name="Pressed"/>
+                                            </VisualStateGroup>
+                                        </VisualStateManager.VisualStateGroups>
+                                    </Border>
+                                </ControlTemplate>
+                            </Button.Template>
+                        </Button>
+                    </Grid>
+
+                    <!-- Local: solo informativo, autocompletado desde USUARIOS.LOCAL_USUARIO.
+                         Ya no es seleccionable — el local se toma siempre de la base de datos,
+                         no de una eleccion manual en el login. -->
+                    <TextBlock Text="LOCAL (SUCURSAL)" Style="{StaticResource FldLbl}"/>
+                    <Border x:Name="BtnLocal" Height="38"
+                            BorderThickness="0,0,0,2" BorderBrush="#1F6089"
+                            Background="#1A4F6E">
+                        <Grid Margin="12,0,10,0">
+                            <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
+                                <!-- Número -->
+                                <Border x:Name="ChipNum" Background="#0E2F44"
+                                        CornerRadius="3" Padding="7,2" Margin="0,0,8,0"
+                                        Visibility="Collapsed">
+                                    <TextBlock x:Name="TxtLocalNum" Foreground="#4FC3F7"
+                                               FontSize="12" FontWeight="Bold"/>
+                                </Border>
+                                <!-- Nombre -->
+                                <TextBlock x:Name="TxtLocalNombre"
+                                           Text="Ingrese su usuario..."
+                                           Foreground="#7FB3D3" FontSize="13"
+                                           VerticalAlignment="Center"/>
+                            </StackPanel>
+                        </Grid>
+                    </Border>
+
+                    <!-- Error -->
+                    <Border x:Name="PanelError" Background="#1A1A2E" CornerRadius="5"
+                            Padding="10,7" Margin="0,12,0,0" Visibility="Collapsed">
+                        <StackPanel Orientation="Horizontal">
+                            <TextBlock Text="⚠ " Foreground="#EF9A9A" FontSize="13"
+                                       VerticalAlignment="Center"/>
+                            <TextBlock x:Name="TxtError" Foreground="#EF9A9A"
+                                       FontSize="12" TextWrapping="Wrap"/>
+                        </StackPanel>
+                    </Border>
+
+                    <!-- Botón -->
+                    <Button x:Name="BtnIngresar" Content="INGRESAR"
+                            Style="{StaticResource BtnLogin}"
+                            Margin="0,20,0,0"
+                            Click="BtnIngresar_Click"/>
+
+                    <!-- Versión -->
+                    <TextBlock Text="ElectroMar v2.0  ·  Credimar S.A."
+                               FontSize="10" Foreground="#1F6089"
+                               HorizontalAlignment="Center" Margin="0,14,0,0"/>
+                </StackPanel>
+            </Border>
+
+        </Grid>
+    </Border>
+
 </Window>

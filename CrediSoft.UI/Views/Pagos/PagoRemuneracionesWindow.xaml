@@ -1,0 +1,592 @@
+<Window x:Class="CrediSoft.UI.Views.Pagos.PagoRemuneracionesWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        Title="Pago de Remuneraciones — ElectroMar"
+        Width="1100" Height="740"
+        MinWidth="980" MinHeight="640"
+        WindowStartupLocation="CenterScreen"
+        Background="#EEF4FB"
+        FontFamily="Segoe UI" FontSize="13">
+
+    <Window.Resources>
+        <!-- Botón azul primario -->
+        <Style x:Key="BtnPrimario" TargetType="Button">
+            <Setter Property="Background"      Value="#1565C0"/>
+            <Setter Property="Foreground"      Value="White"/>
+            <Setter Property="FontWeight"      Value="SemiBold"/>
+            <Setter Property="BorderThickness" Value="0"/>
+            <Setter Property="Padding"         Value="16,9"/>
+            <Setter Property="Cursor"          Value="Hand"/>
+            <Setter Property="FontSize"        Value="12"/>
+            <Style.Triggers>
+                <Trigger Property="IsMouseOver" Value="True">
+                    <Setter Property="Background" Value="#0D47A1"/>
+                </Trigger>
+                <Trigger Property="IsEnabled" Value="False">
+                    <Setter Property="Background" Value="#B0BEC5"/>
+                    <Setter Property="Foreground" Value="#ECEFF1"/>
+                </Trigger>
+            </Style.Triggers>
+        </Style>
+        <!-- Botón gris secundario -->
+        <Style x:Key="BtnSecundario" TargetType="Button">
+            <Setter Property="Background"      Value="#ECEFF1"/>
+            <Setter Property="Foreground"      Value="#37474F"/>
+            <Setter Property="FontWeight"      Value="SemiBold"/>
+            <Setter Property="BorderThickness" Value="1"/>
+            <Setter Property="BorderBrush"     Value="#B0BEC5"/>
+            <Setter Property="Padding"         Value="14,8"/>
+            <Setter Property="Cursor"          Value="Hand"/>
+            <Setter Property="FontSize"        Value="12"/>
+            <Style.Triggers>
+                <Trigger Property="IsMouseOver" Value="True">
+                    <Setter Property="Background" Value="#CFD8DC"/>
+                </Trigger>
+            </Style.Triggers>
+        </Style>
+        <!-- Botón buscar azul medio -->
+        <Style x:Key="BtnBuscar" TargetType="Button">
+            <Setter Property="Background"      Value="#1E88E5"/>
+            <Setter Property="Foreground"      Value="White"/>
+            <Setter Property="FontWeight"      Value="SemiBold"/>
+            <Setter Property="BorderThickness" Value="0"/>
+            <Setter Property="Padding"         Value="14,8"/>
+            <Setter Property="Cursor"          Value="Hand"/>
+            <Setter Property="FontSize"        Value="12"/>
+            <Style.Triggers>
+                <Trigger Property="IsMouseOver" Value="True">
+                    <Setter Property="Background" Value="#1565C0"/>
+                </Trigger>
+            </Style.Triggers>
+        </Style>
+        <!-- Label de campo pequeño -->
+        <Style x:Key="Lbl" TargetType="TextBlock">
+            <Setter Property="FontSize"   Value="10"/>
+            <Setter Property="Foreground" Value="#78909C"/>
+            <Setter Property="Margin"     Value="0,0,0,2"/>
+            <Setter Property="FontWeight" Value="SemiBold"/>
+        </Style>
+        <!-- TextBox solo lectura -->
+        <Style x:Key="ValRO" TargetType="TextBox">
+            <Setter Property="Padding"         Value="6,5"/>
+            <Setter Property="BorderBrush"     Value="#BBDEFB"/>
+            <Setter Property="BorderThickness" Value="1"/>
+            <Setter Property="Background"      Value="#F5F9FF"/>
+            <Setter Property="Foreground"      Value="#263238"/>
+            <Setter Property="FontSize"        Value="12"/>
+            <Setter Property="TextAlignment"   Value="Right"/>
+            <Setter Property="IsReadOnly"      Value="True"/>
+        </Style>
+        <!-- TextBox editable -->
+        <Style x:Key="Campo" TargetType="TextBox">
+            <Setter Property="Padding"         Value="6,5"/>
+            <Setter Property="BorderBrush"     Value="#BBDEFB"/>
+            <Setter Property="BorderThickness" Value="1"/>
+            <Setter Property="Background"      Value="White"/>
+            <Setter Property="Foreground"      Value="#212121"/>
+            <Setter Property="FontSize"        Value="13"/>
+            <Style.Triggers>
+                <Trigger Property="IsFocused" Value="True">
+                    <Setter Property="BorderBrush" Value="#1565C0"/>
+                </Trigger>
+            </Style.Triggers>
+        </Style>
+    </Window.Resources>
+
+    <DockPanel>
+
+        <!-- ══ HEADER ══ -->
+        <Border DockPanel.Dock="Top" Background="#0E2F44" Padding="20,12">
+            <Grid>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="Auto"/>
+                    <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="Auto"/>
+                </Grid.ColumnDefinitions>
+
+                <!-- Ícono circular -->
+                <Border Grid.Column="0" Width="44" Height="44"
+                        CornerRadius="22" Background="#1565C0"
+                        VerticalAlignment="Center" Margin="0,0,14,0">
+                    <TextBlock Text="&#xE8C7;" FontFamily="Segoe MDL2 Assets"
+                               FontSize="20" Foreground="White"
+                               HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                </Border>
+
+                <!-- Títulos -->
+                <StackPanel Grid.Column="1" VerticalAlignment="Center">
+                    <TextBlock Text="PAGO DE REMUNERACIONES"
+                               FontSize="16" FontWeight="Bold" Foreground="White"/>
+                    <TextBlock Text="Pagos generados pendientes de confirmación"
+                               FontSize="11" Foreground="#90CAF9" Margin="0,2,0,0"/>
+                </StackPanel>
+
+                <!-- Cerrar -->
+                <Button Grid.Column="2" Style="{StaticResource BtnSecundario}"
+                        Padding="14,8" Click="OnCerrar">
+                    <StackPanel Orientation="Horizontal">
+                        <TextBlock Text="&#xE711;" FontFamily="Segoe MDL2 Assets"
+                                   FontSize="12" VerticalAlignment="Center" Margin="0,0,6,0"/>
+                        <TextBlock Text="Cerrar" VerticalAlignment="Center"/>
+                    </StackPanel>
+                </Button>
+            </Grid>
+        </Border>
+
+        <!-- ══ BARRA DE FILTROS ══ -->
+        <Border DockPanel.Dock="Top" Background="White"
+                BorderBrush="#BBDEFB" BorderThickness="0,0,0,1" Padding="16,10">
+            <Grid>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="Auto"/>  <!-- label CI -->
+                    <ColumnDefinition Width="150"/>   <!-- TxtCi -->
+                    <ColumnDefinition Width="Auto"/>  <!-- Buscar + Lista -->
+                    <ColumnDefinition Width="20"/>    <!-- sep -->
+                    <ColumnDefinition Width="Auto"/>  <!-- label Período -->
+                    <ColumnDefinition Width="130"/>   <!-- DpDesde -->
+                    <ColumnDefinition Width="Auto"/>  <!-- al -->
+                    <ColumnDefinition Width="130"/>   <!-- DpHasta -->
+                    <ColumnDefinition Width="*"/>     <!-- nombre funcionario -->
+                </Grid.ColumnDefinitions>
+
+                <!-- CI Funcionario -->
+                <TextBlock Grid.Column="0" Text="C.I. Funcionario:"
+                           FontWeight="SemiBold" Foreground="#37474F"
+                           VerticalAlignment="Center" Margin="0,0,8,0" FontSize="12"/>
+                <TextBox x:Name="TxtCi" Grid.Column="1"
+                         Style="{StaticResource Campo}" Height="34"
+                         VerticalContentAlignment="Center"
+                         KeyDown="OnCiKeyDown"/>
+
+                <!-- Botones búsqueda -->
+                <StackPanel Grid.Column="2" Orientation="Horizontal" Margin="8,0,0,0">
+                    <Button Style="{StaticResource BtnBuscar}" Margin="0,0,6,0"
+                            Height="34" Click="OnBuscar">
+                        <StackPanel Orientation="Horizontal">
+                            <TextBlock Text="&#xE721;" FontFamily="Segoe MDL2 Assets"
+                                       FontSize="13" VerticalAlignment="Center" Margin="0,0,5,0"/>
+                            <TextBlock Text="Buscar" VerticalAlignment="Center"/>
+                        </StackPanel>
+                    </Button>
+                    <Button Style="{StaticResource BtnSecundario}" Height="34"
+                            ToolTip="Seleccionar funcionario de la lista" Click="OnListar">
+                        <StackPanel Orientation="Horizontal">
+                            <TextBlock Text="&#xE716;" FontFamily="Segoe MDL2 Assets"
+                                       FontSize="13" VerticalAlignment="Center" Margin="0,0,5,0"/>
+                            <TextBlock Text="Lista" VerticalAlignment="Center"/>
+                        </StackPanel>
+                    </Button>
+                </StackPanel>
+
+                <!-- Período -->
+                <TextBlock Grid.Column="4" Text="Período:"
+                           FontWeight="SemiBold" Foreground="#37474F"
+                           VerticalAlignment="Center" Margin="0,0,8,0" FontSize="12"/>
+                <DatePicker x:Name="DpDesde" Grid.Column="5" Width="130" Margin="0,0,6,0"
+                            Style="{StaticResource ModernDP}"
+                            SelectedDateChanged="OnFiltroChanged"/>
+                <TextBlock Grid.Column="6" Text="al" Foreground="#78909C"
+                           VerticalAlignment="Center" Margin="0,0,6,0" FontSize="12"/>
+                <DatePicker x:Name="DpHasta" Grid.Column="7" Width="130"
+                            Style="{StaticResource ModernDP}"
+                            SelectedDateChanged="OnFiltroChanged"/>
+
+                <!-- Nombre funcionario encontrado -->
+                <TextBlock x:Name="TxtNombreFuncionario" Grid.Column="8"
+                           FontWeight="Bold" Foreground="#1565C0"
+                           VerticalAlignment="Center" Margin="16,0,0,0" FontSize="13"/>
+            </Grid>
+        </Border>
+
+        <!-- ══ PIE — ACCIÓN ══ -->
+        <Border DockPanel.Dock="Bottom" Background="White"
+                BorderBrush="#BBDEFB" BorderThickness="0,1,0,0" Padding="16,12">
+            <Grid>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="Auto"/>
+                    <ColumnDefinition Width="12"/>
+                    <ColumnDefinition Width="Auto"/>
+                </Grid.ColumnDefinitions>
+
+                <!-- Neto + Método -->
+                <StackPanel Grid.Column="0" Orientation="Horizontal" VerticalAlignment="Center">
+                    <Border Background="#0E2F44" CornerRadius="6"
+                            Padding="14,8" Margin="0,0,16,0">
+                        <StackPanel Orientation="Horizontal">
+                            <TextBlock Text="NETO A COBRAR" Foreground="#90CAF9"
+                                       FontSize="10" FontWeight="Bold"
+                                       VerticalAlignment="Center" Margin="0,0,10,0"/>
+                            <TextBox x:Name="TxtNeto" IsReadOnly="True" Width="150"
+                                     Padding="8,4" FontSize="16" FontWeight="Bold"
+                                     TextAlignment="Right" BorderThickness="0"
+                                     Foreground="White" Background="Transparent"/>
+                            <TextBlock Text="Gs." Foreground="#90CAF9" FontSize="12"
+                                       VerticalAlignment="Center" Margin="4,0,0,0"/>
+                        </StackPanel>
+                    </Border>
+
+                    <TextBlock Text="Forma de pago:" FontSize="11" FontWeight="SemiBold"
+                               Foreground="#546E7A" VerticalAlignment="Center" Margin="0,0,8,0"/>
+                    <ComboBox x:Name="CboMetodo" Width="140" Padding="8,5" FontSize="12"
+                              Height="34" VerticalContentAlignment="Center"
+                              BorderBrush="#BBDEFB">
+                        <ComboBoxItem Content="EFECTIVO"      IsSelected="True"/>
+                        <ComboBoxItem Content="TRANSFERENCIA"/>
+                        <ComboBoxItem Content="TARJETA"/>
+                        <ComboBoxItem Content="CHEQUE"/>
+                        <ComboBoxItem Content="OTRO"/>
+                    </ComboBox>
+                </StackPanel>
+
+                <!-- Confirmar pago -->
+                <Button x:Name="BtnGuardar" Grid.Column="1"
+                        Style="{StaticResource BtnPrimario}" IsEnabled="False"
+                        Height="40" Padding="18,0" Click="OnGuardar">
+                    <StackPanel Orientation="Horizontal">
+                        <TextBlock Text="&#xE74E;" FontFamily="Segoe MDL2 Assets"
+                                   FontSize="14" VerticalAlignment="Center" Margin="0,0,8,0"/>
+                        <TextBlock Text="Confirmar pago  (F5)" VerticalAlignment="Center"
+                                   FontSize="13" FontWeight="Bold"/>
+                    </StackPanel>
+                </Button>
+
+                <!-- Cerrar -->
+                <Button Grid.Column="3" Style="{StaticResource BtnSecundario}"
+                        Height="40" Padding="16,0" Click="OnCerrar">
+                    <TextBlock Text="Cerrar" VerticalAlignment="Center"/>
+                </Button>
+            </Grid>
+        </Border>
+
+        <!-- ══ CONTENIDO PRINCIPAL ══ -->
+        <Grid Margin="14,10,14,10">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="210"/>  <!-- Grilla pendientes -->
+                <RowDefinition Height="10"/>   <!-- sep -->
+                <RowDefinition Height="*"/>    <!-- Detalle -->
+            </Grid.RowDefinitions>
+
+            <!-- ── GRILLA PENDIENTES ── -->
+            <Border Grid.Row="0" BorderBrush="#BBDEFB" BorderThickness="1"
+                    CornerRadius="6" Background="White">
+                <Border.Effect>
+                    <DropShadowEffect BlurRadius="8" Opacity="0.06" ShadowDepth="2" Direction="270" Color="Black"/>
+                </Border.Effect>
+                <DockPanel>
+                    <Border DockPanel.Dock="Top" Background="#1565C0"
+                            Padding="12,8" CornerRadius="6,6,0,0">
+                        <Grid>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="*"/>
+                                <ColumnDefinition Width="Auto"/>
+                            </Grid.ColumnDefinitions>
+                            <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
+                                <TextBlock Text="&#xE9D5;" FontFamily="Segoe MDL2 Assets"
+                                           FontSize="13" Foreground="White"
+                                           VerticalAlignment="Center" Margin="0,0,8,0"/>
+                                <TextBlock Text="PAGOS GENERADOS PENDIENTES"
+                                           FontWeight="Bold" Foreground="White" FontSize="11"/>
+                                <TextBlock Text="— clic para ver el detalle"
+                                           Foreground="#90CAF9" FontSize="11" Margin="4,0,0,0"/>
+                            </StackPanel>
+                            <TextBlock x:Name="TxtContador" Grid.Column="1"
+                                       Foreground="#BBDEFB" FontSize="11"
+                                       VerticalAlignment="Center"/>
+                        </Grid>
+                    </Border>
+
+                    <DataGrid x:Name="GridPendientes"
+                              AutoGenerateColumns="False"
+                              IsReadOnly="True"
+                              SelectionMode="Single"
+                              GridLinesVisibility="Horizontal"
+                              HorizontalGridLinesBrush="#EEF4FB"
+                              BorderThickness="0"
+                              RowBackground="White"
+                              AlternatingRowBackground="#F5F9FF"
+                              HeadersVisibility="Column"
+                              CanUserResizeRows="False"
+                              SelectionChanged="OnPendienteSeleccionado"
+                              FontSize="12">
+                        <DataGrid.Resources>
+                            <SolidColorBrush x:Key="{x:Static SystemColors.HighlightBrushKey}"      Color="#1565C0"/>
+                            <SolidColorBrush x:Key="{x:Static SystemColors.HighlightTextBrushKey}"  Color="White"/>
+                            <SolidColorBrush x:Key="{x:Static SystemColors.InactiveSelectionHighlightBrushKey}"     Color="#BBDEFB"/>
+                            <SolidColorBrush x:Key="{x:Static SystemColors.InactiveSelectionHighlightTextBrushKey}" Color="#0E2F44"/>
+                        </DataGrid.Resources>
+                        <DataGrid.RowStyle>
+                            <Style TargetType="DataGridRow">
+                                <Setter Property="Cursor" Value="Hand"/>
+                                <Style.Triggers>
+                                    <Trigger Property="IsSelected" Value="True">
+                                        <Setter Property="FontWeight" Value="SemiBold"/>
+                                    </Trigger>
+                                    <Trigger Property="IsMouseOver" Value="True">
+                                        <Setter Property="Background" Value="#EEF4FB"/>
+                                    </Trigger>
+                                </Style.Triggers>
+                            </Style>
+                        </DataGrid.RowStyle>
+                        <DataGrid.ColumnHeaderStyle>
+                            <Style TargetType="DataGridColumnHeader">
+                                <Setter Property="Background"      Value="#EEF4FB"/>
+                                <Setter Property="Foreground"      Value="#37474F"/>
+                                <Setter Property="FontWeight"      Value="SemiBold"/>
+                                <Setter Property="Padding"         Value="10,6"/>
+                                <Setter Property="BorderBrush"     Value="#BBDEFB"/>
+                                <Setter Property="BorderThickness" Value="0,0,1,1"/>
+                                <Setter Property="FontSize"        Value="11"/>
+                            </Style>
+                        </DataGrid.ColumnHeaderStyle>
+                        <DataGrid.Columns>
+                            <DataGridTextColumn Header="ID"            Binding="{Binding IdGps}"        Width="55"/>
+                            <DataGridTextColumn Header="Funcionario"   Binding="{Binding Nombre}"       Width="*"/>
+                            <DataGridTextColumn Header="Fecha"         Binding="{Binding FechaFmt}"     Width="100"/>
+                            <DataGridTextColumn Header="Salario"       Binding="{Binding SalarioFmt}"   Width="115"/>
+                            <DataGridTextColumn Header="T. Ingresos"   Binding="{Binding IngresosFmt}"  Width="115"/>
+                            <DataGridTextColumn Header="T. Descuentos" Binding="{Binding EgresosFmt}"   Width="115"/>
+                            <DataGridTextColumn Header="Neto"          Binding="{Binding NetoFmt}"      Width="115"/>
+                        </DataGrid.Columns>
+                    </DataGrid>
+                </DockPanel>
+            </Border>
+
+            <!-- ── DETALLE ── -->
+            <Border Grid.Row="2" BorderBrush="#BBDEFB" BorderThickness="1"
+                    CornerRadius="6" Background="White">
+                <Border.Effect>
+                    <DropShadowEffect BlurRadius="8" Opacity="0.06" ShadowDepth="2" Direction="270" Color="Black"/>
+                </Border.Effect>
+                <DockPanel>
+                    <Border DockPanel.Dock="Top" Background="#0E2F44"
+                            Padding="12,8" CornerRadius="6,6,0,0">
+                        <StackPanel Orientation="Horizontal">
+                            <TextBlock Text="&#xE8A5;" FontFamily="Segoe MDL2 Assets"
+                                       FontSize="13" Foreground="#90CAF9"
+                                       VerticalAlignment="Center" Margin="0,0,8,0"/>
+                            <TextBlock x:Name="TxtHeaderDetalle"
+                                       Text="DETALLE — seleccioná un registro de la lista"
+                                       FontWeight="Bold" Foreground="White" FontSize="11"/>
+                        </StackPanel>
+                    </Border>
+
+                    <ScrollViewer VerticalScrollBarVisibility="Auto">
+                        <Grid Margin="14,12,14,12">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="*"/>
+                                <ColumnDefinition Width="16"/>
+                                <ColumnDefinition Width="*"/>
+                            </Grid.ColumnDefinitions>
+
+                            <!-- ─ ASIGNACIONES ─ -->
+                            <StackPanel Grid.Column="0">
+                                <!-- Cabecera azul -->
+                                <Border Background="#1565C0" Padding="12,8" CornerRadius="6,6,0,0">
+                                    <Grid>
+                                        <Grid.ColumnDefinitions>
+                                            <ColumnDefinition Width="*"/>
+                                            <ColumnDefinition Width="70"/>
+                                            <ColumnDefinition Width="115"/>
+                                        </Grid.ColumnDefinitions>
+                                        <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
+                                            <TextBlock Text="+" Foreground="#90CAF9" FontSize="14"
+                                                       FontWeight="Bold" Margin="0,0,6,0"
+                                                       VerticalAlignment="Center"/>
+                                            <TextBlock Text="ASIGNACIONES" FontWeight="Bold"
+                                                       Foreground="White" FontSize="11"
+                                                       VerticalAlignment="Center"/>
+                                        </StackPanel>
+                                        <TextBlock Grid.Column="1" Text="%" Foreground="#90CAF9"
+                                                   FontSize="10" FontWeight="SemiBold"
+                                                   HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                                        <TextBlock Grid.Column="2" Text="SUBTOTAL Gs." Foreground="#90CAF9"
+                                                   FontSize="10" FontWeight="SemiBold"
+                                                   HorizontalAlignment="Right" VerticalAlignment="Center"/>
+                                    </Grid>
+                                </Border>
+
+                                <!-- Filas asignaciones -->
+                                <Border BorderBrush="#BBDEFB" BorderThickness="1,0,1,0">
+                                    <Grid Margin="10,8,10,8">
+                                        <Grid.RowDefinitions>
+                                            <RowDefinition Height="Auto"/><RowDefinition Height="5"/>
+                                            <RowDefinition Height="Auto"/><RowDefinition Height="5"/>
+                                            <RowDefinition Height="Auto"/><RowDefinition Height="5"/>
+                                            <RowDefinition Height="Auto"/><RowDefinition Height="5"/>
+                                            <RowDefinition Height="Auto"/><RowDefinition Height="5"/>
+                                            <RowDefinition Height="Auto"/><RowDefinition Height="5"/>
+                                            <RowDefinition Height="Auto"/>
+                                        </Grid.RowDefinitions>
+                                        <Grid.ColumnDefinitions>
+                                            <ColumnDefinition Width="*"/>
+                                            <ColumnDefinition Width="70"/>
+                                            <ColumnDefinition Width="115"/>
+                                        </Grid.ColumnDefinitions>
+
+                                        <TextBlock Grid.Row="0" Grid.Column="0" Text="Salario fijo"
+                                                   VerticalAlignment="Center" FontSize="12" Foreground="#37474F"/>
+                                        <TextBox x:Name="TxtSalario" Grid.Row="0" Grid.Column="2" Style="{StaticResource ValRO}"/>
+
+                                        <TextBlock Grid.Row="2" Grid.Column="0" Text="Venta"
+                                                   VerticalAlignment="Center" FontSize="12" Foreground="#37474F"/>
+                                        <TextBox x:Name="TxtPorcVenta" Grid.Row="2" Grid.Column="1"
+                                                 Style="{StaticResource ValRO}" TextAlignment="Center"/>
+                                        <TextBox x:Name="TxtTotalVenta" Grid.Row="2" Grid.Column="2" Style="{StaticResource ValRO}"/>
+
+                                        <TextBlock Grid.Row="4" Grid.Column="0" Text="Cobranza"
+                                                   VerticalAlignment="Center" FontSize="12" Foreground="#37474F"/>
+                                        <TextBox x:Name="TxtPorcCobranza" Grid.Row="4" Grid.Column="1"
+                                                 Style="{StaticResource ValRO}" TextAlignment="Center"/>
+                                        <TextBox x:Name="TxtTotalCobranza" Grid.Row="4" Grid.Column="2" Style="{StaticResource ValRO}"/>
+
+                                        <TextBlock Grid.Row="6" Grid.Column="0" Text="Plus"
+                                                   VerticalAlignment="Center" FontSize="12" Foreground="#37474F"/>
+                                        <TextBox x:Name="TxtPlus" Grid.Row="6" Grid.Column="2" Style="{StaticResource ValRO}"/>
+
+                                        <TextBlock Grid.Row="8" Grid.Column="0" Text="Horas extras"
+                                                   VerticalAlignment="Center" FontSize="12" Foreground="#37474F"/>
+                                        <TextBox x:Name="TxtHorasExtras" Grid.Row="8" Grid.Column="2" Style="{StaticResource ValRO}"/>
+
+                                        <TextBlock Grid.Row="10" Grid.Column="0" Text="Bonificación"
+                                                   VerticalAlignment="Center" FontSize="12" Foreground="#37474F"/>
+                                        <TextBox x:Name="TxtBonificacion" Grid.Row="10" Grid.Column="2" Style="{StaticResource ValRO}"/>
+
+                                        <TextBlock Grid.Row="12" Grid.Column="0" Text="Otras comisiones"
+                                                   VerticalAlignment="Center" FontSize="12" Foreground="#37474F"/>
+                                        <TextBox x:Name="TxtOtrasComisiones" Grid.Row="12" Grid.Column="2" Style="{StaticResource ValRO}"/>
+                                    </Grid>
+                                </Border>
+
+                                <!-- Total ingresos -->
+                                <Border Background="#E3F2FD" BorderBrush="#BBDEFB"
+                                        BorderThickness="1,1,1,1" Padding="12,9" CornerRadius="0,0,6,6">
+                                    <Grid>
+                                        <Grid.ColumnDefinitions>
+                                            <ColumnDefinition Width="*"/>
+                                            <ColumnDefinition Width="115"/>
+                                        </Grid.ColumnDefinitions>
+                                        <TextBlock Text="TOTAL INGRESOS Gs." FontWeight="Bold"
+                                                   Foreground="#1565C0" VerticalAlignment="Center" FontSize="12"/>
+                                        <TextBox x:Name="TxtTotalIngresos" Grid.Column="1"
+                                                 Style="{StaticResource ValRO}"
+                                                 FontWeight="Bold" Foreground="#1565C0" FontSize="13"
+                                                 Background="Transparent" BorderThickness="0"/>
+                                    </Grid>
+                                </Border>
+
+                                <!-- Nota asignación -->
+                                <TextBlock Style="{StaticResource Lbl}" Text="NOTA ASIGNACIÓN" Margin="0,10,0,3"/>
+                                <TextBox x:Name="TxtNotaAsignacion" Padding="6,5" FontSize="11" Height="38"
+                                         BorderBrush="#BBDEFB" BorderThickness="1"
+                                         TextWrapping="Wrap" IsReadOnly="True" Background="#F5F9FF"
+                                         Foreground="#546E7A"/>
+                            </StackPanel>
+
+                            <!-- ─ DESCUENTOS ─ -->
+                            <StackPanel Grid.Column="2">
+                                <!-- Cabecera roja -->
+                                <Border Background="#C62828" Padding="12,8" CornerRadius="6,6,0,0">
+                                    <Grid>
+                                        <Grid.ColumnDefinitions>
+                                            <ColumnDefinition Width="*"/>
+                                            <ColumnDefinition Width="70"/>
+                                            <ColumnDefinition Width="115"/>
+                                        </Grid.ColumnDefinitions>
+                                        <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
+                                            <TextBlock Text="−" Foreground="#FFCDD2" FontSize="16"
+                                                       FontWeight="Bold" Margin="0,0,6,0"
+                                                       VerticalAlignment="Center"/>
+                                            <TextBlock Text="DESCUENTOS" FontWeight="Bold"
+                                                       Foreground="White" FontSize="11"
+                                                       VerticalAlignment="Center"/>
+                                        </StackPanel>
+                                        <TextBlock Grid.Column="1" Text="%" Foreground="#FFCDD2"
+                                                   FontSize="10" FontWeight="SemiBold"
+                                                   HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                                        <TextBlock Grid.Column="2" Text="SUBTOTAL Gs." Foreground="#FFCDD2"
+                                                   FontSize="10" FontWeight="SemiBold"
+                                                   HorizontalAlignment="Right" VerticalAlignment="Center"/>
+                                    </Grid>
+                                </Border>
+
+                                <!-- Filas descuentos -->
+                                <Border BorderBrush="#FFCDD2" BorderThickness="1,0,1,0">
+                                    <Grid Margin="10,8,10,8">
+                                        <Grid.RowDefinitions>
+                                            <RowDefinition Height="Auto"/><RowDefinition Height="5"/>
+                                            <RowDefinition Height="Auto"/><RowDefinition Height="5"/>
+                                            <RowDefinition Height="Auto"/><RowDefinition Height="5"/>
+                                            <RowDefinition Height="Auto"/><RowDefinition Height="5"/>
+                                            <RowDefinition Height="Auto"/><RowDefinition Height="5"/>
+                                            <RowDefinition Height="Auto"/><RowDefinition Height="5"/>
+                                            <RowDefinition Height="Auto"/>
+                                        </Grid.RowDefinitions>
+                                        <Grid.ColumnDefinitions>
+                                            <ColumnDefinition Width="*"/>
+                                            <ColumnDefinition Width="70"/>
+                                            <ColumnDefinition Width="115"/>
+                                        </Grid.ColumnDefinitions>
+
+                                        <TextBlock Grid.Row="0" Grid.Column="0" Text="Ausencias"
+                                                   VerticalAlignment="Center" FontSize="12" Foreground="#37474F"/>
+                                        <TextBox x:Name="TxtAusencias" Grid.Row="0" Grid.Column="2" Style="{StaticResource ValRO}"/>
+
+                                        <TextBlock Grid.Row="2" Grid.Column="0" Text="Adelantos"
+                                                   VerticalAlignment="Center" FontSize="12" Foreground="#37474F"/>
+                                        <TextBox x:Name="TxtAdelantos" Grid.Row="2" Grid.Column="2" Style="{StaticResource ValRO}"/>
+
+                                        <TextBlock Grid.Row="4" Grid.Column="0" Text="IPS"
+                                                   VerticalAlignment="Center" FontSize="12" Foreground="#37474F"/>
+                                        <TextBox x:Name="TxtIps" Grid.Row="4" Grid.Column="2" Style="{StaticResource ValRO}"/>
+
+                                        <TextBlock Grid.Row="6" Grid.Column="0" Text="Cuota/s"
+                                                   VerticalAlignment="Center" FontSize="12" Foreground="#37474F"/>
+                                        <TextBox x:Name="TxtCuotas" Grid.Row="6" Grid.Column="2" Style="{StaticResource ValRO}"/>
+
+                                        <TextBlock Grid.Row="8" Grid.Column="0" Text="Multas"
+                                                   VerticalAlignment="Center" FontSize="12" Foreground="#37474F"/>
+                                        <TextBox x:Name="TxtMultas" Grid.Row="8" Grid.Column="2" Style="{StaticResource ValRO}"/>
+
+                                        <TextBlock Grid.Row="10" Grid.Column="0" Text="Otros"
+                                                   VerticalAlignment="Center" FontSize="12" Foreground="#37474F"/>
+                                        <TextBox x:Name="TxtOtros" Grid.Row="10" Grid.Column="2" Style="{StaticResource ValRO}"/>
+
+                                        <TextBlock Grid.Row="12" Grid.Column="0" Text="X"
+                                                   VerticalAlignment="Center" FontSize="12" Foreground="#37474F"/>
+                                        <TextBox x:Name="TxtEquis" Grid.Row="12" Grid.Column="2" Style="{StaticResource ValRO}"/>
+                                    </Grid>
+                                </Border>
+
+                                <!-- Total descuentos -->
+                                <Border Background="#FFEBEE" BorderBrush="#FFCDD2"
+                                        BorderThickness="1,1,1,1" Padding="12,9" CornerRadius="0,0,6,6">
+                                    <Grid>
+                                        <Grid.ColumnDefinitions>
+                                            <ColumnDefinition Width="*"/>
+                                            <ColumnDefinition Width="115"/>
+                                        </Grid.ColumnDefinitions>
+                                        <TextBlock Text="TOTAL DESCUENTOS Gs." FontWeight="Bold"
+                                                   Foreground="#C62828" VerticalAlignment="Center" FontSize="12"/>
+                                        <TextBox x:Name="TxtTotalEgresos" Grid.Column="1"
+                                                 Style="{StaticResource ValRO}"
+                                                 FontWeight="Bold" Foreground="#C62828" FontSize="13"
+                                                 Background="Transparent" BorderThickness="0"/>
+                                    </Grid>
+                                </Border>
+
+                                <!-- Nota egreso -->
+                                <TextBlock Style="{StaticResource Lbl}" Text="NOTA DESCUENTOS" Margin="0,10,0,3"/>
+                                <TextBox x:Name="TxtNotaEgreso" Padding="6,5" FontSize="11" Height="38"
+                                         BorderBrush="#FFCDD2" BorderThickness="1"
+                                         TextWrapping="Wrap" IsReadOnly="True" Background="#FFF8F8"
+                                         Foreground="#546E7A"/>
+                            </StackPanel>
+                        </Grid>
+                    </ScrollViewer>
+                </DockPanel>
+            </Border>
+        </Grid>
+
+    </DockPanel>
+</Window>

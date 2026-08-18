@@ -32,7 +32,17 @@ internal static class SpHelper
         p.Add("@msg", dbType: DbType.String, direction: ParameterDirection.Output, size: 200);
         await conn.ExecuteAsync(sp, p, commandType: CommandType.StoredProcedure);
         var msg = p.Get<string?>("@msg");
-        if (!string.IsNullOrWhiteSpace(msg))
+        // Estos SPs legados (AGREGAR_PROVEEDOR_CS, AGREGAR_BANCO_CS, ELIMINAR_*_CS, etc.)
+        // escriben literalmente 'GUARDADO' (alta/edición) o 'ELIMINADO' (baja) en @msg
+        // cuando la operación fue exitosa — NO son mensajes de error. Antes esta
+        // comparación trataba cualquier @msg no vacío como falla, así que una operación
+        // exitosa terminaba mostrando "Error: GUARDADO"/"Error: ELIMINADO" al usuario
+        // pese a que el registro sí se había insertado/borrado (bug real detectado:
+        // proveedor de prueba quedó guardado en la base con el diálogo mostrando error).
+        var esExito = string.IsNullOrWhiteSpace(msg)
+            || string.Equals(msg, "GUARDADO", StringComparison.OrdinalIgnoreCase)
+            || string.Equals(msg, "ELIMINADO", StringComparison.OrdinalIgnoreCase);
+        if (!esExito)
             throw new InvalidOperationException(msg);
     }
 }

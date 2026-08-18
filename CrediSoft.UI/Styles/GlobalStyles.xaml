@@ -101,6 +101,117 @@
         <Setter Property="FontSize" Value="12" />
     </Style>
 
+    <!-- Estilos de celda para DataGrid de artículos -->
+    <Style x:Key="CeldaGrid" TargetType="TextBlock">
+        <Setter Property="VerticalAlignment" Value="Center"/>
+        <Setter Property="Padding" Value="4,0"/>
+        <Setter Property="FontSize" Value="11"/>
+    </Style>
+    <Style x:Key="CeldaGridDer" TargetType="TextBlock" BasedOn="{StaticResource CeldaGrid}">
+        <Setter Property="TextAlignment" Value="Right"/>
+        <Setter Property="FontFamily" Value="Consolas"/>
+    </Style>
+    <Style x:Key="CeldaGridCen" TargetType="TextBlock" BasedOn="{StaticResource CeldaGrid}">
+        <Setter Property="TextAlignment" Value="Center"/>
+    </Style>
+
+    <!-- ComboBox oscuro para diálogos de tema dark -->
+    <Style x:Key="DarkComboBox" TargetType="ComboBox">
+        <Setter Property="Background"       Value="#1E2A34" />
+        <Setter Property="Foreground"       Value="White" />
+        <Setter Property="BorderBrush"      Value="#3E566C" />
+        <Setter Property="BorderThickness"  Value="1" />
+        <Setter Property="Padding"          Value="6,0,4,0" />
+        <Setter Property="FontSize"         Value="11" />
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="ComboBox">
+                    <Grid>
+                        <Border x:Name="border"
+                                Background="{TemplateBinding Background}"
+                                BorderBrush="{TemplateBinding BorderBrush}"
+                                BorderThickness="{TemplateBinding BorderThickness}"
+                                CornerRadius="3">
+                            <Grid>
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="*" />
+                                    <ColumnDefinition Width="20" />
+                                </Grid.ColumnDefinitions>
+                                <ContentPresenter x:Name="ContentSite"
+                                                  Grid.Column="0"
+                                                  Content="{TemplateBinding SelectionBoxItem}"
+                                                  ContentTemplate="{TemplateBinding SelectionBoxItemTemplate}"
+                                                  Margin="{TemplateBinding Padding}"
+                                                  VerticalAlignment="Center"
+                                                  HorizontalAlignment="Left" />
+                                <TextBlock Grid.Column="1"
+                                           Text="▾"
+                                           Foreground="White"
+                                           FontSize="10"
+                                           VerticalAlignment="Center"
+                                           HorizontalAlignment="Center"
+                                           IsHitTestVisible="False" />
+                                <ToggleButton Grid.ColumnSpan="2"
+                                              Focusable="False"
+                                              IsChecked="{Binding IsDropDownOpen, Mode=TwoWay, RelativeSource={RelativeSource TemplatedParent}}"
+                                              ClickMode="Press">
+                                    <ToggleButton.Template>
+                                        <ControlTemplate TargetType="ToggleButton">
+                                            <Border Background="Transparent" />
+                                        </ControlTemplate>
+                                    </ToggleButton.Template>
+                                </ToggleButton>
+                            </Grid>
+                        </Border>
+                        <Popup x:Name="Popup"
+                               Placement="Bottom"
+                               IsOpen="{TemplateBinding IsDropDownOpen}"
+                               AllowsTransparency="True"
+                               Focusable="False"
+                               PopupAnimation="Slide">
+                            <Border x:Name="DropDownBorder"
+                                    Background="#1E2A34"
+                                    BorderBrush="#3E566C"
+                                    BorderThickness="1"
+                                    MinWidth="{TemplateBinding ActualWidth}"
+                                    MaxHeight="{TemplateBinding MaxDropDownHeight}">
+                                <ScrollViewer SnapsToDevicePixels="True">
+                                    <StackPanel IsItemsHost="True"
+                                                KeyboardNavigation.DirectionalNavigation="Contained" />
+                                </ScrollViewer>
+                            </Border>
+                        </Popup>
+                    </Grid>
+                    <ControlTemplate.Triggers>
+                        <Trigger Property="IsMouseOver" Value="True">
+                            <Setter TargetName="border" Property="BorderBrush" Value="#6A8FAF" />
+                        </Trigger>
+                        <Trigger Property="IsDropDownOpen" Value="True">
+                            <Setter TargetName="border" Property="BorderBrush" Value="#6A8FAF" />
+                        </Trigger>
+                    </ControlTemplate.Triggers>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+        <Style.Resources>
+            <Style TargetType="ComboBoxItem">
+                <Setter Property="Background"  Value="#1E2A34" />
+                <Setter Property="Foreground"  Value="White" />
+                <Setter Property="Padding"     Value="8,5" />
+                <Setter Property="FontSize"    Value="11" />
+                <Style.Triggers>
+                    <Trigger Property="IsMouseOver" Value="True">
+                        <Setter Property="Background" Value="#3E566C" />
+                    </Trigger>
+                    <Trigger Property="IsSelected" Value="True">
+                        <Setter Property="Background" Value="#E67E22" />
+                        <Setter Property="FontWeight" Value="SemiBold" />
+                    </Trigger>
+                </Style.Triggers>
+            </Style>
+        </Style.Resources>
+    </Style>
+
     <!-- DataGrid estilo CrediSoft -->
     <Style x:Key="CrediGrid" TargetType="DataGrid">
         <Setter Property="AutoGenerateColumns" Value="False" />
@@ -122,6 +233,28 @@
                 </Style>
             </Setter.Value>
         </Setter>
+    </Style>
+
+
+    <!-- DatePicker moderno — borde azul, sin botón de calendario visible, fondo blanco limpio -->
+    <Style x:Key="ModernDP" TargetType="DatePicker">
+        <Setter Property="Background"       Value="White"/>
+        <Setter Property="BorderBrush"      Value="#BBDEFB"/>
+        <Setter Property="BorderThickness"  Value="1"/>
+        <Setter Property="Padding"          Value="8,5"/>
+        <Setter Property="FontSize"         Value="13"/>
+        <Setter Property="FontFamily"       Value="Segoe UI"/>
+        <Setter Property="Foreground"       Value="#212121"/>
+        <Setter Property="Height"           Value="34"/>
+        <Setter Property="VerticalContentAlignment" Value="Center"/>
+        <Style.Triggers>
+            <Trigger Property="IsMouseOver" Value="True">
+                <Setter Property="BorderBrush" Value="#1565C0"/>
+            </Trigger>
+            <Trigger Property="IsFocused" Value="True">
+                <Setter Property="BorderBrush" Value="#1565C0"/>
+            </Trigger>
+        </Style.Triggers>
     </Style>
 
 </ResourceDictionary>

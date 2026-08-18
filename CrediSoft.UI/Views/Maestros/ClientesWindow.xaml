@@ -2,8 +2,8 @@
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         Title="Gestión de Clientes"
-        Width="1150" Height="740"
-        MinWidth="960" MinHeight="620"
+        Width="1020" Height="660"
+        MinWidth="860" MinHeight="540"
         WindowStartupLocation="CenterOwner"
         Background="#F0F2F5">
 
@@ -32,7 +32,7 @@
                     <Setter Property="Foreground" Value="#374151" />
                 </Trigger>
                 <Trigger Property="IsKeyboardFocused" Value="True">
-                    <Setter Property="BorderBrush" Value="#FF8C00" />
+                    <Setter Property="BorderBrush" Value="#0E2F44" />
                 </Trigger>
             </Style.Triggers>
         </Style>
@@ -50,7 +50,7 @@
 
         <!-- Sección header pill -->
         <Style x:Key="SectionPill" TargetType="Border">
-            <Setter Property="Background" Value="#FF8C00" />
+            <Setter Property="Background" Value="#0E2F44" />
             <Setter Property="CornerRadius" Value="4" />
             <Setter Property="Padding" Value="10,4" />
             <Setter Property="Margin" Value="0,10,0,6" />
@@ -85,7 +85,7 @@
         </Grid.RowDefinitions>
 
         <!-- ══ HEADER ══ -->
-        <Border Grid.Row="0" Background="#FF8C00">
+        <Border Grid.Row="0" Background="#0E2F44">
             <Border.Effect>
                 <DropShadowEffect BlurRadius="6" ShadowDepth="2" Opacity="0.25" Color="#000" />
             </Border.Effect>
@@ -98,14 +98,14 @@
 
                 <!-- Ícono + título -->
                 <StackPanel Grid.Column="0" Orientation="Horizontal" VerticalAlignment="Center">
-                    <Border Background="#E07000" CornerRadius="6" Padding="8,6" Margin="0,0,10,0">
+                    <Border Background="#1A4F6E" CornerRadius="6" Padding="8,6" Margin="0,0,10,0">
                         <TextBlock Text="👤" FontSize="18" />
                     </Border>
                     <StackPanel VerticalAlignment="Center">
                         <TextBlock Text="Gestión de Clientes" FontSize="16" FontWeight="Bold"
                                    Foreground="White" />
                         <TextBlock Text="Administración del padrón de clientes" FontSize="10.5"
-                                   Foreground="#FFE0B2" />
+                                   Foreground="#B0D4EC" />
                     </StackPanel>
                 </StackPanel>
 
@@ -113,10 +113,10 @@
                 <StackPanel Grid.Column="1" Orientation="Horizontal"
                             HorizontalAlignment="Center" VerticalAlignment="Center">
                     <!-- Input CI rápido -->
-                    <Border Background="#E07000" CornerRadius="6" Padding="10,6" VerticalAlignment="Center">
+                    <Border Background="#1A4F6E" CornerRadius="6" Padding="10,6" VerticalAlignment="Center">
                         <StackPanel>
                             <StackPanel Orientation="Horizontal">
-                                <TextBlock Text="CI:" Foreground="#FFE0B2" FontSize="12"
+                                <TextBlock Text="CI:" Foreground="#B0D4EC" FontSize="12"
                                            VerticalAlignment="Center" Margin="0,0,6,0" />
                                 <TextBox x:Name="TxtBuscar" Width="140" Height="28"
                                          Padding="6,4" FontSize="12" Background="White"
@@ -126,24 +126,24 @@
                                          DataObject.Pasting="OnCiPegado" />
                                 <Button Content="Buscar" Margin="6,0,0,0" Height="28"
                                         Padding="10,0" FontSize="12" FontWeight="SemiBold"
-                                        Background="White" Foreground="#FF8C00"
+                                        Background="White" Foreground="#0E2F44"
                                         BorderThickness="0" Cursor="Hand" Click="OnBuscar" />
                             </StackPanel>
                             <TextBlock Text="Mín. 6 dígitos · use Ver Listado para buscar por nombre"
-                                       Foreground="#FFDDA0" FontSize="9.5"
+                                       Foreground="#7FB3D3" FontSize="9.5"
                                        Margin="0,3,0,0" />
                         </StackPanel>
                     </Border>
                     <!-- Separador -->
-                    <Border Width="1" Background="#E07000" Margin="12,4" />
+                    <Border Width="1" Background="#1A4F6E" Margin="12,4" />
                     <!-- Botón modal completo -->
                     <Button Content="🔍  Ver Listado de Clientes" Height="34" Padding="14,0"
                             FontSize="12" FontWeight="Bold"
-                            Background="White" Foreground="#FF8C00"
+                            Background="White" Foreground="#0E2F44"
                             BorderThickness="0" Cursor="Hand"
                             Click="OnAbrirBuscador" />
                     <!-- Badge cliente activo -->
-                    <Border x:Name="BadgeCliente" Background="#E07000" CornerRadius="4"
+                    <Border x:Name="BadgeCliente" Background="#1A4F6E" CornerRadius="4"
                             Padding="8,4" Margin="10,0,0,0" Visibility="Collapsed">
                         <TextBlock x:Name="TxtClienteSeleccionadoBadge"
                                    Foreground="White" FontSize="11" FontWeight="SemiBold" />
@@ -152,7 +152,7 @@
 
                 <!-- Atajos teclado -->
                 <TextBlock Grid.Column="2" Text="F1=Ayuda  F2=Buscar  Ctrl+N=Nuevo  Ctrl+S=Cerrar"
-                           Foreground="#FFE0B2" FontSize="10" VerticalAlignment="Center" />
+                           Foreground="#B0D4EC" FontSize="10" VerticalAlignment="Center" />
             </Grid>
         </Border>
 
@@ -447,7 +447,7 @@
                         </Border>
                         <Button x:Name="BtnCambiarFotoDoc" Content="📷  Cambiar foto"
                                 Height="28" FontSize="11" FontWeight="SemiBold"
-                                Background="#FF8C00" Foreground="White"
+                                Background="#0E2F44" Foreground="White"
                                 BorderThickness="0" Cursor="Hand" IsEnabled="False"
                                 Click="OnCambiarFotoDoc"
                                 Style="{StaticResource BtnPrimary}" />
@@ -485,9 +485,11 @@
 
                 <!-- Botones (derecha) -->
                 <StackPanel Grid.Column="1" Orientation="Horizontal">
-                    <Button Content="Vista"    Style="{StaticResource ActBtn}" Background="#6B7280"
-                            Foreground="White" Width="80"  Margin="0,0,6,0" Click="OnVista" />
-                    <Button Content="Nuevo"    Style="{StaticResource ActBtn}" Background="#FF8C00"
+                    <Button x:Name="BtnVistaPrevia" Content="Vista previa" Style="{StaticResource ActBtn}" Background="#374151"
+                            Foreground="White" Width="96"  Margin="0,0,6,0" Click="OnVistaPrevia" IsEnabled="False"/>
+                    <Button x:Name="BtnImprimirFicha" Content="Imprimir" Style="{StaticResource ActBtn}" Background="#1B5E20"
+                            Foreground="White" Width="84"  Margin="0,0,6,0" Click="OnImprimirFicha" IsEnabled="False"/>
+                    <Button Content="Nuevo"    Style="{StaticResource ActBtn}" Background="#0E2F44"
                             Foreground="White" Width="80"  Margin="0,0,6,0" Click="OnNuevo" />
                     <Button x:Name="BtnEditar"  Content="Editar"   Style="{StaticResource ActBtn}"
                             Background="#3B82F6" Foreground="White" Width="80"

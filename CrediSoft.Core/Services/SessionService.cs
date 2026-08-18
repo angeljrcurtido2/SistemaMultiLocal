@@ -9,6 +9,7 @@ public interface ISessionService
     bool EstaLogueado { get; }
     void IniciarSesion(Usuario usuario, Local local);
     void CerrarSesion();
+    void ActualizarLocalActual(Local local);
 }
 
 public class SessionService : ISessionService
@@ -32,5 +33,13 @@ public class SessionService : ISessionService
     {
         UsuarioActual = null;
         LocalActual = null;
+    }
+
+    // Refresca los datos del local en sesión (ej. teléfono recién editado en Locales /
+    // Sucursales) sin re-loguear — solo aplica si es el mismo local que ya estaba en sesión.
+    public void ActualizarLocalActual(Local local)
+    {
+        if (LocalActual != null && LocalActual.IdLocal == local.IdLocal)
+            LocalActual = local;
     }
 }

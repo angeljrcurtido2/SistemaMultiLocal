@@ -8,7 +8,7 @@ public class CabeceraVenta
     public int IdUsuario { get; set; }
     public int IdCliente { get; set; }
     public int? IdGarante { get; set; }
-    public byte FormaDeVenta { get; set; }      // 1=crédito, 2=contado
+    public byte FormaDeVenta { get; set; }      // 1=contado, 2=crédito — ver EliminarVentaContadoWindow/EliminarVentaCreditoWindow (HerramientasWindows.cs), la referencia real de esta convención
     public byte MetodoDeVenta { get; set; }     // 1=efectivo, 2=tarjeta, etc.
     public string NTarjeta { get; set; } = string.Empty;
     public decimal Parcial { get; set; }

@@ -1,564 +1,1355 @@
-<Window x:Class="CrediSoft.UI.Views.Ventas.VentaCreditoWindow"
+﻿<Window x:Class="CrediSoft.UI.Views.Ventas.VentaCreditoWindow"
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         Title="Solicitud / Venta a Crédito"
-        Width="1380" Height="760"
-        MinWidth="1200" MinHeight="680"
+        Width="1360" Height="700"
+        MinWidth="1200" MinHeight="560"
         WindowStartupLocation="CenterOwner"
-        Background="#FFA500"
+        Background="#EEF2F7"
         KeyDown="OnWindowKeyDown">
 
-    <Grid Margin="4">
+    <Window.Resources>
+
+        <!-- ── Brushes ── -->
+        <SolidColorBrush x:Key="BrC1"  Color="#124E78"/>
+        <SolidColorBrush x:Key="BrC2"  Color="#1F77B4"/>
+        <SolidColorBrush x:Key="BrC3"  Color="#D2EBFC"/>
+        <SolidColorBrush x:Key="BrC4"  Color="#F0F8FF"/>
+        <SolidColorBrush x:Key="BrC5"  Color="#C0281B"/>
+        <SolidColorBrush x:Key="BrCF"  Color="#EEF2F7"/>
+        <SolidColorBrush x:Key="BrCB"  Color="#D0DAE8"/>
+        <SolidColorBrush x:Key="BrCT"  Color="#141F30"/>
+        <SolidColorBrush x:Key="BrCS"  Color="#5A6B7C"/>
+        <SolidColorBrush x:Key="BrW"   Color="White"/>
+
+        <!-- ── Chip de dato (solo lectura) ── -->
+        <Style x:Key="ChipLabel" TargetType="TextBlock">
+            <Setter Property="FontSize"      Value="9"/>
+            <Setter Property="FontWeight"    Value="SemiBold"/>
+            <Setter Property="Foreground"    Value="{StaticResource BrCS}"/>
+            <Setter Property="Margin"        Value="0,0,0,2"/>
+            <Setter Property="TextWrapping"  Value="Wrap"/>
+        </Style>
+        <Style x:Key="ChipValue" TargetType="TextBox">
+            <Setter Property="Background"       Value="White"/>
+            <Setter Property="BorderBrush"      Value="{StaticResource BrCB}"/>
+            <Setter Property="BorderThickness"  Value="1"/>
+            <Setter Property="Foreground"       Value="{StaticResource BrCT}"/>
+            <Setter Property="Padding"          Value="8,5"/>
+            <Setter Property="FontSize"         Value="12"/>
+            <Setter Property="IsReadOnly"       Value="True"/>
+            <Setter Property="VerticalContentAlignment" Value="Center"/>
+            <Setter Property="Height"           Value="30"/>
+        </Style>
+        <Style x:Key="ChipValueEdit" TargetType="TextBox" BasedOn="{StaticResource ChipValue}">
+            <Setter Property="IsReadOnly"  Value="False"/>
+            <Setter Property="Background"  Value="White"/>
+        </Style>
+
+        <!-- ── Tab personalizado ── -->
+        <Style x:Key="ModernTabItem" TargetType="TabItem">
+            <Setter Property="Background"       Value="Transparent"/>
+            <Setter Property="Foreground"       Value="{StaticResource BrCS}"/>
+            <Setter Property="BorderThickness"  Value="0"/>
+            <Setter Property="Padding"          Value="20,10"/>
+            <Setter Property="FontSize"         Value="12"/>
+            <Setter Property="FontWeight"       Value="SemiBold"/>
+            <Setter Property="Cursor"           Value="Hand"/>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="TabItem">
+                        <Border x:Name="TabBorder"
+                                Background="Transparent"
+                                BorderThickness="0,0,0,3"
+                                BorderBrush="Transparent"
+                                Padding="{TemplateBinding Padding}"
+                                Margin="0,0,4,0">
+                            <StackPanel Orientation="Horizontal">
+                                <TextBlock x:Name="TabIcon"
+                                           Text="{TemplateBinding Tag}"
+                                           FontSize="14"
+                                           VerticalAlignment="Center"
+                                           Margin="0,0,6,0"/>
+                                <ContentPresenter x:Name="ContentSite"
+                                                  VerticalAlignment="Center"
+                                                  HorizontalAlignment="Center"
+                                                  ContentSource="Header"/>
+                            </StackPanel>
+                        </Border>
+                        <ControlTemplate.Triggers>
+                            <Trigger Property="IsSelected" Value="True">
+                                <Setter TargetName="TabBorder" Property="BorderBrush"
+                                        Value="{StaticResource BrC2}"/>
+                                <Setter TargetName="TabBorder" Property="Background"
+                                        Value="White"/>
+                                <Setter Property="Foreground" Value="{StaticResource BrC1}"/>
+                            </Trigger>
+                            <Trigger Property="IsMouseOver" Value="True">
+                                <Setter TargetName="TabBorder" Property="Background"
+                                        Value="#F0F6FC"/>
+                            </Trigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+
+        <!-- ── Botón primario ── -->
+        <Style x:Key="BtnPrimary" TargetType="Button">
+            <Setter Property="Background"      Value="{StaticResource BrC2}"/>
+            <Setter Property="Foreground"      Value="White"/>
+            <Setter Property="FontWeight"      Value="SemiBold"/>
+            <Setter Property="FontSize"        Value="11"/>
+            <Setter Property="BorderThickness" Value="0"/>
+            <Setter Property="Padding"         Value="12,6"/>
+            <Setter Property="Cursor"          Value="Hand"/>
+            <Setter Property="Height"          Value="30"/>
+        </Style>
+        <Style x:Key="BtnSuccess" TargetType="Button" BasedOn="{StaticResource BtnPrimary}">
+            <Setter Property="Background" Value="#1E6E42"/>
+            <Setter Property="Padding"    Value="14,6"/>
+        </Style>
+
+        <!-- ── Grilla: estilos celdas ── -->
+        <Style x:Key="CeldaGrid"    TargetType="TextBlock">
+            <Setter Property="VerticalAlignment" Value="Center"/>
+            <Setter Property="Margin"            Value="8,0"/>
+        </Style>
+        <Style x:Key="CeldaGridDer" TargetType="TextBlock">
+            <Setter Property="VerticalAlignment" Value="Center"/>
+            <Setter Property="TextAlignment"     Value="Right"/>
+            <Setter Property="Margin"            Value="8,0"/>
+            <Setter Property="FontWeight"        Value="SemiBold"/>
+        </Style>
+        <Style x:Key="CeldaGridCen" TargetType="TextBlock">
+            <Setter Property="VerticalAlignment" Value="Center"/>
+            <Setter Property="TextAlignment"     Value="Center"/>
+            <Setter Property="Margin"            Value="4,0"/>
+        </Style>
+
+        <!-- ── Separador de sección dentro de card ── -->
+        <Style x:Key="SectionDivider" TargetType="Border">
+            <Setter Property="Height"     Value="1"/>
+            <Setter Property="Background" Value="{StaticResource BrCB}"/>
+            <Setter Property="Margin"     Value="0,10,0,10"/>
+        </Style>
+
+    </Window.Resources>
+
+    <Grid>
         <Grid.RowDefinitions>
-            <RowDefinition Height="*" />
-            <RowDefinition Height="Auto" />
+            <RowDefinition Height="60"/>   <!-- Header -->
+            <RowDefinition Height="*"/>    <!-- Cuerpo  -->
+            <RowDefinition Height="54"/>   <!-- Footer  -->
         </Grid.RowDefinitions>
 
-        <!-- ══ CUERPO PRINCIPAL ══ -->
-        <Grid Grid.Row="0">
+        <!-- ════════════════════════════════════════════════════════
+             HEADER
+             ════════════════════════════════════════════════════════ -->
+        <Border Grid.Row="0" Background="{StaticResource BrC1}">
+            <Grid Margin="20,0">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="Auto"/>
+                    <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="Auto"/>
+                    <ColumnDefinition Width="16"/>
+                    <ColumnDefinition Width="Auto"/>
+                </Grid.ColumnDefinitions>
+
+                <Border Grid.Column="0" Width="4" CornerRadius="2"
+                        Background="{StaticResource BrC2}"
+                        Margin="0,12,14,12"/>
+                <StackPanel Grid.Column="1" VerticalAlignment="Center">
+                    <TextBlock Text="SOLICITUD / VENTA A CRÉDITO"
+                               FontSize="17" FontWeight="Bold" Foreground="White"/>
+                    <TextBlock Text="Complete los datos de cliente, garante, referencias y mercaderías"
+                               FontSize="10" Foreground="#80AACC" Margin="0,2,0,0"/>
+                </StackPanel>
+
+                <!-- Nº solicitud en header -->
+                <StackPanel Grid.Column="2" VerticalAlignment="Center" Orientation="Horizontal">
+                    <!-- Nº actual -->
+                    <Border Background="#0E2A40" CornerRadius="8" Padding="10,0"
+                            Height="40" VerticalAlignment="Center" Margin="0,0,8,0">
+                        <StackPanel VerticalAlignment="Center">
+                            <TextBlock Text="SOLICITUD Nº" FontSize="8" FontWeight="Bold"
+                                       Foreground="#5A8AAA" TextAlignment="Center"/>
+                            <TextBox x:Name="TxtNroSolicitud"
+                                     IsReadOnly="True" Width="64"
+                                     Background="Transparent" Foreground="White"
+                                     BorderThickness="0" FontSize="15" FontWeight="Bold"
+                                     TextAlignment="Center" Padding="0"/>
+                        </StackPanel>
+                    </Border>
+
+                    <!-- Botón buscar solicitud — ahora con texto claro -->
+                    <Button Height="40" Padding="10,0"
+                            Background="#1A3A52" Foreground="White"
+                            BorderThickness="0" Cursor="Hand"
+                            ToolTip="Buscar y cargar una solicitud existente por número"
+                            Click="OnBuscarSolicitud">
+                        <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
+                            <TextBlock Text="🔍" FontSize="13" VerticalAlignment="Center"
+                                       Margin="0,0,5,0"/>
+                            <StackPanel VerticalAlignment="Center">
+                                <TextBlock Text="BUSCAR" FontSize="8" FontWeight="Bold"
+                                           Foreground="#5A8AAA"/>
+                                <TextBlock Text="SOLICITUD" FontSize="8" FontWeight="Bold"
+                                           Foreground="#5A8AAA"/>
+                            </StackPanel>
+                        </StackPanel>
+                    </Button>
+                </StackPanel>
+
+                <!-- Badge estado -->
+                <Border Grid.Column="4" CornerRadius="6"
+                        Background="#1A3A52" Padding="14,0"
+                        VerticalAlignment="Center" Height="34">
+                    <TextBlock x:Name="TxtEstado" Text="NUEVO"
+                               FontSize="13" FontWeight="Bold"
+                               Foreground="White" VerticalAlignment="Center"/>
+                </Border>
+            </Grid>
+        </Border>
+
+        <!-- ════════════════════════════════════════════════════════
+             CUERPO
+             ════════════════════════════════════════════════════════ -->
+        <Grid Grid.Row="1" Margin="12,10,12,6">
             <Grid.ColumnDefinitions>
-                <!-- Columna izquierda: Solicitud + Ingresos/Egresos -->
-                <ColumnDefinition Width="230" />
-                <!-- Columna derecha: Cliente + Garante + Referencias + Mercaderías -->
-                <ColumnDefinition Width="*" />
+                <ColumnDefinition Width="210"/>   <!-- Panel fijo izquierdo -->
+                <ColumnDefinition Width="10"/>
+                <ColumnDefinition Width="*"/>     <!-- Tabs -->
             </Grid.ColumnDefinitions>
 
-            <!-- ══════════════════════════════════
-                 COLUMNA IZQUIERDA
-                 ══════════════════════════════════ -->
-            <StackPanel Grid.Column="0" Margin="0,0,4,0">
+            <!-- ═══════════════════════════════
+                 PANEL IZQUIERDO FIJO
+                 ═══════════════════════════════ -->
+            <StackPanel Grid.Column="0">
 
-                <!-- SOLICITUD -->
-                <Border BorderBrush="Gray" BorderThickness="1" Padding="4,4,4,6" Margin="0,0,0,4" Background="#FFF0C0">
+                <!-- Card Solicitud -->
+                <Border Background="White" CornerRadius="10"
+                        BorderBrush="{StaticResource BrCB}" BorderThickness="1"
+                        Padding="14,12" Margin="0,0,0,8">
                     <StackPanel>
-                        <TextBlock Text="SOLICITUD" FontWeight="Bold" FontSize="11" Margin="0,0,0,4" />
+                        <TextBlock Text="SOLICITUD" FontSize="9" FontWeight="Bold"
+                                   Foreground="{StaticResource BrCS}" Margin="0,0,0,10"/>
 
-                        <Grid Margin="0,0,0,3">
+                        <TextBlock Style="{StaticResource ChipLabel}" Text="NÚMERO"/>
+                        <TextBox x:Name="TxtNumero" Style="{StaticResource ChipValue}"
+                                 FontSize="10" Margin="0,0,0,8"/>
+
+                        <!-- Local -->
+                        <TextBlock Style="{StaticResource ChipLabel}" Text="LOCAL"/>
+                        <Grid Margin="0,0,0,4">
                             <Grid.ColumnDefinitions>
-                                <ColumnDefinition Width="Auto" />
-                                <ColumnDefinition Width="*" />
-                                <ColumnDefinition Width="Auto" />
+                                <ColumnDefinition Width="30"/>
+                                <ColumnDefinition Width="*"/>
                             </Grid.ColumnDefinitions>
-                            <TextBlock Grid.Column="0" Text="Nº" VerticalAlignment="Center" Margin="0,0,4,0" FontSize="11" />
-                            <TextBox x:Name="TxtNroSolicitud" Grid.Column="1" IsReadOnly="True"
-                                     Background="#FFFF99" Padding="2,1" FontSize="11" />
-                            <Button x:Name="BtnBuscarSolicitud" Grid.Column="2" Content="Buscar"
-                                    Margin="2,0,0,0" Padding="5,2" FontSize="10"
-                                    Background="#CC0000" Foreground="White" FontWeight="Bold"
-                                    Click="OnBuscarSolicitud" />
+                            <Button x:Name="BtnSeleccionarLocal" Grid.Column="0" Content="📍" Height="30" Width="30"
+                                    Style="{StaticResource BtnPrimary}" Padding="0"
+                                    Click="OnSeleccionarLocal"/>
+                            <TextBox x:Name="TxtLocal" Grid.Column="1" Margin="4,0,0,0"
+                                     Style="{StaticResource ChipValue}" FontSize="11"
+                                     FontWeight="Bold" Foreground="{StaticResource BrC1}"/>
                         </Grid>
+                        <TextBox x:Name="TxtLocalNombre" Style="{StaticResource ChipValue}"
+                                 FontSize="10" Foreground="{StaticResource BrCS}"
+                                 Margin="0,0,0,8"/>
 
-                        <TextBlock Text="Número:" FontSize="10" Margin="0,2,0,1" />
-                        <TextBox x:Name="TxtNumero" Padding="2,1" FontSize="11" Background="#FFFF99" />
+                        <!-- Vendedor -->
+                        <TextBlock Style="{StaticResource ChipLabel}" Text="VENDEDOR"/>
+                        <Button x:Name="BtnBuscarVendedor"
+                                Content="🔍 Seleccionar vendedor"
+                                Style="{StaticResource BtnPrimary}"
+                                HorizontalAlignment="Stretch"
+                                Margin="0,0,0,4"
+                                Click="OnBuscarVendedor"/>
+                        <TextBox x:Name="TxtVendedor" Style="{StaticResource ChipValue}"
+                                 Margin="0,0,0,8"/>
 
-                        <Grid Margin="0,3,0,0">
-                            <Grid.ColumnDefinitions>
-                                <ColumnDefinition Width="Auto" />
-                                <ColumnDefinition Width="*" />
-                            </Grid.ColumnDefinitions>
-                            <Button Grid.Column="0" x:Name="BtnLocal" Content="Local"
-                                    Padding="5,2" FontSize="10"
-                                    Background="#CC0000" Foreground="White" FontWeight="Bold"
-                                    Click="OnSeleccionarLocal" />
-                            <TextBox x:Name="TxtLocal" Grid.Column="1" Margin="3,0,0,0"
-                                     IsReadOnly="True" Padding="2,1" FontSize="11" Background="#FFFF99" />
-                        </Grid>
+                        <!-- Fechas -->
+                        <TextBlock Style="{StaticResource ChipLabel}" Text="FECHA SOLICITUD"/>
+                        <DatePicker x:Name="DtpSolicitud" Margin="0,0,0,8"
+                                    Height="30" FontSize="11"
+                                    Background="White" Foreground="{StaticResource BrCT}"
+                                    BorderBrush="{StaticResource BrCB}"/>
 
-                        <TextBox x:Name="TxtLocalNombre" Padding="2,1" FontSize="10"
-                                 IsReadOnly="True" Background="#F5F5F5" Margin="0,2,0,0" />
-
-                        <Grid Margin="0,3,0,0">
-                            <Grid.ColumnDefinitions>
-                                <ColumnDefinition Width="Auto" />
-                                <ColumnDefinition Width="*" />
-                            </Grid.ColumnDefinitions>
-                            <TextBlock Grid.Column="0" Text="Vendedor:" VerticalAlignment="Center"
-                                       Margin="0,0,4,0" FontSize="10" />
-                            <Button Grid.Column="1" x:Name="BtnBuscarVendedor" Content="Buscar"
-                                    Padding="5,2" FontSize="10"
-                                    Background="#006600" Foreground="White" FontWeight="Bold"
-                                    HorizontalAlignment="Left"
-                                    Click="OnBuscarVendedor" />
-                        </Grid>
-                        <TextBox x:Name="TxtVendedor" Padding="2,1" FontSize="11"
-                                 IsReadOnly="True" Background="#FFFF99" Margin="0,2,0,0" />
-
-                        <TextBlock Text="Solicitud:" FontSize="10" Margin="0,3,0,1" />
-                        <DatePicker x:Name="DtpSolicitud" FontSize="10" />
-
-                        <TextBlock Text="Figurar:" FontSize="10" Margin="0,3,0,1" />
-                        <DatePicker x:Name="DtpFigurar" FontSize="10" />
-
-                        <Border Background="#FFFFFF" BorderBrush="Gray" BorderThickness="1"
-                                Margin="0,6,0,0" Height="32">
-                            <TextBlock x:Name="TxtEstado" Text="ESTADO"
-                                       HorizontalAlignment="Center" VerticalAlignment="Center"
-                                       FontWeight="Bold" FontSize="13" />
-                        </Border>
-
-                        <Border Background="#FFA500" Margin="0,3,0,0" Height="20" />
+                        <TextBlock Style="{StaticResource ChipLabel}" Text="FECHA FIGURAR"/>
+                        <DatePicker x:Name="DtpFigurar"
+                                    Height="30" FontSize="11"
+                                    Background="White" Foreground="{StaticResource BrCT}"
+                                    BorderBrush="{StaticResource BrCB}"/>
                     </StackPanel>
                 </Border>
 
-                <!-- INGRESOS / EGRESOS -->
-                <Border BorderBrush="Gray" BorderThickness="1" Padding="4" Background="#FFF0C0">
+                <!-- Card I/E colapsable -->
+                <Border Background="White" CornerRadius="10"
+                        BorderBrush="{StaticResource BrCB}" BorderThickness="1">
                     <StackPanel>
-                        <!-- Encabezado tabla IE -->
-                        <Grid>
+                        <!-- Header toggle -->
+                        <Border x:Name="BdrIEHeader" CornerRadius="9,9,0,0"
+                                Background="{StaticResource BrC1}"
+                                Cursor="Hand" Padding="14,9">
+                            <Grid>
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="*"/>
+                                    <ColumnDefinition Width="Auto"/>
+                                </Grid.ColumnDefinitions>
+                                <TextBlock Text="INGRESOS / EGRESOS"
+                                           FontSize="9" FontWeight="Bold" Foreground="#AACCE8"/>
+                                <TextBlock x:Name="TxtIEChevron" Grid.Column="1"
+                                           Text="▲" FontSize="9" Foreground="#AACCE8"/>
+                            </Grid>
+                        </Border>
+
+                        <Grid x:Name="PnlIE" Margin="10,8,10,10">
                             <Grid.ColumnDefinitions>
-                                <ColumnDefinition Width="*" />
-                                <ColumnDefinition Width="70" />
-                                <ColumnDefinition Width="*" />
-                                <ColumnDefinition Width="70" />
+                                <ColumnDefinition Width="*"/>
+                                <ColumnDefinition Width="6"/>
+                                <ColumnDefinition Width="*"/>
                             </Grid.ColumnDefinitions>
-                            <Border Grid.Column="0" Grid.ColumnSpan="2" Background="#6666CC" Margin="0,0,2,0">
-                                <TextBlock Text="INGRESOS" Foreground="White" FontWeight="Bold"
-                                           FontSize="10" HorizontalAlignment="Center" Padding="2" />
-                            </Border>
-                            <Border Grid.Column="2" Grid.ColumnSpan="2" Background="#6666CC" Margin="2,0,0,0">
-                                <TextBlock Text="EGRESOS" Foreground="White" FontWeight="Bold"
-                                           FontSize="10" HorizontalAlignment="Center" Padding="2" />
-                            </Border>
-                        </Grid>
 
-                        <!-- Filas IE -->
-                        <Grid Margin="0,2,0,0">
-                            <Grid.ColumnDefinitions>
-                                <ColumnDefinition Width="*" />
-                                <ColumnDefinition Width="70" />
-                                <ColumnDefinition Width="*" />
-                                <ColumnDefinition Width="70" />
-                            </Grid.ColumnDefinitions>
-                            <Grid.RowDefinitions>
-                                <RowDefinition Height="22" />
-                                <RowDefinition Height="22" />
-                                <RowDefinition Height="22" />
-                                <RowDefinition Height="22" />
-                                <RowDefinition Height="24" />
-                            </Grid.RowDefinitions>
+                            <!-- INGRESOS -->
+                            <StackPanel Grid.Column="0">
+                                <Border Background="{StaticResource BrC2}" CornerRadius="4,4,0,0"
+                                        Padding="4,3">
+                                    <TextBlock Text="ING." FontSize="8" FontWeight="Bold"
+                                               Foreground="White" HorizontalAlignment="Center"/>
+                                </Border>
+                                <Grid Background="{StaticResource BrC4}">
+                                    <Grid.RowDefinitions>
+                                        <RowDefinition Height="24"/>
+                                        <RowDefinition Height="24"/>
+                                        <RowDefinition Height="24"/>
+                                        <RowDefinition Height="24"/>
+                                    </Grid.RowDefinitions>
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="*"/>
+                                        <ColumnDefinition Width="48"/>
+                                    </Grid.ColumnDefinitions>
+                                    <TextBlock Grid.Row="0" Grid.Column="0" Text="Salario" FontSize="9"
+                                               VerticalAlignment="Center" Margin="4,0" Foreground="{StaticResource BrCS}"/>
+                                    <TextBox x:Name="TxtISalario" Grid.Row="0" Grid.Column="1" Text="0"
+                                             FontSize="9" TextAlignment="Right" Padding="2,2"
+                                             BorderThickness="0,0,0,1" BorderBrush="{StaticResource BrCB}"
+                                             Background="Transparent" VerticalContentAlignment="Center"
+                                             TextChanged="OnIngresoEgresoChanged"/>
+                                    <TextBlock Grid.Row="1" Grid.Column="0" Text="Honor." FontSize="9"
+                                               VerticalAlignment="Center" Margin="4,0" Foreground="{StaticResource BrCS}"/>
+                                    <TextBox x:Name="TxtIHonorario" Grid.Row="1" Grid.Column="1" Text="0"
+                                             FontSize="9" TextAlignment="Right" Padding="2,2"
+                                             BorderThickness="0,0,0,1" BorderBrush="{StaticResource BrCB}"
+                                             Background="Transparent" VerticalContentAlignment="Center"
+                                             TextChanged="OnIngresoEgresoChanged"/>
+                                    <TextBlock Grid.Row="2" Grid.Column="0" Text="Cónyuge" FontSize="9"
+                                               VerticalAlignment="Center" Margin="4,0" Foreground="{StaticResource BrCS}"/>
+                                    <TextBox x:Name="TxtIConyuge" Grid.Row="2" Grid.Column="1" Text="0"
+                                             FontSize="9" TextAlignment="Right" Padding="2,2"
+                                             BorderThickness="0,0,0,1" BorderBrush="{StaticResource BrCB}"
+                                             Background="Transparent" VerticalContentAlignment="Center"
+                                             TextChanged="OnIngresoEgresoChanged"/>
+                                    <TextBlock Grid.Row="3" Grid.Column="0" Text="Otros" FontSize="9"
+                                               VerticalAlignment="Center" Margin="4,0" Foreground="{StaticResource BrCS}"/>
+                                    <TextBox x:Name="TxtIOtros" Grid.Row="3" Grid.Column="1" Text="0"
+                                             FontSize="9" TextAlignment="Right" Padding="2,2"
+                                             Background="Transparent" BorderThickness="0"
+                                             VerticalContentAlignment="Center"
+                                             TextChanged="OnIngresoEgresoChanged"/>
+                                </Grid>
+                                <Border Background="{StaticResource BrC1}" Padding="4,4">
+                                    <Grid>
+                                        <Grid.ColumnDefinitions>
+                                            <ColumnDefinition Width="*"/>
+                                            <ColumnDefinition Width="48"/>
+                                        </Grid.ColumnDefinitions>
+                                        <TextBlock Text="TOT." FontSize="8" FontWeight="Bold"
+                                                   Foreground="White" VerticalAlignment="Center"/>
+                                        <TextBox x:Name="TxtITotal" Grid.Column="1"
+                                                 IsReadOnly="True" FontSize="9" FontWeight="Bold"
+                                                 Background="Transparent" BorderThickness="0"
+                                                 Foreground="#7EE8A2" TextAlignment="Right"
+                                                 VerticalContentAlignment="Center"/>
+                                    </Grid>
+                                </Border>
+                            </StackPanel>
 
-                            <TextBlock Grid.Row="0" Grid.Column="0" Text="Salario" FontSize="10" VerticalAlignment="Center" Padding="2,0" />
-                            <TextBox x:Name="TxtISalario" Grid.Row="0" Grid.Column="1" Padding="2,1" FontSize="10" Background="#FFFF99" Text="0" TextChanged="OnIngresoEgresoChanged" />
-                            <TextBlock Grid.Row="0" Grid.Column="2" Text="Gastos familiares" FontSize="10" VerticalAlignment="Center" Padding="2,0" />
-                            <TextBox x:Name="TxtEGasto" Grid.Row="0" Grid.Column="3" Padding="2,1" FontSize="10" Background="#FFFF99" Text="0" TextChanged="OnIngresoEgresoChanged" />
-
-                            <TextBlock Grid.Row="1" Grid.Column="0" Text="Honorario Prof." FontSize="10" VerticalAlignment="Center" Padding="2,0" />
-                            <TextBox x:Name="TxtIHonorario" Grid.Row="1" Grid.Column="1" Padding="2,1" FontSize="10" Background="#FFFF99" Text="0" TextChanged="OnIngresoEgresoChanged" />
-                            <TextBlock Grid.Row="1" Grid.Column="2" Text="Cuotas" FontSize="10" VerticalAlignment="Center" Padding="2,0" />
-                            <TextBox x:Name="TxtECuota" Grid.Row="1" Grid.Column="3" Padding="2,1" FontSize="10" Background="#FFFF99" Text="0" TextChanged="OnIngresoEgresoChanged" />
-
-                            <TextBlock Grid.Row="2" Grid.Column="0" Text="Salario Cónyuge" FontSize="10" VerticalAlignment="Center" Padding="2,0" />
-                            <TextBox x:Name="TxtIConyuge" Grid.Row="2" Grid.Column="1" Padding="2,1" FontSize="10" Background="#FFFF99" Text="0" TextChanged="OnIngresoEgresoChanged" />
-                            <TextBlock Grid.Row="2" Grid.Column="2" Text="Alquiler" FontSize="10" VerticalAlignment="Center" Padding="2,0" />
-                            <TextBox x:Name="TxtEAlquiler" Grid.Row="2" Grid.Column="3" Padding="2,1" FontSize="10" Background="#FFFF99" Text="0" TextChanged="OnIngresoEgresoChanged" />
-
-                            <TextBlock Grid.Row="3" Grid.Column="0" Text="Otros" FontSize="10" VerticalAlignment="Center" Padding="2,0" />
-                            <TextBox x:Name="TxtIOtros" Grid.Row="3" Grid.Column="1" Padding="2,1" FontSize="10" Background="#FFFF99" Text="0" TextChanged="OnIngresoEgresoChanged" />
-                            <TextBlock Grid.Row="3" Grid.Column="2" Text="Otros" FontSize="10" VerticalAlignment="Center" Padding="2,0" />
-                            <TextBox x:Name="TxtEOtros" Grid.Row="3" Grid.Column="3" Padding="2,1" FontSize="10" Background="#FFFF99" Text="0" TextChanged="OnIngresoEgresoChanged" />
-
-                            <!-- TOTALES -->
-                            <Border Grid.Row="4" Grid.Column="0" Background="#6666CC">
-                                <TextBlock Text="TOTAL" Foreground="#00FF00" FontWeight="Bold"
-                                           FontSize="10" HorizontalAlignment="Center" VerticalAlignment="Center" />
-                            </Border>
-                            <TextBox x:Name="TxtITotal" Grid.Row="4" Grid.Column="1" Padding="2,1" FontSize="10"
-                                     IsReadOnly="True" Background="#CCFFCC" FontWeight="Bold" />
-                            <Border Grid.Row="4" Grid.Column="2" Background="#6666CC">
-                                <TextBlock Text="TOTAL" Foreground="#FF4444" FontWeight="Bold"
-                                           FontSize="10" HorizontalAlignment="Center" VerticalAlignment="Center" />
-                            </Border>
-                            <TextBox x:Name="TxtETotal" Grid.Row="4" Grid.Column="3" Padding="2,1" FontSize="10"
-                                     IsReadOnly="True" Background="#FFCCCC" FontWeight="Bold" />
+                            <!-- EGRESOS -->
+                            <StackPanel Grid.Column="2">
+                                <Border Background="#9B2335" CornerRadius="4,4,0,0" Padding="4,3">
+                                    <TextBlock Text="EGR." FontSize="8" FontWeight="Bold"
+                                               Foreground="White" HorizontalAlignment="Center"/>
+                                </Border>
+                                <Grid Background="#FFF5F5">
+                                    <Grid.RowDefinitions>
+                                        <RowDefinition Height="24"/>
+                                        <RowDefinition Height="24"/>
+                                        <RowDefinition Height="24"/>
+                                        <RowDefinition Height="24"/>
+                                    </Grid.RowDefinitions>
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="*"/>
+                                        <ColumnDefinition Width="48"/>
+                                    </Grid.ColumnDefinitions>
+                                    <TextBlock Grid.Row="0" Grid.Column="0" Text="Gtos." FontSize="9"
+                                               VerticalAlignment="Center" Margin="4,0" Foreground="{StaticResource BrCS}"/>
+                                    <TextBox x:Name="TxtEGasto" Grid.Row="0" Grid.Column="1" Text="0"
+                                             FontSize="9" TextAlignment="Right" Padding="2,2"
+                                             BorderThickness="0,0,0,1" BorderBrush="{StaticResource BrCB}"
+                                             Background="Transparent" VerticalContentAlignment="Center"
+                                             TextChanged="OnIngresoEgresoChanged"/>
+                                    <TextBlock Grid.Row="1" Grid.Column="0" Text="Cuotas" FontSize="9"
+                                               VerticalAlignment="Center" Margin="4,0" Foreground="{StaticResource BrCS}"/>
+                                    <TextBox x:Name="TxtECuota" Grid.Row="1" Grid.Column="1" Text="0"
+                                             FontSize="9" TextAlignment="Right" Padding="2,2"
+                                             BorderThickness="0,0,0,1" BorderBrush="{StaticResource BrCB}"
+                                             Background="Transparent" VerticalContentAlignment="Center"
+                                             TextChanged="OnIngresoEgresoChanged"/>
+                                    <TextBlock Grid.Row="2" Grid.Column="0" Text="Alquil." FontSize="9"
+                                               VerticalAlignment="Center" Margin="4,0" Foreground="{StaticResource BrCS}"/>
+                                    <TextBox x:Name="TxtEAlquiler" Grid.Row="2" Grid.Column="1" Text="0"
+                                             FontSize="9" TextAlignment="Right" Padding="2,2"
+                                             BorderThickness="0,0,0,1" BorderBrush="{StaticResource BrCB}"
+                                             Background="Transparent" VerticalContentAlignment="Center"
+                                             TextChanged="OnIngresoEgresoChanged"/>
+                                    <TextBlock Grid.Row="3" Grid.Column="0" Text="Otros" FontSize="9"
+                                               VerticalAlignment="Center" Margin="4,0" Foreground="{StaticResource BrCS}"/>
+                                    <TextBox x:Name="TxtEOtros" Grid.Row="3" Grid.Column="1" Text="0"
+                                             FontSize="9" TextAlignment="Right" Padding="2,2"
+                                             Background="Transparent" BorderThickness="0"
+                                             VerticalContentAlignment="Center"
+                                             TextChanged="OnIngresoEgresoChanged"/>
+                                </Grid>
+                                <Border Background="#7B1A28" Padding="4,4">
+                                    <Grid>
+                                        <Grid.ColumnDefinitions>
+                                            <ColumnDefinition Width="*"/>
+                                            <ColumnDefinition Width="48"/>
+                                        </Grid.ColumnDefinitions>
+                                        <TextBlock Text="TOT." FontSize="8" FontWeight="Bold"
+                                                   Foreground="White" VerticalAlignment="Center"/>
+                                        <TextBox x:Name="TxtETotal" Grid.Column="1"
+                                                 IsReadOnly="True" FontSize="9" FontWeight="Bold"
+                                                 Background="Transparent" BorderThickness="0"
+                                                 Foreground="#FFAAAA" TextAlignment="Right"
+                                                 VerticalContentAlignment="Center"/>
+                                    </Grid>
+                                </Border>
+                            </StackPanel>
                         </Grid>
                     </StackPanel>
                 </Border>
 
             </StackPanel>
 
-            <!-- ══════════════════════════════════
-                 COLUMNA DERECHA
-                 ══════════════════════════════════ -->
-            <Grid Grid.Column="1">
-                <Grid.RowDefinitions>
-                    <!-- Cliente -->
-                    <RowDefinition Height="Auto" />
-                    <!-- Garante -->
-                    <RowDefinition Height="Auto" />
-                    <!-- Referencias -->
-                    <RowDefinition Height="Auto" />
-                    <!-- Mercaderías -->
-                    <RowDefinition Height="*" />
-                </Grid.RowDefinitions>
+            <!-- ═══════════════════════════════
+                 TABS PRINCIPAL
+                 ═══════════════════════════════ -->
+            <TabControl x:Name="MainTabs"
+                        Grid.Column="2"
+                        Background="Transparent"
+                        BorderThickness="0"
+                        Padding="0"
+                        SelectionChanged="OnTabChanged">
+                <TabControl.Template>
+                    <ControlTemplate TargetType="TabControl">
+                        <Grid>
+                            <Grid.RowDefinitions>
+                                <RowDefinition Height="Auto"/>
+                                <RowDefinition Height="*"/>
+                            </Grid.RowDefinitions>
+                            <!-- Barra de tabs -->
+                            <Border Grid.Row="0" Background="White"
+                                    CornerRadius="10,10,0,0"
+                                    BorderBrush="{StaticResource BrCB}" BorderThickness="1,1,1,0">
+                                <TabPanel IsItemsHost="True" Background="Transparent"
+                                          Margin="6,0"/>
+                            </Border>
+                            <!-- Contenido -->
+                            <Border Grid.Row="1" Background="White"
+                                    CornerRadius="0,0,10,10"
+                                    BorderBrush="{StaticResource BrCB}" BorderThickness="1">
+                                <ContentPresenter ContentSource="SelectedContent" Margin="0"/>
+                            </Border>
+                        </Grid>
+                    </ControlTemplate>
+                </TabControl.Template>
 
-                <!-- ── CLIENTE ── -->
-                <Border Grid.Row="0" BorderBrush="Gray" BorderThickness="1"
-                        Padding="4,4,4,6" Margin="0,0,0,3" Background="#FFF0C0">
-                    <StackPanel>
-                        <TextBlock Text="Cliente" FontWeight="Bold" FontSize="11" Margin="0,0,0,3" />
+                <!-- ═══════════ TAB: CLIENTE ═══════════ -->
+                <TabItem Header="Cliente" Tag="👤" Style="{StaticResource ModernTabItem}">
+                    <ScrollViewer VerticalScrollBarVisibility="Auto"
+                                  HorizontalScrollBarVisibility="Disabled"
+                                  Padding="20,16,20,16">
+                        <StackPanel>
+                            <!-- Acción buscar cliente -->
+                            <Grid Margin="0,0,0,14">
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="Auto"/>
+                                    <ColumnDefinition Width="*"/>
+                                    <ColumnDefinition Width="Auto"/>
+                                    <ColumnDefinition Width="Auto"/>
+                                </Grid.ColumnDefinitions>
+                                <Button Grid.Column="0" x:Name="BtnBuscarCliente"
+                                        Content="👤 Buscar cliente"
+                                        Style="{StaticResource BtnPrimary}"
+                                        Click="OnBuscarCliente"/>
+                                <!-- nombre grande a la derecha del botón -->
+                                <TextBox x:Name="TxtClienteNombre" Grid.Column="1"
+                                         Margin="10,0" Height="30" FontSize="13"
+                                         FontWeight="SemiBold"
+                                         Background="Transparent" BorderThickness="0,0,0,2"
+                                         BorderBrush="{StaticResource BrC2}"
+                                         Foreground="{StaticResource BrC1}"
+                                         VerticalContentAlignment="Center"
+                                         IsReadOnly="True"
+                                         Padding="4,0"/>
+                                <Button Grid.Column="2" Content="📋 Historial"
+                                        Style="{StaticResource BtnPrimary}"
+                                        Margin="0,0,6,0"
+                                        Click="OnVerHistorialCliente"/>
+                                <Button Grid.Column="3" Content="🪪 Ver cédula"
+                                        Style="{StaticResource BtnPrimary}"
+                                        Click="OnVerCedulaCliente"/>
+                            </Grid>
+
+                            <!-- Panel foto de cédula: previsualización en miniatura si existe,
+                                 o aviso + botón para cargarla si el cliente no tiene una — muchos
+                                 clientes no tienen foto de cédula cargada y hasta ahora esto solo
+                                 se descubría al presionar "Ver cédula" y toparse con el aviso de
+                                 "no encontrada", sin forma de cargarla desde acá mismo. -->
+                            <Border x:Name="PanelFotoCedula" Margin="0,0,0,14"
+                                    Background="#F8FAFC" CornerRadius="8" Padding="12,10"
+                                    BorderBrush="{StaticResource BrCB}" BorderThickness="1">
+                                <Grid>
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="Auto"/>
+                                        <ColumnDefinition Width="*"/>
+                                        <ColumnDefinition Width="Auto"/>
+                                    </Grid.ColumnDefinitions>
+                                    <Border Grid.Column="0" Width="70" Height="46" CornerRadius="4"
+                                            Background="#E8EEF6" BorderBrush="{StaticResource BrCB}"
+                                            BorderThickness="1" Margin="0,0,12,0">
+                                        <Image x:Name="ImgMiniaturaCedula" Stretch="UniformToFill"
+                                               Cursor="Hand" ToolTip="Click para ver en grande"
+                                               MouseLeftButtonUp="OnClickMiniaturaCedula"/>
+                                    </Border>
+                                    <TextBlock x:Name="TxtEstadoFotoCedula" Grid.Column="1"
+                                               FontSize="11.5" TextWrapping="Wrap"
+                                               VerticalAlignment="Center"
+                                               Foreground="{StaticResource BrCS}"
+                                               Text="Seleccione un cliente para ver el estado de su foto de cédula."/>
+                                    <Button x:Name="BtnCargarFotoCedula" Grid.Column="2"
+                                            Content="📷 Cargar foto de cédula"
+                                            Style="{StaticResource BtnPrimary}"
+                                            VerticalAlignment="Center"
+                                            Click="OnCargarFotoCedula"/>
+                                </Grid>
+                            </Border>
+
+                            <!-- Fila 1: CI | RUC | Dirección | Sexo -->
+                            <Grid Margin="0,0,0,10">
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="130"/>
+                                    <ColumnDefinition Width="12"/>
+                                    <ColumnDefinition Width="130"/>
+                                    <ColumnDefinition Width="12"/>
+                                    <ColumnDefinition Width="*"/>
+                                    <ColumnDefinition Width="12"/>
+                                    <ColumnDefinition Width="60"/>
+                                </Grid.ColumnDefinitions>
+                                <StackPanel Grid.Column="0">
+                                    <TextBlock Style="{StaticResource ChipLabel}" Text="C.I."/>
+                                    <TextBox x:Name="TxtClienteCI" Style="{StaticResource ChipValue}"/>
+                                </StackPanel>
+                                <StackPanel Grid.Column="2">
+                                    <TextBlock Style="{StaticResource ChipLabel}" Text="RUC"/>
+                                    <TextBox x:Name="TxtClienteRUC" Style="{StaticResource ChipValue}"/>
+                                </StackPanel>
+                                <StackPanel Grid.Column="4">
+                                    <TextBlock Style="{StaticResource ChipLabel}" Text="DIRECCIÓN"/>
+                                    <TextBox x:Name="TxtClienteDireccion" Style="{StaticResource ChipValue}"/>
+                                </StackPanel>
+                                <StackPanel Grid.Column="6">
+                                    <TextBlock Style="{StaticResource ChipLabel}" Text="SEXO"/>
+                                    <TextBox x:Name="TxtClienteSexo" Style="{StaticResource ChipValue}"/>
+                                </StackPanel>
+                            </Grid>
+
+                            <!-- Fila 2: Celular | Ciudad | Estado | Est. Civil | Informconf -->
+                            <Grid Margin="0,0,0,10">
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="130"/>
+                                    <ColumnDefinition Width="12"/>
+                                    <ColumnDefinition Width="130"/>
+                                    <ColumnDefinition Width="12"/>
+                                    <ColumnDefinition Width="110"/>
+                                    <ColumnDefinition Width="12"/>
+                                    <ColumnDefinition Width="110"/>
+                                    <ColumnDefinition Width="12"/>
+                                    <ColumnDefinition Width="*"/>
+                                </Grid.ColumnDefinitions>
+                                <StackPanel Grid.Column="0">
+                                    <TextBlock Style="{StaticResource ChipLabel}" Text="CELULAR"/>
+                                    <TextBox x:Name="TxtClienteCelular" Style="{StaticResource ChipValue}"/>
+                                </StackPanel>
+                                <StackPanel Grid.Column="2">
+                                    <TextBlock Style="{StaticResource ChipLabel}" Text="CIUDAD"/>
+                                    <TextBox x:Name="TxtClienteCiudad" Style="{StaticResource ChipValue}"/>
+                                </StackPanel>
+                                <StackPanel Grid.Column="4">
+                                    <TextBlock Style="{StaticResource ChipLabel}" Text="ESTADO"/>
+                                    <TextBox x:Name="TxtClienteEstado" Style="{StaticResource ChipValue}"/>
+                                </StackPanel>
+                                <StackPanel Grid.Column="6">
+                                    <TextBlock Style="{StaticResource ChipLabel}" Text="EST. CIVIL"/>
+                                    <TextBox x:Name="TxtClienteECV" Style="{StaticResource ChipValue}"/>
+                                </StackPanel>
+                                <StackPanel Grid.Column="8">
+                                    <TextBlock Style="{StaticResource ChipLabel}" Text="INFORMCONF"/>
+                                    <TextBox x:Name="TxtClienteInformconf" Style="{StaticResource ChipValue}"/>
+                                </StackPanel>
+                            </Grid>
+
+                            <!-- Fila 3: Lugar trabajo | Tel. laboral | Condición —
+                                 El campo "Tipo" (Bueno/Regular/Malo, CLIENTES.TIPO) y el combo puntual "Estado según
+                                 Inforconf" (Bueno/Malo/Sin consultar) del legacy se quitaron de esta pantalla: la
+                                 decisión de si el cliente requiere garante ya NO depende de un dato que se cargaba
+                                 suelto en cada solicitud, sino del historial real de créditos (ver
+                                 EvaluarRequiereGaranteAsync) MÁS el campo Inforconf real de la ficha del cliente
+                                 (CLIENTES.INFORCOM, que se muestra arriba en "INFORMCONF" y se corrige desde
+                                 Gestión de Clientes — nunca desde acá). -->
+                            <Grid Margin="0,0,0,10">
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="*"/>
+                                    <ColumnDefinition Width="12"/>
+                                    <ColumnDefinition Width="130"/>
+                                    <ColumnDefinition Width="12"/>
+                                    <ColumnDefinition Width="130"/>
+                                </Grid.ColumnDefinitions>
+                                <StackPanel Grid.Column="0">
+                                    <TextBlock Style="{StaticResource ChipLabel}" Text="LUGAR DE TRABAJO"/>
+                                    <TextBox x:Name="TxtClienteLugarTrabajo" Style="{StaticResource ChipValue}"/>
+                                </StackPanel>
+                                <StackPanel Grid.Column="2">
+                                    <TextBlock Style="{StaticResource ChipLabel}" Text="TEL. LABORAL"/>
+                                    <TextBox x:Name="TxtClienteTelLab" Style="{StaticResource ChipValue}"/>
+                                </StackPanel>
+                                <StackPanel Grid.Column="4">
+                                    <TextBlock Style="{StaticResource ChipLabel}" Text="CONDICIÓN"/>
+                                    <TextBox x:Name="TxtClienteCondicion" Style="{StaticResource ChipValue}"/>
+                                </StackPanel>
+                            </Grid>
+
+                            <!-- Separador -->
+                            <Border Style="{StaticResource SectionDivider}"/>
+
+                            <!-- Fila 4: Antigüedad | Crédito máx | Saldo | Cónyuge | Venc CI — chips de resumen -->
+                            <TextBlock Text="DATOS FINANCIEROS" FontSize="9" FontWeight="Bold"
+                                       Foreground="{StaticResource BrCS}" Margin="0,0,0,8"/>
+                            <Grid>
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="*"/>
+                                    <ColumnDefinition Width="12"/>
+                                    <ColumnDefinition Width="*"/>
+                                    <ColumnDefinition Width="12"/>
+                                    <ColumnDefinition Width="*"/>
+                                    <ColumnDefinition Width="12"/>
+                                    <ColumnDefinition Width="*"/>
+                                    <ColumnDefinition Width="12"/>
+                                    <ColumnDefinition Width="*"/>
+                                </Grid.ColumnDefinitions>
+
+                                <!-- Card chip: Antigüedad -->
+                                <Border Grid.Column="0" Background="{StaticResource BrC4}"
+                                        CornerRadius="8" Padding="12,8"
+                                        BorderBrush="{StaticResource BrC3}" BorderThickness="1">
+                                    <StackPanel>
+                                        <TextBlock Style="{StaticResource ChipLabel}" Text="ANTIGÜEDAD"/>
+                                        <TextBox x:Name="TxtClienteAntiguedad"
+                                                 Background="Transparent" BorderThickness="0"
+                                                 IsReadOnly="True" FontSize="13" FontWeight="Bold"
+                                                 Foreground="{StaticResource BrC1}" Padding="0"/>
+                                    </StackPanel>
+                                </Border>
+                                <!-- Card chip: Crédito máx -->
+                                <Border Grid.Column="2" Background="{StaticResource BrC4}"
+                                        CornerRadius="8" Padding="12,8"
+                                        BorderBrush="{StaticResource BrC3}" BorderThickness="1">
+                                    <StackPanel>
+                                        <TextBlock Style="{StaticResource ChipLabel}" Text="CRÉDITO MÁX."/>
+                                        <TextBox x:Name="TxtClienteCredMax"
+                                                 Background="Transparent" BorderThickness="0"
+                                                 IsReadOnly="True" FontSize="13" FontWeight="Bold"
+                                                 Foreground="{StaticResource BrC1}" Padding="0"/>
+                                    </StackPanel>
+                                </Border>
+                                <!-- Card chip: Saldo -->
+                                <Border Grid.Column="4" Background="#FFF5F5"
+                                        CornerRadius="8" Padding="12,8"
+                                        BorderBrush="#F0C0C0" BorderThickness="1">
+                                    <StackPanel>
+                                        <TextBlock Style="{StaticResource ChipLabel}" Text="SALDO ACTUAL"/>
+                                        <TextBox x:Name="TxtClienteSaldo"
+                                                 Background="Transparent" BorderThickness="0"
+                                                 IsReadOnly="True" FontSize="13" FontWeight="Bold"
+                                                 Foreground="{StaticResource BrC5}" Padding="0"/>
+                                    </StackPanel>
+                                </Border>
+                                <!-- Card chip: Cónyuge -->
+                                <Border Grid.Column="6" Background="#F8FAFC"
+                                        CornerRadius="8" Padding="12,8"
+                                        BorderBrush="{StaticResource BrCB}" BorderThickness="1">
+                                    <StackPanel>
+                                        <TextBlock Style="{StaticResource ChipLabel}" Text="CÓNYUGE"/>
+                                        <TextBox x:Name="TxtClienteConyuge"
+                                                 Background="Transparent" BorderThickness="0"
+                                                 IsReadOnly="True" FontSize="13" FontWeight="Bold"
+                                                 Foreground="{StaticResource BrCT}" Padding="0"/>
+                                    </StackPanel>
+                                </Border>
+                                <!-- Card chip: Venc CI -->
+                                <Border Grid.Column="8" Background="#FFFBF0"
+                                        CornerRadius="8" Padding="12,8"
+                                        BorderBrush="#F0E0A0" BorderThickness="1">
+                                    <StackPanel>
+                                        <TextBlock Style="{StaticResource ChipLabel}" Text="VENC. C.I."/>
+                                        <TextBox x:Name="TxtClienteVencCI"
+                                                 Background="Transparent" BorderThickness="0"
+                                                 IsReadOnly="True" FontSize="13" FontWeight="Bold"
+                                                 Foreground="#8A6000" Padding="0"/>
+                                    </StackPanel>
+                                </Border>
+                            </Grid>
+
+                            <!-- Card informativo: por qué este cliente requiere (o no) garante —
+                                 se actualiza al elegir cliente y al marcar/desmarcar "Es funcionario
+                                 público", para que el cajero lo sepa ANTES de intentar confirmar la
+                                 venta, no recién cuando el guardado lo bloquea. ChkFuncionarioPublico
+                                 solo se muestra cuando el cliente requeriría garante por historial de
+                                 créditos — es la excepción manual que pidió el cliente (Credimar):
+                                 policía/docente/funcionario público exime de garante aunque el
+                                 historial de créditos por sí solo lo exigiría. -->
+                            <Border x:Name="CardEstadoGarante" Margin="0,14,0,0"
+                                    CornerRadius="8" Padding="14,10" BorderThickness="1">
+                                <StackPanel>
+                                    <StackPanel Orientation="Horizontal">
+                                        <TextBlock x:Name="IconoEstadoGarante" FontSize="18"
+                                                   VerticalAlignment="Center" Margin="0,0,10,0"/>
+                                        <TextBlock x:Name="TxtEstadoGarante" FontSize="12"
+                                                   TextWrapping="Wrap" VerticalAlignment="Center"/>
+                                    </StackPanel>
+                                    <CheckBox x:Name="ChkFuncionarioPublico" Margin="28,8,0,0"
+                                              Content="¿Es funcionario público? (policía, docente, etc.) — exime de garante"
+                                              FontSize="12" Visibility="Collapsed"
+                                              Checked="OnFuncionarioPublicoChanged"
+                                              Unchecked="OnFuncionarioPublicoChanged"/>
+                                </StackPanel>
+                            </Border>
+                        </StackPanel>
+                    </ScrollViewer>
+                </TabItem>
+
+                <!-- ═══════════ TAB: GARANTE ═══════════ -->
+                <TabItem Header="Garante" Tag="🛡" Style="{StaticResource ModernTabItem}">
+                    <ScrollViewer VerticalScrollBarVisibility="Auto"
+                                  HorizontalScrollBarVisibility="Disabled"
+                                  Padding="20,16,20,16">
+                        <StackPanel>
+                            <!-- Repite el mismo aviso de la pestaña Cliente (CardEstadoGarante) —
+                                 el cajero puede llegar acá directo sin haber leído la pestaña
+                                 Cliente, y sin esto no tenía forma de saber si el garante es
+                                 obligatorio u opcional para ESTE cliente, generando confusión. -->
+                            <Border x:Name="CardEstadoGaranteTab" Margin="0,0,0,14"
+                                    CornerRadius="8" Padding="14,10" BorderThickness="1">
+                                <StackPanel Orientation="Horizontal">
+                                    <TextBlock x:Name="IconoEstadoGaranteTab" FontSize="18"
+                                               VerticalAlignment="Center" Margin="0,0,10,0"/>
+                                    <TextBlock x:Name="TxtEstadoGaranteTab" FontSize="12"
+                                               TextWrapping="Wrap" VerticalAlignment="Center"/>
+                                </StackPanel>
+                            </Border>
+
+                            <!-- Acción buscar garante -->
+                            <Grid Margin="0,0,0,14">
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="Auto"/>
+                                    <ColumnDefinition Width="*"/>
+                                </Grid.ColumnDefinitions>
+                                <Button Grid.Column="0" x:Name="BtnBuscarGarante"
+                                        Content="🛡 Buscar garante"
+                                        Style="{StaticResource BtnPrimary}"
+                                        Click="OnBuscarGarante"/>
+                                <TextBox x:Name="TxtGaranteNombre" Grid.Column="1"
+                                         Margin="10,0,0,0" Height="30" FontSize="13"
+                                         FontWeight="SemiBold"
+                                         Background="Transparent" BorderThickness="0,0,0,2"
+                                         BorderBrush="{StaticResource BrC2}"
+                                         Foreground="{StaticResource BrC1}"
+                                         VerticalContentAlignment="Center"
+                                         IsReadOnly="True" Padding="4,0"/>
+                            </Grid>
+
+                            <!-- Fila 1: CI | Dirección | Teléfono -->
+                            <Grid Margin="0,0,0,10">
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="130"/>
+                                    <ColumnDefinition Width="12"/>
+                                    <ColumnDefinition Width="*"/>
+                                    <ColumnDefinition Width="12"/>
+                                    <ColumnDefinition Width="130"/>
+                                </Grid.ColumnDefinitions>
+                                <StackPanel Grid.Column="0">
+                                    <TextBlock Style="{StaticResource ChipLabel}" Text="C.I."/>
+                                    <TextBox x:Name="TxtGaranteCI" Style="{StaticResource ChipValue}"/>
+                                </StackPanel>
+                                <StackPanel Grid.Column="2">
+                                    <TextBlock Style="{StaticResource ChipLabel}" Text="DIRECCIÓN"/>
+                                    <TextBox x:Name="TxtGaranteDireccion" Style="{StaticResource ChipValue}"/>
+                                </StackPanel>
+                                <StackPanel Grid.Column="4">
+                                    <TextBlock Style="{StaticResource ChipLabel}" Text="TELÉFONO"/>
+                                    <TextBox x:Name="TxtGaranteTelefono" Style="{StaticResource ChipValue}"/>
+                                </StackPanel>
+                            </Grid>
+
+                            <!-- Fila 2: Lugar trabajo | Tel. Lab | Antigüedad -->
+                            <Grid Margin="0,0,0,10">
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="*"/>
+                                    <ColumnDefinition Width="12"/>
+                                    <ColumnDefinition Width="130"/>
+                                    <ColumnDefinition Width="12"/>
+                                    <ColumnDefinition Width="130"/>
+                                </Grid.ColumnDefinitions>
+                                <StackPanel Grid.Column="0">
+                                    <TextBlock Style="{StaticResource ChipLabel}" Text="LUGAR DE TRABAJO"/>
+                                    <TextBox x:Name="TxtGaranteLugarTrabajo" Style="{StaticResource ChipValue}"/>
+                                </StackPanel>
+                                <StackPanel Grid.Column="2">
+                                    <TextBlock Style="{StaticResource ChipLabel}" Text="TEL. LABORAL"/>
+                                    <TextBox x:Name="TxtGaranteTelLab" Style="{StaticResource ChipValue}"/>
+                                </StackPanel>
+                                <StackPanel Grid.Column="4">
+                                    <TextBlock Style="{StaticResource ChipLabel}" Text="ANTIGÜEDAD"/>
+                                    <TextBox x:Name="TxtGaranteAntiguedad" Style="{StaticResource ChipValue}"/>
+                                </StackPanel>
+                            </Grid>
+
+                            <Border Style="{StaticResource SectionDivider}"/>
+
+                            <!-- Fila 3: Venc CI | Est. Civil | Cónyuge — chips -->
+                            <Grid>
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="*"/>
+                                    <ColumnDefinition Width="12"/>
+                                    <ColumnDefinition Width="*"/>
+                                    <ColumnDefinition Width="12"/>
+                                    <ColumnDefinition Width="*"/>
+                                </Grid.ColumnDefinitions>
+                                <Border Grid.Column="0" Background="{StaticResource BrC4}"
+                                        CornerRadius="8" Padding="12,8"
+                                        BorderBrush="{StaticResource BrC3}" BorderThickness="1">
+                                    <StackPanel>
+                                        <TextBlock Style="{StaticResource ChipLabel}" Text="VENC. C.I."/>
+                                        <TextBox x:Name="TxtGaranteVencCI"
+                                                 Background="Transparent" BorderThickness="0"
+                                                 IsReadOnly="True" FontSize="13" FontWeight="Bold"
+                                                 Foreground="{StaticResource BrC1}" Padding="0"/>
+                                    </StackPanel>
+                                </Border>
+                                <Border Grid.Column="2" Background="{StaticResource BrC4}"
+                                        CornerRadius="8" Padding="12,8"
+                                        BorderBrush="{StaticResource BrC3}" BorderThickness="1">
+                                    <StackPanel>
+                                        <TextBlock Style="{StaticResource ChipLabel}" Text="EST. CIVIL"/>
+                                        <TextBox x:Name="TxtGaranteECV"
+                                                 Background="Transparent" BorderThickness="0"
+                                                 IsReadOnly="True" FontSize="13" FontWeight="Bold"
+                                                 Foreground="{StaticResource BrC1}" Padding="0"/>
+                                    </StackPanel>
+                                </Border>
+                                <Border Grid.Column="4" Background="{StaticResource BrC4}"
+                                        CornerRadius="8" Padding="12,8"
+                                        BorderBrush="{StaticResource BrC3}" BorderThickness="1">
+                                    <StackPanel>
+                                        <TextBlock Style="{StaticResource ChipLabel}" Text="CÓNYUGE"/>
+                                        <TextBox x:Name="TxtGaranteConyuge"
+                                                 Background="Transparent" BorderThickness="0"
+                                                 IsReadOnly="True" FontSize="13" FontWeight="Bold"
+                                                 Foreground="{StaticResource BrC1}" Padding="0"/>
+                                    </StackPanel>
+                                </Border>
+                            </Grid>
+                        </StackPanel>
+                    </ScrollViewer>
+                </TabItem>
+
+                <!-- ═══════════ TAB: REFERENCIAS ═══════════ -->
+                <TabItem Header="Referencias" Tag="📎" Style="{StaticResource ModernTabItem}">
+                    <ScrollViewer VerticalScrollBarVisibility="Auto"
+                                  HorizontalScrollBarVisibility="Disabled"
+                                  Padding="20,16,20,16">
                         <Grid>
                             <Grid.ColumnDefinitions>
-                                <ColumnDefinition Width="Auto" />
-                                <ColumnDefinition Width="160" />
-                                <ColumnDefinition Width="Auto" />
-                                <ColumnDefinition Width="100" />
-                                <ColumnDefinition Width="Auto" />
-                                <ColumnDefinition Width="100" />
-                                <ColumnDefinition Width="Auto" />
-                                <ColumnDefinition Width="*" />
-                                <ColumnDefinition Width="Auto" />
-                                <ColumnDefinition Width="60" />
+                                <ColumnDefinition Width="*"/>
+                                <ColumnDefinition Width="16"/>
+                                <ColumnDefinition Width="*"/>
                             </Grid.ColumnDefinitions>
                             <Grid.RowDefinitions>
-                                <RowDefinition Height="22" />
-                                <RowDefinition Height="22" />
-                                <RowDefinition Height="22" />
+                                <RowDefinition Height="Auto"/>
+                                <RowDefinition Height="16"/>
+                                <RowDefinition Height="Auto"/>
                             </Grid.RowDefinitions>
 
-                            <!-- Fila 0 -->
-                            <Button Grid.Row="0" Grid.Column="0" x:Name="BtnBuscarCliente"
-                                    Content="Cliente" Padding="6,2" FontSize="10"
-                                    Background="#CC0000" Foreground="White" FontWeight="Bold"
-                                    Click="OnBuscarCliente" />
-                            <TextBox x:Name="TxtClienteNombre" Grid.Row="0" Grid.Column="1"
-                                     Margin="2,0" Padding="2,1" FontSize="11" IsReadOnly="True" Background="#FFFF99" />
-                            <TextBlock Grid.Row="0" Grid.Column="2" Text="C.I.:" VerticalAlignment="Center" Margin="4,0,2,0" FontSize="10" />
-                            <TextBox x:Name="TxtClienteCI" Grid.Row="0" Grid.Column="3"
-                                     Margin="2,0" Padding="2,1" FontSize="11" IsReadOnly="True" Background="#FFFF99" />
-                            <TextBlock Grid.Row="0" Grid.Column="4" Text="RUC:" VerticalAlignment="Center" Margin="4,0,2,0" FontSize="10" />
-                            <TextBox x:Name="TxtClienteRUC" Grid.Row="0" Grid.Column="5"
-                                     Margin="2,0" Padding="2,1" FontSize="11" IsReadOnly="True" Background="#FFFF99" />
-                            <TextBlock Grid.Row="0" Grid.Column="6" Text="Dirección:" VerticalAlignment="Center" Margin="4,0,2,0" FontSize="10" />
-                            <TextBox x:Name="TxtClienteDireccion" Grid.Row="0" Grid.Column="7"
-                                     Margin="2,0" Padding="2,1" FontSize="11" IsReadOnly="True" Background="#FFFF99" />
-                            <TextBlock Grid.Row="0" Grid.Column="8" Text="Sexo:" VerticalAlignment="Center" Margin="4,0,2,0" FontSize="10" />
-                            <TextBox x:Name="TxtClienteSexo" Grid.Row="0" Grid.Column="9"
-                                     Padding="2,1" FontSize="11" IsReadOnly="True" Background="#FFFF99" />
+                            <!-- ── Ref. Personal 1 ── -->
+                            <Border Grid.Row="0" Grid.Column="0" Background="#F4F8FF"
+                                    CornerRadius="8" Padding="14,12"
+                                    BorderBrush="{StaticResource BrC3}" BorderThickness="1">
+                                <StackPanel>
+                                    <TextBlock Text="REFERENCIA PERSONAL 1" FontSize="9"
+                                               FontWeight="Bold" Foreground="{StaticResource BrC2}"
+                                               Margin="0,0,0,10"/>
+                                    <Grid Margin="0,0,0,8">
+                                        <Grid.ColumnDefinitions>
+                                            <ColumnDefinition Width="Auto"/>
+                                            <ColumnDefinition Width="*"/>
+                                        </Grid.ColumnDefinitions>
+                                        <Button x:Name="BtnBuscarRef1" Grid.Column="0"
+                                                Content="🔍" Width="30" Height="30"
+                                                Style="{StaticResource BtnPrimary}" Padding="0"
+                                                Margin="0,0,8,0" VerticalAlignment="Bottom"
+                                                Click="OnBuscarRef1"/>
+                                        <StackPanel Grid.Column="1">
+                                            <TextBlock Style="{StaticResource ChipLabel}" Text="NOMBRE"/>
+                                            <TextBox x:Name="TxtRef1Nom" Style="{StaticResource ChipValueEdit}"/>
+                                        </StackPanel>
+                                    </Grid>
+                                    <Grid>
+                                        <Grid.ColumnDefinitions>
+                                            <ColumnDefinition Width="*"/>
+                                            <ColumnDefinition Width="10"/>
+                                            <ColumnDefinition Width="*"/>
+                                        </Grid.ColumnDefinitions>
+                                        <StackPanel Grid.Column="0">
+                                            <TextBlock Style="{StaticResource ChipLabel}" Text="CELULAR"/>
+                                            <TextBox x:Name="TxtRef1Tel" Style="{StaticResource ChipValueEdit}"/>
+                                        </StackPanel>
+                                        <StackPanel Grid.Column="2">
+                                            <TextBlock Style="{StaticResource ChipLabel}" Text="LUGAR DE TRABAJO"/>
+                                            <TextBox x:Name="TxtRef1Trab" Style="{StaticResource ChipValueEdit}"/>
+                                        </StackPanel>
+                                    </Grid>
+                                </StackPanel>
+                            </Border>
 
-                            <!-- Fila 1 -->
-                            <TextBlock Grid.Row="1" Grid.Column="0" Text="Celular:" VerticalAlignment="Center" Margin="0,2,2,0" FontSize="10" />
-                            <TextBox x:Name="TxtClienteCelular" Grid.Row="1" Grid.Column="1"
-                                     Margin="2,2,2,0" Padding="2,1" FontSize="11" IsReadOnly="True" Background="#FFFF99" />
-                            <TextBlock Grid.Row="1" Grid.Column="2" Text="Ciudad:" VerticalAlignment="Center" Margin="4,2,2,0" FontSize="10" />
-                            <TextBox x:Name="TxtClienteCiudad" Grid.Row="1" Grid.Column="3"
-                                     Margin="2,2,2,0" Padding="2,1" FontSize="11" IsReadOnly="True" Background="#FFFF99" />
-                            <TextBlock Grid.Row="1" Grid.Column="4" Text="Estado:" VerticalAlignment="Center" Margin="4,2,2,0" FontSize="10" />
-                            <TextBox x:Name="TxtClienteEstado" Grid.Row="1" Grid.Column="5"
-                                     Margin="2,2,2,0" Padding="2,1" FontSize="11" IsReadOnly="True" Background="#FFFF99" />
-                            <TextBlock Grid.Row="1" Grid.Column="6" Text="Estado Civil:" VerticalAlignment="Center" Margin="4,2,2,0" FontSize="10" />
-                            <TextBox x:Name="TxtClienteECV" Grid.Row="1" Grid.Column="7"
-                                     Margin="2,2,2,0" Padding="2,1" FontSize="11" IsReadOnly="True" Background="#FFFF99" />
-                            <TextBlock Grid.Row="1" Grid.Column="8" Text="Informconf:" VerticalAlignment="Center" Margin="4,2,2,0" FontSize="10" />
-                            <TextBox x:Name="TxtClienteInformconf" Grid.Row="1" Grid.Column="9"
-                                     Padding="2,1" FontSize="11" IsReadOnly="True" Background="#FFFF99" />
+                            <!-- ── Ref. Personal 2 ── -->
+                            <Border Grid.Row="0" Grid.Column="2" Background="#F4F8FF"
+                                    CornerRadius="8" Padding="14,12"
+                                    BorderBrush="{StaticResource BrC3}" BorderThickness="1">
+                                <StackPanel>
+                                    <TextBlock Text="REFERENCIA PERSONAL 2" FontSize="9"
+                                               FontWeight="Bold" Foreground="{StaticResource BrC2}"
+                                               Margin="0,0,0,10"/>
+                                    <Grid Margin="0,0,0,8">
+                                        <Grid.ColumnDefinitions>
+                                            <ColumnDefinition Width="Auto"/>
+                                            <ColumnDefinition Width="*"/>
+                                        </Grid.ColumnDefinitions>
+                                        <Button x:Name="BtnBuscarRef2" Grid.Column="0"
+                                                Content="🔍" Width="30" Height="30"
+                                                Style="{StaticResource BtnPrimary}" Padding="0"
+                                                Margin="0,0,8,0" VerticalAlignment="Bottom"
+                                                Click="OnBuscarRef2"/>
+                                        <StackPanel Grid.Column="1">
+                                            <TextBlock Style="{StaticResource ChipLabel}" Text="NOMBRE"/>
+                                            <TextBox x:Name="TxtRef2Nom" Style="{StaticResource ChipValueEdit}"/>
+                                        </StackPanel>
+                                    </Grid>
+                                    <Grid>
+                                        <Grid.ColumnDefinitions>
+                                            <ColumnDefinition Width="*"/>
+                                            <ColumnDefinition Width="10"/>
+                                            <ColumnDefinition Width="*"/>
+                                        </Grid.ColumnDefinitions>
+                                        <StackPanel Grid.Column="0">
+                                            <TextBlock Style="{StaticResource ChipLabel}" Text="CELULAR"/>
+                                            <TextBox x:Name="TxtRef2Tel" Style="{StaticResource ChipValueEdit}"/>
+                                        </StackPanel>
+                                        <StackPanel Grid.Column="2">
+                                                <TextBlock Style="{StaticResource ChipLabel}" Text="LUGAR DE TRABAJO"/>
+                                                <TextBox x:Name="TxtRef2Trab" Style="{StaticResource ChipValueEdit}"/>
+                                            </StackPanel>
+                                    </Grid>
+                                </StackPanel>
+                            </Border>
 
-                            <!-- Fila 2 -->
-                            <TextBlock Grid.Row="2" Grid.Column="0" Text="Lugar de trabajo:" VerticalAlignment="Center" Margin="0,2,2,0" FontSize="10" />
-                            <TextBox x:Name="TxtClienteLugarTrabajo" Grid.Row="2" Grid.Column="1" Grid.ColumnSpan="3"
-                                     Margin="2,2,2,0" Padding="2,1" FontSize="11" IsReadOnly="True" Background="#FFFF99" />
-                            <TextBlock Grid.Row="2" Grid.Column="4" Text="Teléfono laboral:" VerticalAlignment="Center" Margin="4,2,2,0" FontSize="10" />
-                            <TextBox x:Name="TxtClienteTelLab" Grid.Row="2" Grid.Column="5"
-                                     Margin="2,2,2,0" Padding="2,1" FontSize="11" IsReadOnly="True" Background="#FFFF99" />
-                            <TextBlock Grid.Row="2" Grid.Column="6" Text="Condición:" VerticalAlignment="Center" Margin="4,2,2,0" FontSize="10" />
-                            <TextBox x:Name="TxtClienteCondicion" Grid.Row="2" Grid.Column="7"
-                                     Margin="2,2,2,0" Padding="2,1" FontSize="11" IsReadOnly="True" Background="#FFFF99" />
-                            <TextBlock Grid.Row="2" Grid.Column="8" Text="Tipo:" VerticalAlignment="Center" Margin="4,2,2,0" FontSize="10" />
-                            <TextBox x:Name="TxtClienteTipo" Grid.Row="2" Grid.Column="9"
-                                     Padding="2,1" FontSize="11" IsReadOnly="True" Background="#FFFF99" />
+                            <!-- ── Ref. Comercial 1 ── -->
+                            <Border Grid.Row="2" Grid.Column="0" Background="#F9F9F9"
+                                    CornerRadius="8" Padding="14,12"
+                                    BorderBrush="{StaticResource BrCB}" BorderThickness="1">
+                                <StackPanel>
+                                    <TextBlock Text="REFERENCIA COMERCIAL 1" FontSize="9"
+                                               FontWeight="Bold" Foreground="{StaticResource BrCS}"
+                                               Margin="0,0,0,10"/>
+                                    <Grid>
+                                        <Grid.ColumnDefinitions>
+                                            <ColumnDefinition Width="*"/>
+                                            <ColumnDefinition Width="10"/>
+                                            <ColumnDefinition Width="120"/>
+                                        </Grid.ColumnDefinitions>
+                                        <StackPanel Grid.Column="0">
+                                            <TextBlock Style="{StaticResource ChipLabel}" Text="NOMBRE"/>
+                                            <TextBox x:Name="TxtRefC1Nom" Style="{StaticResource ChipValueEdit}"/>
+                                        </StackPanel>
+                                        <StackPanel Grid.Column="2">
+                                            <TextBlock Style="{StaticResource ChipLabel}" Text="TELÉFONO"/>
+                                            <TextBox x:Name="TxtRefC1Tel" Style="{StaticResource ChipValueEdit}"/>
+                                        </StackPanel>
+                                    </Grid>
+                                </StackPanel>
+                            </Border>
+
+                            <!-- ── Ref. Comercial 2 ── -->
+                            <Border Grid.Row="2" Grid.Column="2" Background="#F9F9F9"
+                                    CornerRadius="8" Padding="14,12"
+                                    BorderBrush="{StaticResource BrCB}" BorderThickness="1">
+                                <StackPanel>
+                                    <TextBlock Text="REFERENCIA COMERCIAL 2" FontSize="9"
+                                               FontWeight="Bold" Foreground="{StaticResource BrCS}"
+                                               Margin="0,0,0,10"/>
+                                    <Grid>
+                                        <Grid.ColumnDefinitions>
+                                            <ColumnDefinition Width="*"/>
+                                            <ColumnDefinition Width="10"/>
+                                            <ColumnDefinition Width="120"/>
+                                        </Grid.ColumnDefinitions>
+                                        <StackPanel Grid.Column="0">
+                                            <TextBlock Style="{StaticResource ChipLabel}" Text="NOMBRE"/>
+                                            <TextBox x:Name="TxtRefC2Nom" Style="{StaticResource ChipValueEdit}"/>
+                                        </StackPanel>
+                                        <StackPanel Grid.Column="2">
+                                            <TextBlock Style="{StaticResource ChipLabel}" Text="TELÉFONO"/>
+                                            <TextBox x:Name="TxtRefC2Tel" Style="{StaticResource ChipValueEdit}"/>
+                                        </StackPanel>
+                                    </Grid>
+                                </StackPanel>
+                            </Border>
                         </Grid>
+                    </ScrollViewer>
+                </TabItem>
 
-                        <!-- Fila extra: Antigüedad, Crédito máx, Saldo, Cónyuge, Venc CI, botones -->
-                        <Grid Margin="0,2,0,0">
-                            <Grid.ColumnDefinitions>
-                                <ColumnDefinition Width="Auto" />
-                                <ColumnDefinition Width="130" />
-                                <ColumnDefinition Width="Auto" />
-                                <ColumnDefinition Width="90" />
-                                <ColumnDefinition Width="Auto" />
-                                <ColumnDefinition Width="90" />
-                                <ColumnDefinition Width="Auto" />
-                                <ColumnDefinition Width="*" />
-                                <ColumnDefinition Width="Auto" />
-                                <ColumnDefinition Width="90" />
-                                <ColumnDefinition Width="Auto" />
-                                <ColumnDefinition Width="Auto" />
-                            </Grid.ColumnDefinitions>
-                            <TextBlock Grid.Column="0" Text="Antigüedad:" VerticalAlignment="Center" Margin="0,0,2,0" FontSize="10" />
-                            <TextBox x:Name="TxtClienteAntiguedad" Grid.Column="1" Padding="2,1" FontSize="10" IsReadOnly="True" Background="#FFFF99" />
-                            <TextBlock Grid.Column="2" Text="Crédito máximo:" VerticalAlignment="Center" Margin="4,0,2,0" FontSize="10" />
-                            <TextBox x:Name="TxtClienteCredMax" Grid.Column="3" Padding="2,1" FontSize="10" IsReadOnly="True" Background="#FFFF99" />
-                            <TextBlock Grid.Column="4" Text="Saldo actual:" VerticalAlignment="Center" Margin="4,0,2,0" FontSize="10" />
-                            <TextBox x:Name="TxtClienteSaldo" Grid.Column="5" Padding="2,1" FontSize="10" IsReadOnly="True" Background="#FFFF99" />
-                            <TextBlock Grid.Column="6" Text="Cónyuge:" VerticalAlignment="Center" Margin="4,0,2,0" FontSize="10" />
-                            <TextBox x:Name="TxtClienteConyuge" Grid.Column="7" Padding="2,1" FontSize="10" IsReadOnly="True" Background="#FFFF99" />
-                            <TextBlock Grid.Column="8" Text="Vencimiento C.I.:" VerticalAlignment="Center" Margin="4,0,2,0" FontSize="10" />
-                            <TextBox x:Name="TxtClienteVencCI" Grid.Column="9" Padding="2,1" FontSize="10" IsReadOnly="True" Background="#FFFF99" />
-                            <Button Grid.Column="10" Content="Historial" Margin="4,0,2,0" Padding="6,2" FontSize="10"
-                                    Background="#CC6600" Foreground="White" FontWeight="Bold"
-                                    Click="OnVerHistorialCliente" />
-                            <Button Grid.Column="11" Content="Ver cédula" Padding="6,2" FontSize="10"
-                                    Background="#CC6600" Foreground="White" FontWeight="Bold"
-                                    Click="OnVerCedulaCliente" />
-                        </Grid>
-                    </StackPanel>
-                </Border>
-
-                <!-- ── GARANTE ── -->
-                <Border Grid.Row="1" BorderBrush="Gray" BorderThickness="1"
-                        Padding="4,4,4,6" Margin="0,0,0,3" Background="#FFF0C0">
-                    <StackPanel>
-                        <TextBlock Text="Garante" FontWeight="Bold" FontSize="11" Margin="0,0,0,3" />
-                        <Grid>
-                            <Grid.ColumnDefinitions>
-                                <ColumnDefinition Width="Auto" />
-                                <ColumnDefinition Width="160" />
-                                <ColumnDefinition Width="Auto" />
-                                <ColumnDefinition Width="100" />
-                                <ColumnDefinition Width="Auto" />
-                                <ColumnDefinition Width="*" />
-                                <ColumnDefinition Width="Auto" />
-                                <ColumnDefinition Width="120" />
-                            </Grid.ColumnDefinitions>
-                            <Grid.RowDefinitions>
-                                <RowDefinition Height="22" />
-                                <RowDefinition Height="22" />
-                            </Grid.RowDefinitions>
-
-                            <!-- Fila 0 -->
-                            <Button Grid.Row="0" Grid.Column="0" x:Name="BtnBuscarGarante"
-                                    Content="Garante" Padding="6,2" FontSize="10"
-                                    Background="#CC0000" Foreground="White" FontWeight="Bold"
-                                    Click="OnBuscarGarante" />
-                            <TextBox x:Name="TxtGaranteNombre" Grid.Row="0" Grid.Column="1"
-                                     Margin="2,0" Padding="2,1" FontSize="11" IsReadOnly="True" Background="#FFFF99" />
-                            <TextBlock Grid.Row="0" Grid.Column="2" Text="C.I.:" VerticalAlignment="Center" Margin="4,0,2,0" FontSize="10" />
-                            <TextBox x:Name="TxtGaranteCI" Grid.Row="0" Grid.Column="3"
-                                     Margin="2,0" Padding="2,1" FontSize="11" IsReadOnly="True" Background="#FFFF99" />
-                            <TextBlock Grid.Row="0" Grid.Column="4" Text="Dirección:" VerticalAlignment="Center" Margin="4,0,2,0" FontSize="10" />
-                            <TextBox x:Name="TxtGaranteDireccion" Grid.Row="0" Grid.Column="5"
-                                     Margin="2,0" Padding="2,1" FontSize="11" IsReadOnly="True" Background="#FFFF99" />
-                            <TextBlock Grid.Row="0" Grid.Column="6" Text="Teléfono:" VerticalAlignment="Center" Margin="4,0,2,0" FontSize="10" />
-                            <TextBox x:Name="TxtGaranteTelefono" Grid.Row="0" Grid.Column="7"
-                                     Padding="2,1" FontSize="11" IsReadOnly="True" Background="#FFFF99" />
-
-                            <!-- Fila 1 -->
-                            <TextBlock Grid.Row="1" Grid.Column="0" Text="Lugar de trabajo:" VerticalAlignment="Center" Margin="0,2,2,0" FontSize="10" />
-                            <TextBox x:Name="TxtGaranteLugarTrabajo" Grid.Row="1" Grid.Column="1" Grid.ColumnSpan="3"
-                                     Margin="2,2,2,0" Padding="2,1" FontSize="10" IsReadOnly="True" Background="#FFFF99" />
-                            <TextBlock Grid.Row="1" Grid.Column="4" Text="Teléfono laboral:" VerticalAlignment="Center" Margin="4,2,2,0" FontSize="10" />
-                            <TextBox x:Name="TxtGaranteTelLab" Grid.Row="1" Grid.Column="5"
-                                     Margin="2,2,2,0" Padding="2,1" FontSize="10" IsReadOnly="True" Background="#FFFF99" />
-                            <TextBlock Grid.Row="1" Grid.Column="6" Text="Antigüedad:" VerticalAlignment="Center" Margin="4,2,2,0" FontSize="10" />
-                            <TextBox x:Name="TxtGaranteAntiguedad" Grid.Row="1" Grid.Column="7"
-                                     Padding="2,1" FontSize="10" IsReadOnly="True" Background="#FFFF99" />
-                        </Grid>
-
-                        <Grid Margin="0,2,0,0">
-                            <Grid.ColumnDefinitions>
-                                <ColumnDefinition Width="Auto" />
-                                <ColumnDefinition Width="130" />
-                                <ColumnDefinition Width="Auto" />
-                                <ColumnDefinition Width="90" />
-                                <ColumnDefinition Width="Auto" />
-                                <ColumnDefinition Width="*" />
-                            </Grid.ColumnDefinitions>
-                            <TextBlock Grid.Column="0" Text="Vencimiento C.I.:" VerticalAlignment="Center" Margin="0,0,2,0" FontSize="10" />
-                            <TextBox x:Name="TxtGaranteVencCI" Grid.Column="1" Padding="2,1" FontSize="10" IsReadOnly="True" Background="#FFFF99" />
-                            <TextBlock Grid.Column="2" Text="Estado Civil:" VerticalAlignment="Center" Margin="4,0,2,0" FontSize="10" />
-                            <TextBox x:Name="TxtGaranteECV" Grid.Column="3" Padding="2,1" FontSize="10" IsReadOnly="True" Background="#FFFF99" />
-                            <TextBlock Grid.Column="4" Text="Cónyuge:" VerticalAlignment="Center" Margin="4,0,2,0" FontSize="10" />
-                            <TextBox x:Name="TxtGaranteConyuge" Grid.Column="5" Padding="2,1" FontSize="10" IsReadOnly="True" Background="#FFFF99" />
-                        </Grid>
-                    </StackPanel>
-                </Border>
-
-                <!-- ── REFERENCIAS ── -->
-                <Border Grid.Row="2" BorderBrush="Gray" BorderThickness="1"
-                        Padding="4" Margin="0,0,0,3" Background="#FFF0C0">
-                    <StackPanel>
-                        <TextBlock Text="Referencias" FontWeight="Bold" FontSize="11" Margin="0,0,0,3" />
-                        <Grid>
-                            <Grid.ColumnDefinitions>
-                                <!-- Ref 1: botón | nombre | celular | trabajo -->
-                                <ColumnDefinition Width="Auto" />
-                                <ColumnDefinition Width="*" />
-                                <ColumnDefinition Width="90" />
-                                <ColumnDefinition Width="100" />
-                                <!-- separador -->
-                                <ColumnDefinition Width="8" />
-                                <!-- Ref 2: botón | nombre | celular | trabajo -->
-                                <ColumnDefinition Width="Auto" />
-                                <ColumnDefinition Width="*" />
-                                <ColumnDefinition Width="90" />
-                                <ColumnDefinition Width="100" />
-                            </Grid.ColumnDefinitions>
-                            <Grid.RowDefinitions>
-                                <RowDefinition Height="Auto" />
-                                <RowDefinition Height="24" />
-                                <RowDefinition Height="4" />
-                                <RowDefinition Height="Auto" />
-                                <RowDefinition Height="24" />
-                            </Grid.RowDefinitions>
-
-                            <!-- ── Encabezados Ref personal ── -->
-                            <TextBlock Grid.Row="0" Grid.Column="1" Text="Ref. personal 1" FontSize="9" FontWeight="SemiBold" Margin="2,0,0,1" />
-                            <TextBlock Grid.Row="0" Grid.Column="2" Text="Celular"          FontSize="9" FontWeight="SemiBold" Margin="2,0,0,1" />
-                            <TextBlock Grid.Row="0" Grid.Column="3" Text="Lugar de trabajo" FontSize="9" FontWeight="SemiBold" Margin="2,0,0,1" />
-                            <TextBlock Grid.Row="0" Grid.Column="6" Text="Ref. personal 2"  FontSize="9" FontWeight="SemiBold" Margin="2,0,0,1" />
-                            <TextBlock Grid.Row="0" Grid.Column="7" Text="Celular"           FontSize="9" FontWeight="SemiBold" Margin="2,0,0,1" />
-                            <TextBlock Grid.Row="0" Grid.Column="8" Text="Lugar de trabajo"  FontSize="9" FontWeight="SemiBold" Margin="2,0,0,1" />
-
-                            <!-- ── Botón + campos Ref personal 1 ── -->
-                            <Button x:Name="BtnBuscarRef1" Grid.Row="1" Grid.Column="0"
-                                    Content="Buscar" Padding="5,1" FontSize="9" Margin="0,0,3,0"
-                                    Background="#CC0000" Foreground="White" FontWeight="Bold"
-                                    Click="OnBuscarRef1" />
-                            <TextBox x:Name="TxtRef1Nom"  Grid.Row="1" Grid.Column="1" Padding="2,1" FontSize="10" Background="White" />
-                            <TextBox x:Name="TxtRef1Tel"  Grid.Row="1" Grid.Column="2" Margin="2,0" Padding="2,1" FontSize="10" Background="White" />
-                            <TextBox x:Name="TxtRef1Trab" Grid.Row="1" Grid.Column="3" Padding="2,1" FontSize="10" Background="White" />
-
-                            <!-- ── Botón + campos Ref personal 2 ── -->
-                            <Button x:Name="BtnBuscarRef2" Grid.Row="1" Grid.Column="5"
-                                    Content="Buscar" Padding="5,1" FontSize="9" Margin="2,0,3,0"
-                                    Background="#CC0000" Foreground="White" FontWeight="Bold"
-                                    Click="OnBuscarRef2" />
-                            <TextBox x:Name="TxtRef2Nom"  Grid.Row="1" Grid.Column="6" Padding="2,1" FontSize="10" Background="White" />
-                            <TextBox x:Name="TxtRef2Tel"  Grid.Row="1" Grid.Column="7" Margin="2,0" Padding="2,1" FontSize="10" Background="White" />
-                            <TextBox x:Name="TxtRef2Trab" Grid.Row="1" Grid.Column="8" Padding="2,1" FontSize="10" Background="White" />
-
-                            <!-- ── Encabezados Ref comercial ── -->
-                            <TextBlock Grid.Row="3" Grid.Column="1" Text="Ref. comercial 1" FontSize="9" FontWeight="SemiBold" Foreground="#555" Margin="2,0,0,1" />
-                            <TextBlock Grid.Row="3" Grid.Column="2" Text="Teléfono"          FontSize="9" FontWeight="SemiBold" Foreground="#555" Margin="2,0,0,1" />
-                            <TextBlock Grid.Row="3" Grid.Column="6" Text="Ref. comercial 2"  FontSize="9" FontWeight="SemiBold" Foreground="#555" Margin="2,0,0,1" />
-                            <TextBlock Grid.Row="3" Grid.Column="7" Text="Teléfono"           FontSize="9" FontWeight="SemiBold" Foreground="#555" Margin="2,0,0,1" />
-
-                            <!-- ── Campos Ref comercial (solo texto) ── -->
-                            <TextBox x:Name="TxtRefC1Nom" Grid.Row="4" Grid.Column="1" Padding="2,1" FontSize="10" Background="White" />
-                            <TextBox x:Name="TxtRefC1Tel" Grid.Row="4" Grid.Column="2" Margin="2,0" Padding="2,1" FontSize="10" Background="White" />
-                            <TextBox x:Name="TxtRefC2Nom" Grid.Row="4" Grid.Column="6" Padding="2,1" FontSize="10" Background="White" />
-                            <TextBox x:Name="TxtRefC2Tel" Grid.Row="4" Grid.Column="7" Margin="2,0" Padding="2,1" FontSize="10" Background="White" />
-                        </Grid>
-                    </StackPanel>
-                </Border>
-
-                <!-- ── MERCADERÍAS ── -->
-                <Border Grid.Row="3" BorderBrush="Gray" BorderThickness="1"
-                        Padding="4" Background="#FFF0C0">
+                <!-- ═══════════ TAB: MERCADERÍAS ═══════════ -->
+                <TabItem Header="Mercaderías" Tag="🛒" Style="{StaticResource ModernTabItem}">
                     <Grid>
                         <Grid.RowDefinitions>
-                            <RowDefinition Height="Auto" />
-                            <RowDefinition Height="Auto" />
-                            <RowDefinition Height="*" />
-                            <RowDefinition Height="Auto" />
+                            <RowDefinition Height="Auto"/>  <!-- barra ingreso -->
+                            <RowDefinition Height="*"/>     <!-- grilla -->
+                            <RowDefinition Height="Auto"/>  <!-- total -->
                         </Grid.RowDefinitions>
 
-                        <TextBlock Grid.Row="0" Text="Mercaderías" FontWeight="Bold" FontSize="11" Margin="0,0,0,3" />
+                        <!-- Barra de ingreso -->
+                        <Border Grid.Row="0" Background="{StaticResource BrC4}"
+                                BorderBrush="{StaticResource BrCB}" BorderThickness="0,0,0,1"
+                                Padding="14,10">
+                            <Grid>
+                                <Grid.RowDefinitions>
+                                    <RowDefinition Height="Auto"/>
+                                    <RowDefinition Height="Auto"/>
+                                </Grid.RowDefinitions>
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="Auto"/>
+                                    <ColumnDefinition Width="88"/>
+                                    <ColumnDefinition Width="10"/>
+                                    <ColumnDefinition Width="*"/>
+                                    <ColumnDefinition Width="10"/>
+                                    <ColumnDefinition Width="90"/>
+                                    <ColumnDefinition Width="10"/>
+                                    <ColumnDefinition Width="78"/>
+                                    <ColumnDefinition Width="10"/>
+                                    <ColumnDefinition Width="100"/>
+                                    <ColumnDefinition Width="10"/>
+                                    <ColumnDefinition Width="90"/>
+                                    <ColumnDefinition Width="10"/>
+                                    <ColumnDefinition Width="90"/>
+                                    <ColumnDefinition Width="10"/>
+                                    <ColumnDefinition Width="90"/>
+                                    <ColumnDefinition Width="10"/>
+                                    <ColumnDefinition Width="Auto"/>
+                                </Grid.ColumnDefinitions>
 
-                        <!-- Barra de ingreso artículo -->
-                        <Grid Grid.Row="1" Margin="0,0,0,3">
-                            <Grid.ColumnDefinitions>
-                                <ColumnDefinition Width="Auto" />
-                                <ColumnDefinition Width="100" />
-                                <ColumnDefinition Width="Auto" />
-                                <ColumnDefinition Width="*" />
-                                <ColumnDefinition Width="Auto" />
-                                <ColumnDefinition Width="70" />
-                                <ColumnDefinition Width="Auto" />
-                                <ColumnDefinition Width="70" />
-                                <ColumnDefinition Width="Auto" />
-                                <ColumnDefinition Width="55" />
-                                <ColumnDefinition Width="Auto" />
-                                <ColumnDefinition Width="70" />
-                                <ColumnDefinition Width="Auto" />
-                                <ColumnDefinition Width="70" />
-                                <ColumnDefinition Width="Auto" />
-                                <ColumnDefinition Width="55" />
-                                <ColumnDefinition Width="Auto" />
-                            </Grid.ColumnDefinitions>
+                                <Button Grid.Row="0" Grid.Column="0" x:Name="BtnCodigo"
+                                        Content="🔍 Cód."
+                                        Style="{StaticResource BtnPrimary}"
+                                        Click="OnBuscarArticulo"/>
+                                <TextBox x:Name="TxtCodigoArticulo" Grid.Row="0" Grid.Column="1"
+                                         Height="30" Margin="6,0,0,0"
+                                         FontSize="11" Padding="6,4"
+                                         Background="White" Foreground="{StaticResource BrCT}"
+                                         BorderBrush="{StaticResource BrCB}" BorderThickness="1"
+                                         VerticalContentAlignment="Center"
+                                         KeyDown="OnCodigoArticuloKeyDown"/>
 
-                            <Button Grid.Column="0" Content="Código" Padding="5,2" FontSize="10"
-                                    Background="#CC0000" Foreground="White" FontWeight="Bold"
-                                    Click="OnBuscarArticulo" />
-                            <TextBox x:Name="TxtCodigoArticulo" Grid.Column="1" Margin="2,0" Padding="2,1" FontSize="10"
-                                     KeyDown="OnCodigoArticuloKeyDown" />
-                            <TextBlock Grid.Column="2" Text="Descripción:" VerticalAlignment="Center" Margin="4,0,2,0" FontSize="10" />
-                            <TextBox x:Name="TxtDescArticulo" Grid.Column="3" Margin="2,0" Padding="2,1" FontSize="10"
-                                     IsReadOnly="True" Background="#FFFF99" />
-                            <TextBlock Grid.Column="4" Text="Precio" VerticalAlignment="Center" Margin="4,0,2,0" FontSize="10" />
-                            <TextBox x:Name="TxtPrecioArticulo" Grid.Column="5" Margin="2,0" Padding="2,1" FontSize="10" Background="White" TextChanged="OnArticuloCalcular" />
-                            <TextBlock Grid.Column="6" Text="Entrega" VerticalAlignment="Center" Margin="4,0,2,0" FontSize="10" />
-                            <TextBox x:Name="TxtEntregaArticulo" Grid.Column="7" Margin="2,0" Padding="2,1" FontSize="10" Background="White" Text="0" TextChanged="OnArticuloCalcular" />
-                            <TextBlock Grid.Column="8" Text="Cuotas" VerticalAlignment="Center" Margin="4,0,2,0" FontSize="10" />
-                            <ComboBox x:Name="CboCuotas" Grid.Column="9" Margin="2,0" Padding="2,1" FontSize="10"
-                                      SelectionChanged="OnCuotasChanged">
-                                <ComboBoxItem Content="3"  Tag="3"  />
-                                <ComboBoxItem Content="6"  Tag="6"  IsSelected="True" />
-                                <ComboBoxItem Content="9"  Tag="9"  />
-                                <ComboBoxItem Content="12" Tag="12" />
-                                <ComboBoxItem Content="18" Tag="18" />
-                                <ComboBoxItem Content="24" Tag="24" />
-                                <ComboBoxItem Content="36" Tag="36" />
-                            </ComboBox>
-                            <TextBlock Grid.Column="10" Text="Costo mensual" VerticalAlignment="Center" Margin="4,0,2,0" FontSize="10" />
-                            <TextBox x:Name="TxtCostoMensual" Grid.Column="11" Margin="2,0" Padding="2,1" FontSize="10"
-                                     IsReadOnly="True" Background="#FFFF99" />
-                            <TextBlock Grid.Column="12" Text="Valor final" VerticalAlignment="Center" Margin="4,0,2,0" FontSize="10" />
-                            <TextBox x:Name="TxtValorFinal" Grid.Column="13" Margin="2,0" Padding="2,1" FontSize="10"
-                                     IsReadOnly="True" Background="#FFFF99" />
-                            <TextBlock Grid.Column="14" Text="Cantidad" VerticalAlignment="Center" Margin="4,0,2,0" FontSize="10" />
-                            <TextBox x:Name="TxtCantidad" Grid.Column="15" Margin="2,0" Padding="2,1" FontSize="10" Text="1" />
-                            <Button Grid.Column="16" Content="▶ Ingresar" Margin="4,0,0,0" Padding="6,2" FontSize="10"
-                                    Background="#006600" Foreground="White" FontWeight="Bold"
-                                    Click="OnAgregarArticulo" />
-                        </Grid>
+                                <StackPanel Grid.Row="0" Grid.Column="3">
+                                    <TextBlock Style="{StaticResource ChipLabel}" Text="DESCRIPCIÓN"/>
+                                    <TextBox x:Name="TxtDescArticulo" Style="{StaticResource ChipValue}"
+                                             Background="{StaticResource BrC4}"/>
+                                </StackPanel>
+                                <StackPanel Grid.Row="0" Grid.Column="5">
+                                    <TextBlock Style="{StaticResource ChipLabel}" Text="PRECIO"/>
+                                    <TextBox x:Name="TxtPrecioArticulo" Style="{StaticResource ChipValue}"
+                                             IsReadOnly="True" Background="{StaticResource BrC4}"
+                                             TextChanged="OnArticuloCalcular"/>
+                                </StackPanel>
+                                <!-- Entrega/Cuotas/%Descuento/%Recargo solo se editan MIENTRAS se
+                                     está cargando un artículo (tras buscarlo, antes de pulsar
+                                     Ingresar) — igual que el sistema viejo, donde esta barra
+                                     queda deshabilitada apenas el artículo pasa a la grilla,
+                                     dejando editable únicamente Cantidad (ver
+                                     HabilitarEdicionArticulo en el code-behind). -->
+                                <StackPanel Grid.Row="0" Grid.Column="7">
+                                    <TextBlock Style="{StaticResource ChipLabel}" Text="ENTREGA"/>
+                                    <TextBox x:Name="TxtEntregaArticulo" Style="{StaticResource ChipValueEdit}"
+                                             Text="0" IsEnabled="False" TextChanged="OnArticuloCalcular"/>
+                                </StackPanel>
+                                <StackPanel Grid.Row="0" Grid.Column="9">
+                                    <TextBlock x:Name="LblCuotas" Style="{StaticResource ChipLabel}" Text="CUOTAS"/>
+                                    <TextBox x:Name="CboCuotas" Style="{StaticResource ChipValueEdit}"
+                                             Text="6" IsEnabled="False" TextAlignment="Center"
+                                             TextChanged="OnCuotasChanged"/>
+                                </StackPanel>
+                                <StackPanel Grid.Row="0" Grid.Column="11">
+                                    <TextBlock Style="{StaticResource ChipLabel}" Text="COSTO MENS."/>
+                                    <TextBox x:Name="TxtCostoMensual" Style="{StaticResource ChipValue}"
+                                             Background="{StaticResource BrC4}"/>
+                                </StackPanel>
+                                <StackPanel Grid.Row="0" Grid.Column="13">
+                                    <TextBlock Style="{StaticResource ChipLabel}" Text="VALOR FINAL"/>
+                                    <TextBox x:Name="TxtValorFinal" Style="{StaticResource ChipValue}"
+                                             Background="{StaticResource BrC4}"/>
+                                </StackPanel>
+                                <StackPanel Grid.Row="0" Grid.Column="15">
+                                    <TextBlock x:Name="LblCantidad" Style="{StaticResource ChipLabel}" Text="CANT."/>
+                                    <TextBox x:Name="TxtCantidad" Style="{StaticResource ChipValueEdit}"
+                                             Text="1" TextAlignment="Center"
+                                             TextChanged="OnCantidadChanged"/>
+                                </StackPanel>
+                                <Button Grid.Row="0" Grid.RowSpan="2" Grid.Column="17" x:Name="BtnIngresarArticulo"
+                                        Content="▶ Ingresar"
+                                        Style="{StaticResource BtnSuccess}"
+                                        VerticalAlignment="Bottom"
+                                        Click="OnAgregarArticulo"/>
 
-                        <!-- Grilla de artículos -->
-                        <DataGrid x:Name="GridDetalle" Grid.Row="2"
-                                  Style="{StaticResource CrediGrid}"
-                                  Background="LightYellow"
-                                  MouseDoubleClick="OnGridDetalleDoubleClick">
+                                <!-- Fila 2: % Descuento / % Recargo — reflejan el plan de pagos
+                                     configurado en el modal "Seleccionar Artículo" (o se cargan
+                                     a mano acá). Afectan el precio real de venta de la línea
+                                     (Costo Mens./Valor Final), no solo una simulación visual. -->
+                                <StackPanel Grid.Row="1" Grid.Column="5" Margin="0,6,0,0">
+                                    <TextBlock Style="{StaticResource ChipLabel}" Text="% DESCUENTO"/>
+                                    <TextBox x:Name="TxtPctDescuentoArticulo" Style="{StaticResource ChipValueEdit}"
+                                             Text="0" IsEnabled="False" TextAlignment="Center"
+                                             TextChanged="OnArticuloCalcular"/>
+                                </StackPanel>
+                                <StackPanel Grid.Row="1" Grid.Column="7" Margin="0,6,0,0">
+                                    <TextBlock Style="{StaticResource ChipLabel}" Text="% RECARGO"/>
+                                    <TextBox x:Name="TxtPctRecargoArticulo" Style="{StaticResource ChipValueEdit}"
+                                             Text="0" IsEnabled="False" TextAlignment="Center"
+                                             TextChanged="OnArticuloCalcular" LostFocus="OnPctRecargoLostFocus"/>
+                                </StackPanel>
+                            </Grid>
+                        </Border>
+
+                        <!-- Grilla -->
+                        <DataGrid x:Name="GridDetalle" Grid.Row="1"
+                                  AutoGenerateColumns="False"
+                                  CanUserAddRows="False" CanUserDeleteRows="False"
+                                  CanUserReorderColumns="False"
+                                  SelectionMode="Single"
+                                  GridLinesVisibility="None"
+                                  HorizontalScrollBarVisibility="Disabled"
+                                  VerticalScrollBarVisibility="Auto"
+                                  BorderThickness="0"
+                                  Background="White"
+                                  RowBackground="White"
+                                  AlternatingRowBackground="{StaticResource BrC4}"
+                                  RowHeight="32" FontSize="11"
+                                  RowDetailsVisibilityMode="Collapsed"
+                                  EnableRowVirtualization="True"
+                                  MouseDoubleClick="OnGridDetalleDoubleClick"
+                                  PreviewKeyDown="OnGridDetalleKeyDown">
+                            <DataGrid.Resources>
+                                <SolidColorBrush x:Key="{x:Static SystemColors.HighlightBrushKey}"
+                                                 Color="#1F77B4"/>
+                                <SolidColorBrush x:Key="{x:Static SystemColors.HighlightTextBrushKey}"
+                                                 Color="White"/>
+                                <SolidColorBrush x:Key="{x:Static SystemColors.InactiveSelectionHighlightBrushKey}"
+                                                 Color="#D2EBFC"/>
+                            </DataGrid.Resources>
+                            <DataGrid.RowStyle>
+                                <Style TargetType="DataGridRow">
+                                    <Setter Property="BorderThickness" Value="0,0,0,1"/>
+                                    <Setter Property="BorderBrush"     Value="{StaticResource BrCB}"/>
+                                    <Setter Property="Margin"          Value="0"/>
+                                </Style>
+                            </DataGrid.RowStyle>
+                            <DataGrid.ColumnHeaderStyle>
+                                <Style TargetType="DataGridColumnHeader">
+                                    <Setter Property="Background"      Value="{StaticResource BrC1}"/>
+                                    <Setter Property="Foreground"      Value="White"/>
+                                    <Setter Property="FontWeight"      Value="SemiBold"/>
+                                    <Setter Property="FontSize"        Value="11"/>
+                                    <Setter Property="Padding"         Value="10,7"/>
+                                    <Setter Property="BorderThickness" Value="0,0,1,0"/>
+                                    <Setter Property="BorderBrush"     Value="#1A6090"/>
+                                </Style>
+                            </DataGrid.ColumnHeaderStyle>
+                            <DataGrid.CellStyle>
+                                <Style TargetType="DataGridCell">
+                                    <Setter Property="BorderThickness" Value="0"/>
+                                    <Setter Property="VerticalAlignment" Value="Center"/>
+                                    <Setter Property="Template">
+                                        <Setter.Value>
+                                            <ControlTemplate TargetType="DataGridCell">
+                                                <Border Background="{TemplateBinding Background}"
+                                                        BorderThickness="0" Padding="8,0">
+                                                    <ContentPresenter VerticalAlignment="Center"/>
+                                                </Border>
+                                            </ControlTemplate>
+                                        </Setter.Value>
+                                    </Setter>
+                                </Style>
+                            </DataGrid.CellStyle>
                             <DataGrid.Columns>
-                                <DataGridTextColumn Header="Código"       Binding="{Binding ArticuloCodigo}"             Width="70" />
-                                <DataGridTextColumn Header="Descripción"  Binding="{Binding ArticuloNombre}"             Width="*" />
-                                <DataGridTextColumn Header="Precio"       Binding="{Binding Pv, StringFormat=N0}"        Width="80" />
-                                <DataGridTextColumn Header="Entrega"      Binding="{Binding EntregaLinea, StringFormat=N0}" Width="80" />
-                                <DataGridTextColumn Header="Cuotas"       Binding="{Binding CuotasLinea}"                Width="55" />
-                                <DataGridTextColumn Header="Costo mensual" Binding="{Binding CostoMensual, StringFormat=N0}" Width="95" />
-                                <DataGridTextColumn Header="Total final"  Binding="{Binding ValorFinal, StringFormat=N0}" Width="85" />
-                                <DataGridTextColumn Header="Cantidad"     Binding="{Binding Cantidad, StringFormat=N0}"  Width="65" />
-                                <DataGridTextColumn Header="Subtotal"     Binding="{Binding Subtotal, StringFormat=N0}"  Width="85" />
+                                <DataGridTextColumn Header="Código"      Binding="{Binding ArticuloCodigo}"                Width="65"  ElementStyle="{StaticResource CeldaGrid}"/>
+                                <DataGridTextColumn Header="Descripción" Binding="{Binding ArticuloNombre}"                Width="*"   ElementStyle="{StaticResource CeldaGrid}"/>
+                                <DataGridTextColumn Header="Precio"      Binding="{Binding Pv, StringFormat=N0}"           Width="82"  ElementStyle="{StaticResource CeldaGridDer}"/>
+                                <DataGridTextColumn Header="Entrega"     Binding="{Binding EntregaLinea, StringFormat=N0}" Width="68"  ElementStyle="{StaticResource CeldaGridDer}"/>
+                                <DataGridTextColumn Header="Cuotas"      Binding="{Binding CuotasLinea}"                   Width="52"  ElementStyle="{StaticResource CeldaGridCen}"/>
+                                <DataGridTextColumn Header="Costo mens." Binding="{Binding CostoMensual, StringFormat=N0}" Width="84"  ElementStyle="{StaticResource CeldaGridDer}"/>
+                                <DataGridTextColumn Header="Total final" Binding="{Binding ValorFinal, StringFormat=N0}"   Width="84"  ElementStyle="{StaticResource CeldaGridDer}"/>
+                                <DataGridTextColumn Header="Cant."       Binding="{Binding Cantidad, StringFormat=N0}"     Width="46"  ElementStyle="{StaticResource CeldaGridCen}"/>
+                                <DataGridTextColumn Header="Subtotal"    Binding="{Binding Subtotal, StringFormat=N0}"     Width="88"  ElementStyle="{StaticResource CeldaGridDer}"/>
+                                <DataGridTemplateColumn Header="" Width="40" CanUserResize="False" CanUserSort="False">
+                                    <DataGridTemplateColumn.CellTemplate>
+                                        <DataTemplate>
+                                            <Button HorizontalAlignment="Center"
+                                                    VerticalAlignment="Center"
+                                                    Width="26" Height="22" Padding="0"
+                                                    BorderThickness="0"
+                                                    Background="{StaticResource BrC5}"
+                                                    Foreground="White" Cursor="Hand"
+                                                    Click="OnEliminarFila">
+                                                <TextBlock Text="✕" FontSize="11" FontWeight="Bold"
+                                                           HorizontalAlignment="Center"
+                                                           VerticalAlignment="Center"/>
+                                            </Button>
+                                        </DataTemplate>
+                                    </DataGridTemplateColumn.CellTemplate>
+                                </DataGridTemplateColumn>
                             </DataGrid.Columns>
                         </DataGrid>
 
                         <!-- Total -->
-                        <StackPanel Grid.Row="3" Orientation="Horizontal" Margin="0,4,0,0"
-                                    HorizontalAlignment="Left" VerticalAlignment="Center">
-                            <TextBlock Text="Total" FontWeight="Bold" FontSize="12" VerticalAlignment="Center" Margin="0,0,6,0" />
-                            <TextBox x:Name="TxtTotal" Width="100" Padding="3,2" FontSize="12"
-                                     FontWeight="Bold" IsReadOnly="True" Background="#FFFF99" />
-                        </StackPanel>
+                        <Border Grid.Row="2" Background="{StaticResource BrC1}"
+                                CornerRadius="0,0,9,9" Padding="16,12">
+                            <Grid>
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="*"/>
+                                    <ColumnDefinition Width="Auto"/>
+                                </Grid.ColumnDefinitions>
+                                <TextBlock Text="TOTAL GENERAL" FontSize="10" FontWeight="Bold"
+                                           Foreground="#80AACC" VerticalAlignment="Center"/>
+                                <StackPanel Grid.Column="1" Orientation="Horizontal"
+                                            VerticalAlignment="Center">
+                                    <TextBlock Text="Gs." FontSize="14" FontWeight="Bold"
+                                               Foreground="#80AACC" VerticalAlignment="Center"
+                                               Margin="0,0,8,0"/>
+                                    <TextBox x:Name="TxtTotal" Width="150"
+                                             IsReadOnly="True" FontSize="20" FontWeight="Bold"
+                                             Background="Transparent" BorderThickness="0"
+                                             Foreground="White" TextAlignment="Right"
+                                             VerticalContentAlignment="Center"/>
+                                </StackPanel>
+                            </Grid>
+                        </Border>
                     </Grid>
-                </Border>
+                </TabItem>
 
-            </Grid>
+            </TabControl>
         </Grid>
 
-        <!-- ══ BOTONERA INFERIOR ══ -->
-        <StackPanel Grid.Row="1" Orientation="Horizontal" HorizontalAlignment="Right"
-                    Margin="0,4,0,0">
-            <Button x:Name="BtnNuevo" Content="Nuevo" Width="80" Padding="6,4"
-                    Background="#336699" Foreground="White" FontWeight="Bold" FontSize="11"
-                    Click="OnNuevo" Margin="3,0" />
-            <Button x:Name="BtnGuardar" Content="Guardar" Width="80" Padding="6,4"
-                    Background="#006600" Foreground="White" FontWeight="Bold" FontSize="11"
-                    Click="OnConfirmarVenta" Margin="3,0" />
-            <Button Content="Eliminar" Width="80" Padding="6,4"
-                    Background="#CC0000" Foreground="White" FontWeight="Bold" FontSize="11"
-                    Click="OnEliminar" Margin="3,0" />
-            <Button Content="Cerrar" Width="80" Padding="6,4"
-                    Background="#666666" Foreground="White" FontWeight="Bold" FontSize="11"
-                    Click="OnCancelar" Margin="3,0" />
-        </StackPanel>
+        <!-- ════════════════════════════════════════════════════════
+             FOOTER
+             ════════════════════════════════════════════════════════ -->
+        <Border Grid.Row="2" Background="{StaticResource BrC1}" Padding="12,0">
+            <Grid>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*"/>   <!-- izquierda: vacío o info -->
+                    <ColumnDefinition Width="Auto"/> <!-- centro: navegación      -->
+                    <ColumnDefinition Width="*"/>   <!-- derecha: botones acción  -->
+                </Grid.ColumnDefinitions>
+
+                <!-- ── Centro: navegación ── -->
+                <StackPanel Grid.Column="1" Orientation="Horizontal"
+                            VerticalAlignment="Center" HorizontalAlignment="Center">
+
+                    <Button x:Name="BtnAnterior"
+                            Content="← Anterior"
+                            Width="104" Height="36" Margin="0,0,8,0"
+                            Background="#1A3A52" Foreground="White"
+                            FontWeight="SemiBold" FontSize="12" BorderThickness="0"
+                            Cursor="Hand" Click="OnTabAnterior"/>
+
+                    <!-- Dots + label -->
+                    <Border Background="#0E2A40" CornerRadius="18"
+                            Padding="14,0" Height="36" VerticalAlignment="Center">
+                        <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
+                            <Ellipse x:Name="Dot0" Width="9" Height="9" Margin="3,0" Fill="White"/>
+                            <Ellipse x:Name="Dot1" Width="9" Height="9" Margin="3,0" Fill="#3A5A72"/>
+                            <Ellipse x:Name="Dot2" Width="9" Height="9" Margin="3,0" Fill="#3A5A72"/>
+                            <Ellipse x:Name="Dot3" Width="9" Height="9" Margin="3,0" Fill="#3A5A72"/>
+                            <TextBlock x:Name="TxtPasoLabel"
+                                       Text="Paso 1 de 4"
+                                       FontSize="11" FontWeight="SemiBold"
+                                       Foreground="#80AACC"
+                                       VerticalAlignment="Center"
+                                       Margin="10,0,0,0"/>
+                        </StackPanel>
+                    </Border>
+
+                    <Button x:Name="BtnSiguiente"
+                            Content="Siguiente →"
+                            Width="114" Height="36" Margin="8,0,0,0"
+                            Background="{StaticResource BrC2}" Foreground="White"
+                            FontWeight="SemiBold" FontSize="12" BorderThickness="0"
+                            Cursor="Hand" Click="OnTabSiguiente"/>
+                </StackPanel>
+
+                <!-- ── Derecha: botones de acción ── -->
+                <StackPanel Grid.Column="2" Orientation="Horizontal"
+                            HorizontalAlignment="Right" VerticalAlignment="Center">
+                    <Button x:Name="BtnNuevo" Content="Nuevo"
+                            Width="80" Height="34" Margin="4,0"
+                            Background="#2C5F8A" Foreground="White"
+                            FontWeight="SemiBold" FontSize="11" BorderThickness="0"
+                            Cursor="Hand" Click="OnNuevo"/>
+                    <Button x:Name="BtnGuardar" Content="💾 Guardar"
+                            Width="96" Height="34" Margin="4,0"
+                            Background="#1E6E42" Foreground="White"
+                            FontWeight="SemiBold" FontSize="11" BorderThickness="0"
+                            Cursor="Hand" Click="OnConfirmarVenta"/>
+                    <Button x:Name="BtnEliminar" Content="🗑 Eliminar"
+                            Width="96" Height="34" Margin="4,0"
+                            Background="{StaticResource BrC5}" Foreground="White"
+                            FontWeight="SemiBold" FontSize="11" BorderThickness="0"
+                            Cursor="Hand" Click="OnEliminar"/>
+                    <Button x:Name="BtnCerrar" Content="✕ Cerrar"
+                            Width="80" Height="34" Margin="4,0,0,0"
+                            Background="#3E4A5A" Foreground="White"
+                            FontWeight="SemiBold" FontSize="11" BorderThickness="0"
+                            Cursor="Hand" Click="OnCancelar"/>
+                </StackPanel>
+            </Grid>
+        </Border>
 
     </Grid>
 </Window>

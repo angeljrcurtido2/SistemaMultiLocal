@@ -66,6 +66,15 @@ public class UsuarioRepository : IUsuarioRepository
         p.Add("@COMISION_COBRANZA", u.ComisionCobranza);
         p.Add("@msg", dbType: DbType.String, direction: ParameterDirection.Output, size: 20);
         await conn.ExecuteAsync("AGREGAR_USUARIO_CS", p, commandType: CommandType.StoredProcedure);
+        // El SP devuelve @msg='GUARDADO' en éxito, o un motivo de rechazo ('EXISTE CODIGO',
+        // 'EXISTE CI', 'EXISTE PASS' —contraseña ya usada por OTRO usuario del sistema—,
+        // 'EXISTE NOMBRE', 'EXISTE ADMIN') SIN insertar nada. Antes este método ignoraba
+        // @msg y siempre devolvía true, así que la UI mostraba "guardado correctamente"
+        // aunque el alta hubiera sido rechazada — bug real detectado: un funcionario nuevo
+        // no aparecía después en el listado porque nunca se había insertado.
+        var msg = p.Get<string?>("@msg");
+        if (!string.IsNullOrWhiteSpace(msg) && !string.Equals(msg, "GUARDADO", StringComparison.OrdinalIgnoreCase))
+            throw new InvalidOperationException(msg);
         return true;
     }
 
@@ -96,6 +105,9 @@ public class UsuarioRepository : IUsuarioRepository
         p.Add("@COMISION_COBRANZA", u.ComisionCobranza);
         p.Add("@msg", dbType: DbType.String, direction: ParameterDirection.Output, size: 20);
         await conn.ExecuteAsync("ACTUALIZAR_USUARIO_CS", p, commandType: CommandType.StoredProcedure);
+        var msg = p.Get<string?>("@msg");
+        if (!string.IsNullOrWhiteSpace(msg) && !string.Equals(msg, "GUARDADO", StringComparison.OrdinalIgnoreCase))
+            throw new InvalidOperationException(msg);
         return true;
     }
 
@@ -106,6 +118,9 @@ public class UsuarioRepository : IUsuarioRepository
         p.Add("@Id", idUsuario);
         p.Add("@msg", dbType: DbType.String, direction: ParameterDirection.Output, size: 20);
         await conn.ExecuteAsync("ELIMINAR_USUARIO_CS", p, commandType: CommandType.StoredProcedure);
+        var msg = p.Get<string?>("@msg");
+        if (!string.IsNullOrWhiteSpace(msg) && !string.Equals(msg, "ELIMINADO", StringComparison.OrdinalIgnoreCase))
+            throw new InvalidOperationException(msg);
         return true;
     }
 }
